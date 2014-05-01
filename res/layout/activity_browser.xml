@@ -1,0 +1,16 @@
+<?xml version='1.0' encoding="utf-8" ?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" android:orientation="vertical"
+    android:layout_width="match_parent" android:layout_height="match_parent">
+    
+    <LinearLayout style="?android:attr/buttonBarStyle" android:orientation="horizontal" android:background="@drawable/theme_1_3"
+    android:layout_width="match_parent" android:layout_height="wrap_content" android:padding="10dip">
+        
+        <EditText android:id="@+id/webAddressField" android:layout_width="0dip" android:layout_weight="0.7" android:layout_height="wrap_content" android:inputType="textUri" android:hint="" android:background="@android:color/white"/>
+        <Button style="?android:attr/buttonBarButtonStyle" android:textColor="@android:color/white" android:drawableTop="@drawable/go_icon" android:background="#3F48FF" android:id="@+id/goBtn" android:layout_width="0dip" android:layout_weight="0.15" android:layout_height="wrap_content" android:text=""/>
+    	<Button style="?android:attr/buttonBarButtonStyle" android:id="@+id/bookmarksBtn" android:drawableTop="@drawable/bookmark_icon" android:textColor="@android:color/white" android:background="#3F48FF" android:layout_width="0dip" android:layout_weight="0.2" android:layout_height="wrap_content" android:text=""/>
+         
+    </LinearLayout>
+    
+    <WebView android:layout_width="match_parent" android:layout_height="wrap_content" android:id="@+id/browser"/>
+    
+</LinearLayout>

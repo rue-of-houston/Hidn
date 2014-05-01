@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="#000000">
+
+    <TextView style="@style/securityTitleStyle" android:textColor="#FFFFFF" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/directions" 
+        android:layout_marginBottom="5dip" android:layout_marginTop="5dip"/>
+    
+   <ScrollView android:layout_width="match_parent" android:layout_height="wrap_content">
+       <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+       android:orientation="vertical" android:padding="10dip">
+       
+       <TextView style="@style/signupTextView" android:textColor="#FFFFFF" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/username" android:layout_marginTop="5dip"/>
+       <EditText android:id="@+id/username" android:textColor="#43D5FF" android:layout_width="match_parent" android:layout_height="wrap_content" android:hint="@string/usernameHint"
+           android:inputType="textCapWords" android:maxLength="16"/>
+       
+       <TextView style="@style/signupTextView" android:textColor="#FFFFFF" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/password" android:layout_marginTop="5dip"/>
+       <EditText android:id="@+id/password" android:textColor="#43D5FF" android:layout_width="match_parent" android:layout_height="wrap_content" android:hint="@string/passwordHint"
+           android:inputType="textPassword" android:maxLength="16"/>
+       
+       <TextView style="@style/signupTextView" android:textColor="#FFFFFF" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/email" android:layout_marginTop="5dip"/>
+       <EditText android:id="@+id/email" android:textColor="#43D5FF" android:layout_width="match_parent" android:layout_height="wrap_content" android:hint="@string/emailHint"
+           android:inputType="textEmailAddress"/>
+       
+   	   </LinearLayout>   
+   </ScrollView>
+   
+   <Button android:id="@+id/submitBtn" android:background="@drawable/button_gradient" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/submit"/>
+
+</LinearLayout>

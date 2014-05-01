@@ -1,0 +1,42 @@
+<resources xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!--
+        Base application theme for API 14+. This theme completely replaces
+        AppBaseTheme from BOTH res/values/styles.xml and
+        res/values-v11/styles.xml on API 14+ devices.
+    -->
+    <style name="AppBaseTheme" parent="android:Theme.Holo.Light">
+        <!-- API 14 theme customizations can go here. -->
+    </style>
+    
+    <style name="signupTextView">
+        <item name="android:textSize">18sp</item>
+        <item name="android:padding">5dip</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+    
+    <style name="securityTitleStyle">
+        <item name="android:textSize">20sp</item>
+        <item name="android:textColor">#43A5E8</item>
+        <item name="android:textAlignment">center</item>
+    </style>
+    
+    <style name="layoutStyle">
+        <item name="android:padding">10dip</item>
+    </style>
+    
+    <style name="securityPasswordStyle">
+        <item name="android:inputType">textPassword</item>
+        <item name="android:textSize">65sp</item>
+        <item name="android:maxLength">6</item>
+        <item name="android:textColor">#5199FF</item>
+        <item name="android:textAlignment">center</item>
+        <item name="android:padding">10dip</item>
+    </style>
+    
+    <style name="contactHeaderStyle">
+        <item name="android:background">@drawable/theme_1_3</item>
+        <item name="android:textColor">@android:color/white</item>
+    </style>
+
+</resources>
