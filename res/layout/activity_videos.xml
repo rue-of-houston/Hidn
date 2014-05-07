@@ -1,16 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" android:orientation="vertical"
-    android:layout_width="match_parent" android:layout_height="wrap_content">
-    
-    <LinearLayout style="?android:attr/buttonBarStyle" android:orientation="horizontal" android:padding="10dip"
-    android:layout_width="match_parent"  android:background="@drawable/theme_1_3" android:layout_height="wrap_content">
-        
-        <Button style="?android:attr/buttonBarButtonStyle" android:textColor="@android:color/white" android:background="@drawable/button_gradient" android:id="@+id/addVideoBtn" android:layout_width="0dip" android:layout_weight="0.33" android:layout_height="wrap_content" android:text="@string/add"/>
-   		<Button style="?android:attr/buttonBarButtonStyle" android:textColor="@android:color/white" android:background="@drawable/button_gradient" android:id="@+id/restoreVideoBtn" android:layout_width="0dip" android:layout_weight="0.33" android:layout_height="wrap_content" android:text="@string/remove"/>
-    	<Button style="?android:attr/buttonBarButtonStyle" android:textColor="@android:color/white" android:background="@drawable/button_gradient" android:id="@+id/trashVideoBtn" android:layout_width="0dip" android:layout_weight="0.33" android:layout_height="wrap_content" android:text="@string/trash"/>
-         
-    </LinearLayout>
-    
-    <TableLayout android:id="@+id/videoTable" android:layout_width="match_parent" android:layout_height="wrap_content" android:padding="10dip"/>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" android:id="@+id/videosBg" android:orientation="vertical"
+    android:layout_width="match_parent" android:layout_height="match_parent" style="@style/fragmentContainerStyle" android:background="#111111">
+       
+    <ListView android:id="@+id/videoList" android:background="@drawable/theme_light" android:layout_width="match_parent" android:layout_height="match_parent" android:padding="10dip"/>
     
 </LinearLayout>

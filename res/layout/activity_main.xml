@@ -2,7 +2,7 @@
 <android.support.v4.view.ViewPager xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent" android:layout_height="match_parent" android:id="@+id/mainPager">
     
-    <android.support.v4.view.PagerTabStrip android:layout_width="match_parent" android:layout_height="wrap_content" android:textColor="#43D5FF" android:textSize="24sp"
-        android:layout_gravity="top" android:id="@+id/mainPagerTitleStrip" android:background="@drawable/theme_1_3"/>
+    <android.support.v4.view.PagerTabStrip android:layout_width="match_parent" android:layout_height="wrap_content" android:textColor="@android:color/white" android:textSize="24sp"
+        android:layout_gravity="top" android:id="@+id/mainPagerTitleStrip" android:background="#999999"/>
     
 </android.support.v4.view.ViewPager>

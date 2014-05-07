@@ -25,10 +25,11 @@
     <application
         android:allowBackup="true"
         android:icon="@drawable/ic_launcher"
-        android:label="@string/app_name"
+        android:logo="@drawable/hidn_branding"
+        android:label="@string/blank"
         android:theme="@style/AppTheme">
         <activity
-            android:name="com.randerson.hidn.PasswordActivity"
+            android:name="com.randerson.activities.StartUpActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:label="@string/app_name"
             android:screenOrientation="portrait">
@@ -38,11 +39,17 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name="SettingsActivity" android:screenOrientation="portrait"></activity>
-        <activity android:name="SignupActivity" android:screenOrientation="portrait"></activity>
-        <activity android:name="NewViewContactActivity" android:screenOrientation="portrait"></activity>
-        <activity android:name="DrawerFragmentActivity" android:screenOrientation="portrait"></activity>
-        <activity android:name="PagerFragmentActivity" android:screenOrientation="portrait"></activity>
+        <activity android:name="com.randerson.activities.DrawerFragmentActivity" android:screenOrientation="portrait"></activity>
+        <activity android:name="com.randerson.activities.PagerFragmentActivity" android:screenOrientation="portrait"></activity>
+        <activity android:name="com.randerson.activities.PasswordActivity" android:screenOrientation="portrait"></activity>
+        <activity android:name="com.randerson.activities.SignupActivity" android:screenOrientation="portrait"></activity>
+        <activity android:name="com.randerson.activities.NewViewContactActivity" android:screenOrientation="portrait"></activity>
+        <activity android:name="com.randerson.activities.NewViewNoteActivity" android:screenOrientation="portrait"></activity>
+        <activity android:name="com.randerson.activities.SettingsActivity" android:screenOrientation="portrait"></activity>
+        <activity android:name="com.randerson.activities.ViewDocumentsActivity" android:screenOrientation="portrait"></activity>
+        <activity android:name="com.randerson.activities.ViewPhotosActivity" android:screenOrientation="portrait"></activity>
+        <activity android:name="com.randerson.activities.ViewVideosActivity" android:screenOrientation="portrait"></activity>
+        
     </application>
 
 </manifest>

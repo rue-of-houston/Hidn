@@ -7,6 +7,28 @@
     -->
     <style name="AppBaseTheme" parent="android:Theme.Holo.Light">
         <!-- API 14 theme customizations can go here. -->
+        <item name="android:actionBarStyle">@style/Custom.ActionBarStyle</item>
+    </style>
+    
+    <style name="Custom.ActionBarStyle" parent="@android:style/Widget.Holo.Light.ActionBar">
+         <item name="android:titleTextStyle">@style/Custom.ActionBar.TitleTextStyle</item>
+    </style>
+
+    <style name="Custom.ActionBar.TitleTextStyle" parent="@android:style/TextAppearance.Holo.Widget.ActionBar.Title">
+         <item name="android:textColor">@android:color/white</item>
+    </style>
+    
+    <style name="fragmentContainerStyle">
+        <item name="android:paddingBottom">1dip</item>
+        <item name="android:paddingTop">1dip</item>
+        <item name="android:paddingLeft">5dip</item>
+        <item name="android:paddingRight">5dip</item>
+    </style>
+    
+    <style name="listTextView">
+        <item name="android:textSize">20sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:padding">10dip</item>
     </style>
     
     <style name="signupTextView">
@@ -37,6 +59,12 @@
     <style name="contactHeaderStyle">
         <item name="android:background">@drawable/theme_1_3</item>
         <item name="android:textColor">@android:color/white</item>
+    </style>
+    
+    <style name="titleBrandingStyle">
+        <item name="android:textSize">40sp</item>
+        <item name="android:textColor">#FFFFFF</item>
+        <item name="android:padding">25dip</item>
     </style>
 
 </resources>

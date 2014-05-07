@@ -1,21 +1,20 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android" >
 
     <item
-        android:id="@+id/browser_view_bookmark"
+        android:id="@+id/browser_new_bookmark"
         android:orderInCategory="1"
         android:showAsAction="always"
         android:icon="@drawable/ic_action_star"
-        android:title="@string/bookmark"/>
-    
-    <item
-        android:id="@+id/browser_new_bookmark"
-        android:orderInCategory="2"
-        android:showAsAction="always"
-        android:icon="@drawable/ic_action_star_add"
         android:title="@string/add_bookmark"/>
     
     <item
-        android:id="@+id/browser_settings"
+        android:id="@+id/browser_view_bookmark"
+        android:orderInCategory="2"
+        android:showAsAction="never"
+        android:title="@string/bookmark"/>
+    
+    <item
+        android:id="@+id/main_settings"
         android:orderInCategory="100"
         android:showAsAction="never"
         android:title="@string/action_settings"/>

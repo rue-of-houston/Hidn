@@ -1,16 +1,20 @@
 <?xml version='1.0' encoding="utf-8" ?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" android:orientation="vertical"
-    android:layout_width="match_parent" android:layout_height="match_parent">
-    
-    <LinearLayout style="?android:attr/buttonBarStyle" android:orientation="horizontal" android:background="@drawable/theme_1_3"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" android:orientation="vertical" android:id="@+id/browserBg"
+    android:layout_width="match_parent" android:layout_height="match_parent" style="@style/fragmentContainerStyle" android:background="#111111">
+   
+    <LinearLayout style="?android:attr/buttonBarStyle" android:orientation="horizontal" android:background="#A6D5E5"
     android:layout_width="match_parent" android:layout_height="wrap_content" android:padding="10dip">
         
-        <EditText android:id="@+id/webAddressField" android:layout_width="0dip" android:layout_weight="0.7" android:layout_height="wrap_content" android:inputType="textUri" android:hint="" android:background="@android:color/white"/>
+        <EditText android:id="@+id/webAddressField" android:layout_width="0dip" android:layout_weight="0.7" android:layout_height="20dip" android:inputType="textWebEditText" android:hint="@string/browserUrlHint" android:background="@android:color/white"/>
         <Button style="?android:attr/buttonBarButtonStyle" android:textColor="@android:color/white" android:drawableTop="@drawable/go_icon" android:background="#3F48FF" android:id="@+id/goBtn" android:layout_width="0dip" android:layout_weight="0.15" android:layout_height="wrap_content" android:text=""/>
-    	<Button style="?android:attr/buttonBarButtonStyle" android:id="@+id/bookmarksBtn" android:drawableTop="@drawable/bookmark_icon" android:textColor="@android:color/white" android:background="#3F48FF" android:layout_width="0dip" android:layout_weight="0.2" android:layout_height="wrap_content" android:text=""/>
          
     </LinearLayout>
     
-    <WebView android:layout_width="match_parent" android:layout_height="wrap_content" android:id="@+id/browser"/>
+    <LinearLayout android:orientation="vertical" android:background="@drawable/theme_light" android:layout_width="match_parent"
+         android:layout_height="wrap_content" android:padding="1dip">
+     
+    <WebView android:layout_width="match_parent" android:layout_height="match_parent" android:id="@+id/browser"/>
+    
+    </LinearLayout>
     
 </LinearLayout>

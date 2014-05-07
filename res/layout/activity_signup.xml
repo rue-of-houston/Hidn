@@ -3,26 +3,33 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="#000000">
+    android:background="@drawable/theme_4_2">
 
+    <ImageView android:layout_width="match_parent" android:layout_height="wrap_content" android:padding="10dip" android:contentDescription="@string/blank" android:layout_margin="2dip"
+        android:src="@drawable/hidn_branding"/>
+    
     <TextView style="@style/securityTitleStyle" android:textColor="#FFFFFF" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/directions" 
-        android:layout_marginBottom="5dip" android:layout_marginTop="5dip"/>
+        android:layout_marginBottom="5dip" android:layout_marginTop="5dip" android:padding="10dip"/>
     
    <ScrollView android:layout_width="match_parent" android:layout_height="wrap_content">
        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
-       android:orientation="vertical" android:padding="10dip">
+       android:orientation="vertical" android:padding="15dip" android:layout_margin="3dip">
        
        <TextView style="@style/signupTextView" android:textColor="#FFFFFF" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/username" android:layout_marginTop="5dip"/>
-       <EditText android:id="@+id/username" android:textColor="#43D5FF" android:layout_width="match_parent" android:layout_height="wrap_content" android:hint="@string/usernameHint"
-           android:inputType="textCapWords" android:maxLength="16"/>
+       <EditText android:id="@+id/username" android:textColor="#43D5FF" android:layout_width="match_parent" android:layout_height="35dip" android:hint="@string/usernameHint"
+           android:inputType="textCapWords" android:maxLength="16" android:background="@drawable/theme_light"/>
        
        <TextView style="@style/signupTextView" android:textColor="#FFFFFF" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/password" android:layout_marginTop="5dip"/>
-       <EditText android:id="@+id/password" android:textColor="#43D5FF" android:layout_width="match_parent" android:layout_height="wrap_content" android:hint="@string/passwordHint"
-           android:inputType="textPassword" android:maxLength="16"/>
+       <EditText android:id="@+id/password" android:textColor="#43D5FF" android:layout_width="match_parent" android:layout_height="35dip" android:hint="@string/passwordHint"
+           android:inputType="textPassword" android:maxLength="16" android:background="@drawable/theme_light"/>
        
        <TextView style="@style/signupTextView" android:textColor="#FFFFFF" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/email" android:layout_marginTop="5dip"/>
-       <EditText android:id="@+id/email" android:textColor="#43D5FF" android:layout_width="match_parent" android:layout_height="wrap_content" android:hint="@string/emailHint"
-           android:inputType="textEmailAddress"/>
+       <EditText android:id="@+id/email" android:textColor="#43D5FF" android:layout_width="match_parent" android:layout_height="35dip" android:hint="@string/emailHint"
+           android:inputType="textEmailAddress" android:background="@drawable/theme_light"/>
+       
+       <TextView style="@style/signupTextView" android:textColor="#FFFFFF" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/pin" android:layout_marginTop="5dip"/>
+       <EditText android:id="@+id/pin" android:textColor="#43D5FF" android:layout_width="match_parent" android:layout_height="35dip" android:hint="@string/pinHint"
+           android:inputType="numberPassword" android:maxLength="6" android:background="@drawable/theme_light"/>
        
    	   </LinearLayout>   
    </ScrollView>

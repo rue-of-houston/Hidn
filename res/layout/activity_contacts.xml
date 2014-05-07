@@ -1,16 +1,7 @@
 <?xml version="1.0" encoding="utf-8" ?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" android:id="@+id/contactsFragment"
-    android:layout_width="match_parent" android:layout_height="match_parent" android:orientation="vertical">
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" android:id="@+id/contactsBg"
+    android:layout_width="match_parent" android:layout_height="match_parent" android:orientation="vertical" style="@style/fragmentContainerStyle" android:background="#111111">
     
-    <LinearLayout style="?android:attr/buttonBarStyle" android:orientation="horizontal" android:background="@drawable/theme_1_3"
-    android:layout_width="match_parent" android:layout_height="wrap_content" android:padding="10dip">
-        
-        <Button style="?android:attr/buttonBarButtonStyle" android:textColor="@android:color/white" android:background="@drawable/button_gradient" android:id="@+id/addContactBtn" android:layout_width="0dip" android:layout_weight="0.5" android:layout_height="wrap_content" android:text="@string/newBtn"/>
-    	<Button style="?android:attr/buttonBarButtonStyle" android:id="@+id/trashContactBtn" android:textColor="@android:color/white" android:background="@drawable/button_gradient" android:layout_width="0dip" android:layout_weight="0.5" android:layout_height="wrap_content" android:text="@string/trash"/>
-         
-    </LinearLayout>
-    
-    <TableLayout android:id="@+id/contactsTable" android:layout_width="match_parent" android:layout_height="wrap_content" android:padding="10dip"/>
-    
+    <ListView android:id="@+id/contactsList" android:background="@drawable/theme_light" android:layout_width="match_parent" android:layout_height="match_parent" android:padding="10dip" />
     
 </LinearLayout>

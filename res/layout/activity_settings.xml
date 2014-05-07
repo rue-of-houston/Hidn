@@ -1,16 +1,30 @@
 <?xml version="1.0" encoding="utf-8" ?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent">
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent" 
+    android:layout_height="match_parent" android:padding="10dip" android:background="#111111" android:id="@+id/settingsBg">
 	
-	<LinearLayout android:padding="10dip" android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical">
+	<LinearLayout android:padding="15dip" android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical"
+	    android:background="@drawable/theme_light">
 	    
-	<Switch android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/mockSwitch"/>
-    <TextView android:textSize="12sp" android:layout_marginBottom="2dip" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/mockInfo"/>
+	<Switch android:id="@+id/settingsMockSwitch" android:layout_marginTop="5dip" android:layout_marginBottom="2dip" android:layout_width="match_parent" android:layout_height="wrap_content" 
+	    android:text="@string/mockSwitch" android:checked="true" android:textSize="18sp"/>
+    <TextView android:textSize="12sp" android:layout_marginBottom="3dip" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/mockInfo"/>
 	    
-    
-    <Switch android:layout_marginTop="3dip" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/locationSwtich"/>
-	    
+    <Switch android:id="@+id/settingsPrivateSwitch" android:layout_marginTop="5dip" android:layout_marginBottom="2dip" android:layout_width="match_parent" android:layout_height="wrap_content" 
+        android:text="@string/privateSwitch" android:checked="false"  android:textSize="18sp"/>
+	<TextView android:textSize="12sp" android:layout_marginBottom="2dip" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/privateInfo"/>
+	 
+	<Switch android:id="@+id/settingsNavSwitch" android:layout_marginTop="5dip" android:layout_marginBottom="2dip" android:layout_width="match_parent" android:layout_height="wrap_content" 
+	    android:text="@string/navSwitch" android:checked="false"  android:textSize="18sp"/>
+	<TextView android:textSize="12sp" android:layout_marginBottom="2dip" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/navInfo"/>
+	 
+	<Switch android:id="@+id/settingsThemeSwitch" android:layout_marginTop="5dip" android:layout_marginBottom="2dip" android:layout_width="match_parent" android:layout_height="wrap_content" 
+	    android:text="@string/themeSwitch" android:checked="true"  android:textSize="18sp"/>
+	<TextView android:textSize="12sp" android:layout_marginBottom="2dip" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/themeInfo"/>
+	
+	<Spinner android:id="@+id/settingsSpinner" android:layout_width="match_parent" android:layout_height="wrap_content"/>
+	
+	<Spinner android:id="@+id/settingsSpinnerB" android:layout_width="match_parent" android:layout_height="wrap_content"/>
+	
 	</LinearLayout>
     
     
