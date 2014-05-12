@@ -270,12 +270,12 @@ public class SettingsActivity extends Activity {
 		// verify the switch is created
 		if (themeSwitch != null)
 		{
-			// if mockAccess is true, set the switch to on
+			// if useing themes is true, set the switch to on
 			if (useThemes)
 			{
 				themeSwitch.setChecked(true);
 				
-				// set the spinner to be visible
+				// set the spinners to be visible
 				themeSpinner.setVisibility(Spinner.VISIBLE);
 				themeSpinnerB.setVisibility(Spinner.VISIBLE);
 			}
@@ -283,9 +283,11 @@ public class SettingsActivity extends Activity {
 			{
 				themeSwitch.setChecked(false);
 				
-				// set the spinner to be invisible
+				// set the spinners to be invisible
 				themeSpinner.setVisibility(Spinner.INVISIBLE);
 				themeSpinnerB.setVisibility(Spinner.INVISIBLE);
+				
+				
 			}
 			
 			// set the button change listener
@@ -300,6 +302,7 @@ public class SettingsActivity extends Activity {
 						
 						// set the spinner to be visible
 						themeSpinner.setVisibility(Spinner.VISIBLE);
+						themeSpinnerB.setVisibility(Spinner.VISIBLE);
 					}
 					else
 					{
@@ -307,6 +310,14 @@ public class SettingsActivity extends Activity {
 						
 						// set the spinner to be invisible
 						themeSpinner.setVisibility(Spinner.INVISIBLE);
+						themeSpinnerB.setVisibility(Spinner.INVISIBLE);
+						
+						// reset the defaults
+						theme = "4_3";
+						themeB = "Dark";
+						
+						// update the actionbar
+						setupActionBar();
 					}
 				}
 			});
@@ -316,7 +327,7 @@ public class SettingsActivity extends Activity {
 	
 	public void loadAppSettings()
 	{
-		ApplicationDefaults defaults = new ApplicationDefaults(this);
+		ApplicationDefaults defaults = new ApplicationDefaults(this.getApplicationContext());
 		
 		// verify the defaults object is valid
 		if (defaults != null)
@@ -336,7 +347,7 @@ public class SettingsActivity extends Activity {
 	
 	public void saveAppSettings()
 	{
-		ApplicationDefaults defaults = new ApplicationDefaults(this);
+		ApplicationDefaults defaults = new ApplicationDefaults(this.getApplicationContext());
 		
 		// verify the defaults object is valid
 		if (defaults != null)
@@ -354,7 +365,7 @@ public class SettingsActivity extends Activity {
 	protected void onPause() {
 		super.onPause();
 		
-		ApplicationDefaults defaults = new ApplicationDefaults(this);
+		ApplicationDefaults defaults = new ApplicationDefaults(this.getApplicationContext());
 		
 		if (defaults != null)
 		{
@@ -374,7 +385,7 @@ public class SettingsActivity extends Activity {
 		// save app settings
 		saveAppSettings();
 		
-		ApplicationDefaults defaults = new ApplicationDefaults(this);
+		ApplicationDefaults defaults = new ApplicationDefaults(this.getApplicationContext());
 		
 		if (defaults != null)
 		{
@@ -382,33 +393,33 @@ public class SettingsActivity extends Activity {
 			defaults.set("loadLastView", true);
 		}
 		
-		// check if nav style changed, and change user nav style
-		if (previousNavStyle == swipeNav)
+		Intent navStyle = null;
+		
+		// create intent on navStyle that is selected
+		if (swipeNav)
 		{
-			// back functions as back, no nav style change
-			super.onBackPressed();
+			// pagerview swipe nav
+			navStyle = new Intent(this.getApplicationContext(), PagerFragmentActivity.class);
 		}
-		else if (previousNavStyle != swipeNav)
+		else if (!swipeNav)
 		{
-			Intent navStyle = null;
+			// drawerlist nav
+			navStyle = new Intent(this.getApplicationContext(), DrawerFragmentActivity.class);
+		}
+		
+		// verify the intent is valid and change the activity
+		if (navStyle != null)
+		{
+			// check if private mode is enabled
+			if (privateMode)
+			{
+				// set the flag to exclude from recent menu
+				navStyle.setFlags(Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);
+			}
 			
-			// create intent on navStyle that is selected
-			if (swipeNav)
-			{
-				// pagerview swipe nav
-				navStyle = new Intent(this, PagerFragmentActivity.class);
-			}
-			else if (!swipeNav)
-			{
-				// drawerlist nav
-				navStyle = new Intent(this, DrawerFragmentActivity.class);
-			}
-			
-			// verify the intent is valid and change the activity
-			if (navStyle != null)
-			{
-				startActivity(navStyle);
-			}
+			// set the flag clearing duplicate activities
+			navStyle.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+			startActivity(navStyle);
 		}
 	}
 	

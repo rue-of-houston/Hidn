@@ -20,6 +20,7 @@ public class PasswordActivity extends Activity {
 	String PASSWORD = "";
 	boolean defaultNavType;
 	boolean mockAccess;
+	boolean privateMode;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -320,6 +321,9 @@ public class PasswordActivity extends Activity {
 			
 			// check if mockAccess is enabled, returns true if no data is set
 			mockAccess = defaults.getData().getBoolean("mockAccess", true);
+			
+			// check if privateMode is enabled, returns false if no data is set
+			privateMode = defaults.getData().getBoolean("privateMode", false);
 		}
 		
 		if (PASSWORD_FIELD != null)
@@ -350,6 +354,13 @@ public class PasswordActivity extends Activity {
 				// verify that the intent is valid
 				if (startMain != null)
 				{
+					// check if private mode is enabled
+					if (privateMode)
+					{
+						// set the flag to exclude from recent menu
+						startMain.setFlags(Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);
+					}
+					
 					if (passIsValid)
 					{
 						// set the password validation args to true

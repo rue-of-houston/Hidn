@@ -25,8 +25,8 @@ public class PagerFragmentActivity extends FragmentActivity implements ViewHandl
 	public Menu fragmentMenu;
 	public Fragment currentFragment;
 	public ViewPager pager;
-	public String theme = "1_1";
-	public boolean isSettingsActive = false;
+	public String theme = "4_3";
+	public boolean shouldDisablePassLock = false;
 	public FragmentAdapter fragAdapter;
 	
 	@Override
@@ -42,11 +42,11 @@ public class PagerFragmentActivity extends FragmentActivity implements ViewHandl
 		// reference the pager from layout
 		pager = (ViewPager) findViewById(R.id.mainPager);
 		
-		ApplicationDefaults defaults = new ApplicationDefaults(this);
+		ApplicationDefaults defaults = new ApplicationDefaults(this.getApplicationContext());
 		
 		if (defaults != null)
 		{
-			theme = defaults.getData().getString("theme", "1_1");
+			theme = defaults.getData().getString("theme", "4_3");
 		}
 		
 		// verify that the pager is valid
@@ -111,15 +111,15 @@ public class PagerFragmentActivity extends FragmentActivity implements ViewHandl
 	protected void onResume() {
 		super.onResume();
 		
-		// reset the active settings boolean
-		isSettingsActive = false;
+		// reset the active lock boolean
+		shouldDisablePassLock = false;
 	}
 	
 	@Override
 	protected void onPause() {
 		super.onPause();
 		
-		ApplicationDefaults defaults = new ApplicationDefaults(this);
+		ApplicationDefaults defaults = new ApplicationDefaults(this.getApplicationContext());
 		
 		if (defaults != null)
 		{
@@ -127,8 +127,8 @@ public class PagerFragmentActivity extends FragmentActivity implements ViewHandl
 			defaults.set("loadLastView", true);
 		}
 		
-		// close the activity and return to password screen if not changing to settings activity
-		if (isSettingsActive == false) 
+		// close the activity and return to password screen if not changing to exempt activity
+		if (shouldDisablePassLock == false) 
 		{
 			finish();
 		}
@@ -164,8 +164,8 @@ public class PagerFragmentActivity extends FragmentActivity implements ViewHandl
 		
 			case R.id.main_settings:
 			
-				// going into settings menu so temporarily disable the passlock for view change
-				isSettingsActive = true;
+				// going into extended menu so temporarily disable the passlock for view change
+				shouldDisablePassLock = true;
 				
 				// create the intent to start the settings activity
 				Intent settingsActivity = new Intent(this, SettingsActivity.class);
@@ -177,7 +177,18 @@ public class PagerFragmentActivity extends FragmentActivity implements ViewHandl
 				}
 				
 				break;
+				
+			// these cases fall-through on purpose
+			case R.id.photos_add_photo:
+			case R.id.videos_add_video:
+			case R.id.notes_add_note:
+			case R.id.documents_add_doc:
+			case R.id.browser_view_bookmark:
+			case R.id.contact_new_contact:
 			
+				// going into extended menu so temporarily disable the passlock for view change
+				shouldDisablePassLock = true;
+				
 			  // calls on the interface method for the current fragment passing in the 
 			  // selected actionbar menu item id
 			default:

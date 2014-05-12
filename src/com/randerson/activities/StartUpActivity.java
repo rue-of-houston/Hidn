@@ -23,7 +23,7 @@ public class StartUpActivity extends Activity {
 		
 		// set the activity to full screen
 		getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
-				
+		
 		// inflate the xml layout file
 		setContentView(R.layout.activity_startup);
 		
@@ -44,6 +44,7 @@ public class StartUpActivity extends Activity {
 			// verify the intent is valid
 			if (setupScreen != null)
 			{
+				setupScreen.setFlags(Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);
 				startActivity(setupScreen);
 			}
 		}

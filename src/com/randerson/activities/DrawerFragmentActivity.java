@@ -31,7 +31,7 @@ public class DrawerFragmentActivity extends FragmentActivity implements ViewHand
 	public Menu FragmentMenu;
 	public Fragment CurrentFragment;
 	public ListView list;
-	public boolean isSettingsActive = false;
+	public boolean shouldDisablePassLock = false;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -107,7 +107,7 @@ public class DrawerFragmentActivity extends FragmentActivity implements ViewHand
 			case R.id.main_settings:
 			
 				// going into settings menu so temporarily disable the passlock for view change
-				isSettingsActive = true;
+				shouldDisablePassLock = true;
 				
 				// create the intent to start the settings activity
 				Intent settingsActivity = new Intent(this, SettingsActivity.class);
@@ -119,6 +119,17 @@ public class DrawerFragmentActivity extends FragmentActivity implements ViewHand
 				}
 				
 				break;
+				
+			// these cases fall-through on purpose
+			case R.id.photos_add_photo:
+			case R.id.videos_add_video:
+			case R.id.notes_add_note:
+			case R.id.documents_add_doc:
+			case R.id.browser_view_bookmark:
+			case R.id.contact_new_contact:
+		
+			// going into extended menu so temporarily disable the passlock for view change
+			shouldDisablePassLock = true;
 			
 			  // calls on the interface method for the current fragment passing in the 
 			  // selected actionbar menu item id
@@ -135,15 +146,15 @@ public class DrawerFragmentActivity extends FragmentActivity implements ViewHand
 	protected void onResume() {
 		super.onResume();
 		
-		// reset the active settings boolean
-		isSettingsActive = false;
+		// reset the activty exemption boolean
+		shouldDisablePassLock = false;
 	}
 	
 	@Override
 	protected void onPause() {
 		super.onPause();
 		
-		ApplicationDefaults defaults = new ApplicationDefaults(this);
+		ApplicationDefaults defaults = new ApplicationDefaults(this.getApplicationContext());
 		
 		if (defaults != null)
 		{
@@ -152,7 +163,7 @@ public class DrawerFragmentActivity extends FragmentActivity implements ViewHand
 		}
 		
 		// close the activity and return to password screen if not changing to settings activity
-		if (isSettingsActive == false) 
+		if (shouldDisablePassLock == false) 
 		{
 			finish();
 		}
@@ -213,7 +224,7 @@ public class DrawerFragmentActivity extends FragmentActivity implements ViewHand
 		
 		if (lastViewId != HOME)
 		{
-			ApplicationDefaults defaults = new ApplicationDefaults(this);
+			ApplicationDefaults defaults = new ApplicationDefaults(this.getApplicationContext());
 		
 			if (defaults != null)
 			{

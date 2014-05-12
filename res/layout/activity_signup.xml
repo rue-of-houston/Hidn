@@ -3,7 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="@drawable/theme_4_2">
+    android:background="@drawable/theme_dark">
 
     <ImageView android:layout_width="match_parent" android:layout_height="wrap_content" android:padding="10dip" android:contentDescription="@string/blank" android:layout_margin="2dip"
         android:src="@drawable/hidn_branding"/>

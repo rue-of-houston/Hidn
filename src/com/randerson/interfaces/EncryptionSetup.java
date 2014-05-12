@@ -7,14 +7,9 @@ public interface EncryptionSetup {
 	public String RSA_ALGORITHM = "RSA";
 	public String AES_ALGORITHM = "AES";
 	
-	public String encodeData(int encryptionMethod, byte[] objectBytes);
-	
-	public byte[] decodeData(int encryptionMethod, String encodedData);
-	
-	public void setupCipher();
-	
+	public String encodeData(byte[] objectBytes);
+	public byte[] decodeData(String encodedData);
 	public String encodeToBaseString(byte[] encodedBytes);
-	
 	public byte[] decodeBaseString(String codedString);
 	
 }

@@ -32,7 +32,8 @@
             android:name="com.randerson.activities.StartUpActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:label="@string/app_name"
-            android:screenOrientation="portrait">
+            android:screenOrientation="portrait"
+            android:excludeFromRecents="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -49,6 +50,7 @@
         <activity android:name="com.randerson.activities.ViewDocumentsActivity" android:screenOrientation="portrait"></activity>
         <activity android:name="com.randerson.activities.ViewPhotosActivity" android:screenOrientation="portrait"></activity>
         <activity android:name="com.randerson.activities.ViewVideosActivity" android:screenOrientation="portrait"></activity>
+        <activity android:name="com.randerson.activities.AddPhotosActivity" android:screenOrientation="portrait"></activity>
         
     </application>
 

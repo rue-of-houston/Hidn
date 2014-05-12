@@ -2,8 +2,11 @@ package com.randerson.activities;
 
 import com.randerson.hidn.R;
 import com.randerson.interfaces.Constants;
+import com.randerson.interfaces.DataSetup;
 
 import libs.ApplicationDefaults;
+import libs.FileSystem;
+import libs.UniArray;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
@@ -63,7 +66,7 @@ public class SignupActivity extends Activity implements Constants {
 	
 	public void setupApp()
 	{
-		ApplicationDefaults defaults = new ApplicationDefaults(this);
+		ApplicationDefaults defaults = new ApplicationDefaults(this.getApplicationContext());
 		
 		if (defaults != null)
 		{
@@ -90,6 +93,26 @@ public class SignupActivity extends Activity implements Constants {
 			defaults.set("loadLastView", false);
 			
 		}
+		
+		// create the top-level UniArray
+		UniArray APP_DATA = new UniArray();
+		
+		// the 1st level UniArray keys
+		String[] CONTAINER_NAMES = new String[]{ DataSetup.BROWSER_KEY, DataSetup.CONTACT_KEY,
+											   	 DataSetup.DOCUMENT_KEY, DataSetup.ENCRYPTION_KEY,
+											   	 DataSetup.NOTE_KEY, DataSetup.PHOTO_KEY, DataSetup.VIDEO_KEY
+												};
+		
+		// iterate over the container names creating and adding them to the save file
+		for (String key : CONTAINER_NAMES)
+		{
+			UniArray container = new UniArray();
+			
+			APP_DATA.putObject(key, container);
+		}
+		
+		// create the initial save file
+		FileSystem.writeObjectFile(getApplicationContext(), APP_DATA, DataSetup.APP_DATA_FILENAME, true);
 	}
 	
 	// method for validating form fields

@@ -4,22 +4,23 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.util.Base64;
 import android.util.Log;
-
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.security.InvalidKeyException;
 import java.security.Key;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
-
+import java.util.ArrayList;
 import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.KeyGenerator;
 import javax.crypto.NoSuchPaddingException;
 import javax.crypto.spec.SecretKeySpec;
-
-import libs.FileSystem;
 import libs.UniArray;
 
 import com.randerson.interfaces.EncryptionSetup;
@@ -37,6 +38,8 @@ public class HidNCipher implements EncryptionSetup {
 	private KeyPair KEY_PAIR = null;
 	private KeyPairGenerator KEY_PAIR_GEN = null;
 	
+	private int ENCRYPTION_ID = 0;
+	
 	// key map file
 	private UniArray KEYS = null;
 	
@@ -47,16 +50,33 @@ public class HidNCipher implements EncryptionSetup {
 	// application context
 	public Context CONTEXT = null;
 	
+	// the app data managing class
+	DataManager DATA_MANAGER = null;
+	
+	
 	public HidNCipher(Context context, String algorithmType)
 	{
 		CONTEXT = context;
+		
+		// setup the app storage class
+		DATA_MANAGER = new DataManager(CONTEXT);
+		
+		// setup the encryption algorithm to utilize
+		if (algorithmType.equals(AES_ALGORITHM))
+		{
+			ENCRYPTION_ID = AES_ENCRYPTION;
+		}
+		else if (algorithmType.equals(RSA_ALGORITHM))
+		{
+			ENCRYPTION_ID = RSA_ENCRYPTION;
+		}
 		
 		// setup the class to use the specific encryption algorithms
 		setupCipher();
 	}
 
 	@Override
-	public String encodeData(int encryptionMethod, byte[] objectBytes)
+	public String encodeData(byte[] objectBytes)
 	{
 		// string for encoded data to return
 		String encodedData = null;
@@ -67,7 +87,7 @@ public class HidNCipher implements EncryptionSetup {
 		// create byte array of encoded bytes
 		byte[] codedBytes = null;
 		
-		if (encryptionMethod == AES_ENCRYPTION)
+		if (ENCRYPTION_ID == AES_ENCRYPTION)
 		{
 			try {
 				
@@ -105,7 +125,7 @@ public class HidNCipher implements EncryptionSetup {
 			}
 			
 		}
-		else if (encryptionMethod == RSA_ENCRYPTION)
+		else if (ENCRYPTION_ID == RSA_ENCRYPTION)
 		{
 			try {
 				
@@ -147,7 +167,7 @@ public class HidNCipher implements EncryptionSetup {
 	}
 
 	@Override
-	public byte[] decodeData(int encryptionMethod, String encodedData)
+	public byte[] decodeData(String encodedData)
 	{
 		// create a cipher for encrypting
 		Cipher cipher = null;
@@ -158,7 +178,7 @@ public class HidNCipher implements EncryptionSetup {
 		// create byte array of decoded bytes
 		byte[] encodedBytes = decodeBaseString(encodedData);
 		
-		if (encryptionMethod == AES_ENCRYPTION)
+		if (ENCRYPTION_ID == AES_ENCRYPTION)
 		{
 			
 			try {
@@ -194,7 +214,7 @@ public class HidNCipher implements EncryptionSetup {
 			}
 			
 		}
-		else if (encryptionMethod == RSA_ENCRYPTION)
+		else if (ENCRYPTION_ID == RSA_ENCRYPTION)
 		{
 			try {
 				
@@ -235,8 +255,7 @@ public class HidNCipher implements EncryptionSetup {
 	
 	// method for setting up class for encryption / decryption
 	@SuppressLint("TrulyRandom")
-	@Override
-	public void setupCipher()
+	private void setupCipher()
 	{
 		// SETTING UP THE AES ALGORITHM SIDE
 			try {
@@ -309,49 +328,212 @@ public class HidNCipher implements EncryptionSetup {
 		return decodedString;
 	}
 	
-	public void loadStoredKeys()
+	private void loadStoredKeys()
 	{
+		// disable the key save bool
+		SHOULD_SAVE_KEYS = false;
+		
 		// check for previously created keys to overwrite the newly generated keys
-		KEYS = (UniArray) FileSystem.readObjectFile(CONTEXT, "keys.hdn", true);
+		KEYS = (UniArray) DATA_MANAGER.load(DataManager.ENCRYPTION_DATA);
 		
 		if (KEYS != null)
-		{
+		{	
 			// check if the saved data has the public and private keys saved
 			// if so, update the class fields to use those keys
-			if (KEYS.hasObject("publicKey") && KEYS.hasObject("privateKey"))
+			if (KEYS.hasObject(DataManager.PUBLIC_KEY) && KEYS.hasObject(DataManager.PRIVATE_KEY))
 			{
-				PUBLIC_KEY = (Key) KEYS.getObject("publicKey");
-				PRIVATE_KEY = (Key) KEYS.getObject("privateKey");
+				PUBLIC_KEY = (Key) KEYS.getObject(DataManager.PUBLIC_KEY);
+				PRIVATE_KEY = (Key) KEYS.getObject(DataManager.PRIVATE_KEY);
+				
+				if (PUBLIC_KEY != null && PRIVATE_KEY != null)
+				{
+					Log.i("Key Validation", "Valid Keys Found");
+				}
+				else 
+				{
+					Log.i("Key Validation", "One Or More Invalid Keys Found");
+					
+					// reset the key save bool
+					SHOULD_SAVE_KEYS = true;
+				}
+			}
+			else
+			{
+				Log.i("Key Pair Error", "Valid Key Pair Not Found");
+				
+				// reset the key save bool
+				SHOULD_SAVE_KEYS = true;
 			}
 			
 			// check if the saved data has the secret key saved
 			// if so, update the class field to use that key
-			if (KEYS.hasObject("keySpec"))
+			if (KEYS.hasObject(DataManager.SECRET_KEY))
 			{
-				KEY_SPEC = (SecretKeySpec) KEYS.getObject("keySpec");
+				KEY_SPEC = (SecretKeySpec) KEYS.getObject(DataManager.SECRET_KEY);
+				
+				if (KEY_SPEC != null)
+				{
+					Log.i("Secret Key Validation", "Valid Secret Key Found");
+				}
+				else 
+				{
+					Log.i("Secret Key Validation", "Invalid Secret Key Found");
+					
+					// reset the key save bool
+					SHOULD_SAVE_KEYS = true;
+				}
+			}
+			else
+			{
+				Log.i("Secret Key Error", "Secret Key Not Found");
+				
+				// reset the key save bool
+				SHOULD_SAVE_KEYS = true;
 			}
 			
-			// reset the key save bool
-			SHOULD_SAVE_KEYS = false;
+			
 		}
 	}
 
-	public void storeCipherKeys()
+	private void storeCipherKeys()
 	{
-		// check if the keys UniArray is initialized or not
-		// if not initialize it
-		if (KEYS == null)
-		{
-			KEYS = new UniArray();
-		}
-		
+
 		// verify that the keys should be stored
 		if (SHOULD_SAVE_KEYS)
-		{
-			KEYS.putObject("publicKey", PUBLIC_KEY);
-			KEYS.putObject("privateKey", PRIVATE_KEY);
-			KEYS.putObject("keySpec", KEY_SPEC);
+		{	
+			if (DATA_MANAGER != null)
+			{
+				// create the key mapping
+				String[] keys = new String[]{DataManager.PUBLIC_KEY, 
+											 DataManager.PRIVATE_KEY,
+											 DataManager.SECRET_KEY};
+				
+				// create the value mapping
+				Object[] values = new Object[]{PUBLIC_KEY, PRIVATE_KEY, KEY_SPEC};
+				
+				// pass in the mappings to create a keys item for storing
+				KEYS = DATA_MANAGER.createKeysItem(keys, values);
+				
+				// save the keys item
+				DATA_MANAGER.saveItem(DataManager.ENCRYPTION_DATA, KEYS);
+			}
+			
 		}
+	}
+
+	// public method for getting a file bytes
+	public static ArrayList<byte[]> toByteArray(File file)
+	{
+		
+		final long BYTE_COUNT = file.length();
+		int[] count = {(int) BYTE_COUNT};
+		int bytePasses = 1;
+		int currentPass = 1;
+		ArrayList<byte[]> masterBytes = new ArrayList<byte[]>();
+		FileInputStream in = null;
+		
+		
+		// check if the byte size is greater than integer limit
+		// if so the file must be split into parts to capture all of the bytes
+		if (BYTE_COUNT > Integer.MAX_VALUE)
+		{
+			// divide the file size by the max integer size
+			// and round up to obtain the number of split bytes
+			bytePasses = (int) Math.ceil(BYTE_COUNT / Integer.MAX_VALUE);
+			
+			// set a new count
+			count = new int[bytePasses];
+			
+			// set the new byte count to match the greatest int value allowed
+			for (int n = 0; n < bytePasses; n++)
+			{
+				// check if n has incremented to the last iteration
+				// if not the count is the maximum allowed
+				// otherwise the count is the different between the set of values
+				// and the max integer value
+				if (n < (bytePasses - 1))
+				{
+					count[n] = Integer.MAX_VALUE;
+				}
+				else if (n == (bytePasses - 1))
+				{
+					count[n] = (int) (BYTE_COUNT - (Integer.MAX_VALUE * (bytePasses - 1)));
+				}
+			}
+		}
+		
+		// CODE TO BEGIN READING THE BYTES
+		try 
+		{
+			
+			// initialize the file input stream to the current file
+			in = new FileInputStream(file);
+			
+			if (in != null)
+			{
+				int byteOffset = 0;
+				
+				for (int i = 0; i < bytePasses; i++)
+				{
+					// checks if this has exceeded the first pass
+					// setting the byte starting offset to match the
+					// next byte in the file from where the previous pass left
+					if (i > 0)
+					{
+						byteOffset = (currentPass * Integer.MAX_VALUE) + 1;
+					}
+					
+					// create a new byteArray buffer equal to the number of bytes in the current count
+					byte[] buffer = new byte[count[i]];
+					
+					// create the int for storing the amount of bytes already read
+					int bytesRead = 0;
+					
+					// while the number of bytes read is less than the max byte count
+					while(bytesRead < count[i])
+					{
+						try {
+							
+							// read the bytes and capture the amount of bytes read
+							bytesRead += in.read(buffer, byteOffset, count[i]);
+							
+						} catch (IOException e)
+						{
+							e.printStackTrace();
+							
+							Log.i("IO Error", "Error Reading Bytes Into Buffer");
+							
+						}
+					}	// end while loop
+					
+					// add the read byte array into the master byte array
+					masterBytes.add(buffer);
+					
+				}	// end for loop
+			}
+		} catch (FileNotFoundException e)
+		{
+			e.printStackTrace();
+			
+			Log.i("IO Error", "File Not Found");
+		}
+		finally 
+		{
+			
+			try 
+			{
+				
+				in.close();
+				
+			} catch (IOException e) 
+			{
+				e.printStackTrace();
+				
+				Log.i("IO Error", "Error Closing Input Stream");
+			}
+		}
+		
+		return masterBytes;
 	}
 	
 }
