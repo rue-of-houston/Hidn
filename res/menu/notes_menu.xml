@@ -3,7 +3,7 @@
         android:id="@+id/notes_add_note"
         android:orderInCategory="1"
         android:showAsAction="always"
-        android:icon="@drawable/ic_content_new_event"
+        android:icon="@drawable/ic_content_new_note"
         android:title="@string/add"/>
 
     <item

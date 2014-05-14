@@ -2,7 +2,7 @@
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android" android:id="@+id/viewDocumentsBg"
     android:layout_width="match_parent" android:layout_height="match_parent" android:padding="10dip">
     
-    <LinearLayout android:orientation="vertical" android:layout_width="match_parent" android:layout_height="wrap_content" android:background="@drawable/theme_light">
+    <LinearLayout android:orientation="vertical" android:layout_width="match_parent" android:layout_height="wrap_content" android:background="@drawable/theme_light" android:padding="2dip">
        
         <EditText android:id="@+id/documentField" android:layout_marginTop="5dip" android:inputType="textCapSentences" android:hint="@string/blank" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/blank"/>
         

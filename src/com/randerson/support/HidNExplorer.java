@@ -24,7 +24,7 @@ public class HidNExplorer implements ExplorerSetup {
 	
 	public HidNExplorer(Context context)
 	{
-		CONTEXT = context.getApplicationContext();
+		CONTEXT = context;
 	}
 	
 	// method for returning the top-most directories

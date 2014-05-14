@@ -42,7 +42,7 @@ public class PagerFragmentActivity extends FragmentActivity implements ViewHandl
 		// reference the pager from layout
 		pager = (ViewPager) findViewById(R.id.mainPager);
 		
-		ApplicationDefaults defaults = new ApplicationDefaults(this.getApplicationContext());
+		ApplicationDefaults defaults = new ApplicationDefaults(this);
 		
 		if (defaults != null)
 		{
@@ -119,7 +119,7 @@ public class PagerFragmentActivity extends FragmentActivity implements ViewHandl
 	protected void onPause() {
 		super.onPause();
 		
-		ApplicationDefaults defaults = new ApplicationDefaults(this.getApplicationContext());
+		ApplicationDefaults defaults = new ApplicationDefaults(this);
 		
 		if (defaults != null)
 		{
@@ -252,6 +252,12 @@ public class PagerFragmentActivity extends FragmentActivity implements ViewHandl
 	{
 		// this does nothing inside the context of the pagerView
 		// the task is delegated to the page change listener
+	}
+
+	@Override
+	public void setDisablePassLock(boolean state)
+	{
+		shouldDisablePassLock = state;
 	}
 	
 }

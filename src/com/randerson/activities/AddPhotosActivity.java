@@ -58,9 +58,6 @@ public class AddPhotosActivity extends Activity implements FragmentSetup{
 				// load the application settings
 				loadApplicationSettings();
 				
-				// method for setting the actionBar
-				setupActionBar();
-				
 				// initialize the required support classes
 				dataManager = new DataManager(getApplicationContext());
 				cipher = new HidNCipher(getApplicationContext(), EncryptionSetup.AES_ALGORITHM);
@@ -146,7 +143,7 @@ public class AddPhotosActivity extends Activity implements FragmentSetup{
 	public void loadApplicationSettings()
 	{
 		// create a application defaults object to load app settings
-		ApplicationDefaults defaults = new ApplicationDefaults(this.getApplicationContext());
+		ApplicationDefaults defaults = new ApplicationDefaults(this);
 		
 		if (defaults != null)
 		{
@@ -154,6 +151,9 @@ public class AddPhotosActivity extends Activity implements FragmentSetup{
 			theme = defaults.getData().getString("theme", "4_3");
 			themeB = defaults.getData().getString("themeB", "Dark");
 		}
+		
+		// method for setting the actionBar
+		setupActionBar();
 	}
 	
 	@Override
@@ -180,7 +180,7 @@ public class AddPhotosActivity extends Activity implements FragmentSetup{
 	protected void onPause() {
 		super.onPause();
 		
-		ApplicationDefaults defaults = new ApplicationDefaults(this.getApplicationContext());
+		ApplicationDefaults defaults = new ApplicationDefaults(this);
 		
 		if (defaults != null)
 		{

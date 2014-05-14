@@ -39,9 +39,6 @@ public class HomeActivity extends android.support.v4.app.Fragment implements Fra
 		// load the application settings
 		loadApplicationSettings();
 		
-		// method for setting the actionBar
-		setupActionBar();
-		
 		// turns on options menu in fragment
 		setHasOptionsMenu(true);
 		
@@ -113,6 +110,9 @@ public class HomeActivity extends android.support.v4.app.Fragment implements Fra
 				defaults.set("lastView", lastView);
 			}
 		}
+		
+		// method for setting the actionBar
+		setupActionBar();
 	}
 	
 	@Override

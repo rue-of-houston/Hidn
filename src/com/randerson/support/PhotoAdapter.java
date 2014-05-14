@@ -84,7 +84,7 @@ public class PhotoAdapter extends ArrayAdapter<String> {
 				if (LIST_DATA_PATHS != null)
 				{
 					// get the bitmap sample size
-					int sampleSize = HidNExplorer.calulateBitmapSampleSize(LIST_DATA_PATHS[position], 35, 35);
+					int sampleSize = HidNExplorer.calulateBitmapSampleSize(LIST_DATA_PATHS[position], 30, 30);
 					
 					// create and set the bitmap factory options
 					BitmapFactory.Options options = new BitmapFactory.Options();
@@ -104,7 +104,7 @@ public class PhotoAdapter extends ArrayAdapter<String> {
 						image = new BitmapDrawable(CONTEXT.getResources(), baseImage);
 						
 						if (imageView != null)
-						{
+						{	
 							// create and set the drawable
 							imageView.setBackground(image);
 						}

@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android" android:id="@+id/viewContactBg"
+    android:layout_width="match_parent" android:layout_height="match_parent" android:padding="10dip" android:background="@drawable/theme_dark">
+    
+	<LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical"
+	    android:padding="2dip">
+	    
+	 <LinearLayout android:orientation="horizontal" android:layout_marginBottom="5dip" android:padding="10dip" android:layout_width="match_parent" android:layout_height="wrap_content" android:background="@drawable/contact_gradient">
+      
+        <ImageView android:layout_marginBottom="5dip" android:layout_width="0dip" android:minHeight="120dip" android:minWidth="120dip" android:layout_height="wrap_content" android:layout_weight="0.5" android:contentDescription="@string/blank" android:src="@drawable/image_icon"/>
+        <EditText android:id="@+id/contactNameField" android:layout_marginLeft="4dip" android:layout_marginBottom="20dip" android:enabled="false" android:layout_weight="0.5" android:inputType="textCapWords" android:hint="@string/blank" android:layout_width="match_parent" 
+            android:layout_height="wrap_content" android:text="@string/blank" android:textSize="24sp" android:textStyle="bold" android:textColor="@android:color/white"/>
+        
+     </LinearLayout>
+	    
+	 <LinearLayout android:orientation="horizontal" android:layout_marginBottom="2dip" android:padding="5dip" android:layout_width="match_parent" android:layout_height="wrap_content" android:background="@drawable/theme_light">
+        
+         <LinearLayout android:orientation="vertical" android:layout_width="0dip" android:layout_weight="0.5" android:layout_height="wrap_content">
+             
+             <TextView android:layout_marginBottom="2dip" android:layout_width="match_parent" android:layout_height="wrap_content" android:labelFor="@+id/contactPrimaryPhoneField" android:text="@string/primaryPhone"/>
+        	 <EditText android:id="@+id/contactPrimaryPhoneField" android:enabled="false" android:inputType="phone" android:hint="@string/blank" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/blank" android:textColor="@android:color/black"/>
+        
+         </LinearLayout>
+      
+        <ImageView android:id="@+id/primaryPhoneBtn" android:layout_width="0dip" android:layout_weight="0.25" android:layout_height="wrap_content" android:src="@drawable/ic_content_new_call" android:contentDescription="@string/blank"/>
+        <ImageView android:id="@+id/primaryMsgBtn" android:layout_width="0dip" android:layout_weight="0.25" android:layout_height="wrap_content" android:src="@drawable/ic_content_new_msg" android:contentDescription="@string/blank" />
+        
+    </LinearLayout>
+    
+    <LinearLayout android:orientation="horizontal" android:layout_marginBottom="2dip" android:padding="5dip" android:layout_width="match_parent" android:layout_height="wrap_content" android:background="@drawable/theme_light">
+        
+         <LinearLayout android:orientation="vertical" android:layout_width="0dip" android:layout_weight="0.5" android:layout_height="wrap_content">
+             
+             <TextView android:layout_marginBottom="2dip" android:layout_width="match_parent" android:layout_height="wrap_content" android:labelFor="@+id/contactSecondaryPhoneField" android:text="@string/secondaryPhone"/>
+        	 <EditText android:id="@+id/contactSecondaryPhoneField" android:enabled="false" android:inputType="phone" android:hint="@string/blank" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/blank" android:textColor="@android:color/black"/>
+        
+         </LinearLayout>
+      
+        <ImageView android:id="@+id/secondaryPhoneBtn" android:layout_width="0dip" android:layout_weight="0.25" android:layout_height="wrap_content" android:src="@drawable/ic_content_new_call" android:contentDescription="@string/blank"/>
+        <ImageView android:id="@+id/secondaryMsgBtn" android:layout_width="0dip" android:layout_weight="0.25" android:layout_height="wrap_content" android:src="@drawable/ic_content_new_msg" android:contentDescription="@string/blank"/>
+        
+    </LinearLayout>
+    
+    <LinearLayout android:orientation="horizontal" android:layout_marginBottom="2dip" android:padding="5dip" android:layout_width="match_parent" android:layout_height="wrap_content" android:background="@drawable/theme_light">
+        
+         <LinearLayout android:orientation="vertical" android:layout_width="0dip" android:layout_weight="0.75" android:layout_height="wrap_content">
+             
+             <TextView android:layout_marginBottom="2dip" android:layout_width="match_parent" android:layout_height="wrap_content" android:labelFor="@+id/contactEmailField" android:text="@string/email"/>
+        	 <EditText android:id="@+id/contactEmailField" android:enabled="false" android:inputType="textEmailAddress" android:hint="@string/blank" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/blank" android:textColor="@android:color/black"/>
+        
+         </LinearLayout>
+      
+        <ImageView android:id="@+id/emailBtn" android:layout_width="0dip" android:layout_weight="0.25" android:layout_height="wrap_content" android:src="@drawable/ic_content_email" android:contentDescription="@string/blank"/>
+        
+    </LinearLayout>
+    
+    <LinearLayout android:orientation="horizontal" android:layout_marginBottom="2dip" android:padding="5dip" android:layout_width="match_parent" android:layout_height="wrap_content" android:background="@drawable/theme_light">
+        
+         <LinearLayout android:orientation="vertical" android:layout_width="0dip" android:layout_weight="0.75" android:layout_height="wrap_content">
+             
+             <TextView android:layout_marginBottom="2dip" android:layout_width="match_parent" android:layout_height="wrap_content" android:labelFor="@+id/contactAddressField" android:text="@string/address"/>
+        	 <EditText android:id="@+id/contactAddressField" android:enabled="false" android:inputType="textPostalAddress" android:hint="@string/blank" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/blank" android:textColor="@android:color/black"/>
+        
+         </LinearLayout>
+      
+        <ImageView android:id="@+id/addressBtn" android:layout_width="0dip" android:layout_weight="0.25" android:layout_height="wrap_content" android:src="@drawable/ic_location_map" android:contentDescription="@string/blank"/>
+        
+    </LinearLayout>
+	    
+	</LinearLayout>    
+    
+</ScrollView>

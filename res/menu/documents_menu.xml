@@ -4,7 +4,7 @@
         android:id="@+id/documents_add_doc"
         android:orderInCategory="1"
         android:showAsAction="always"
-        android:icon="@drawable/ic_content_new"
+        android:icon="@drawable/ic_content_new_document"
         android:title="@string/add"/>
     
     <item

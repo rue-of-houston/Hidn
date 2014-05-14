@@ -58,31 +58,31 @@ public class PhotosActivity extends android.support.v4.app.Fragment implements F
 				// load the application settings
 				loadApplicationSettings();
 				
-				// method for setting the actionBar
-				setupActionBar();
-				
 				// turns on options menu in fragment
 				setHasOptionsMenu(true);
 				
-				dataManager = new DataManager(getActivity().getApplicationContext());
+				// init the datamanager class
+				dataManager = new DataManager(getActivity());
 				
 				if (dataManager != null)
 				{
+					// get the photos data object
 					UniArray photos = (UniArray) dataManager.load(DataManager.PHOTO_DATA);
 					
 					if (photos !=  null)
 					{
+						// get all of the photo object keys
 						photoNames = photos.getAllObjectKeys();
 
 					}
 				}
 				
+				// crete the listview from res file
 				photoList = (ListView) root.findViewById(R.id.photoList);
 				
 				if (photoList != null)
 				{
-					//adapter = new ArrayAdapter<String>(getActivity(), R.layout.photo_list_item, R.id.photoListItem, photoNames);
-					
+					// create the adapter
 					adapter = new PhotoAdapter(getActivity(), R.layout.photo_list_item, R.id.photoListItem, photoNames);
 					
 					// check if the adapter is valid
@@ -117,6 +117,10 @@ public class PhotosActivity extends android.support.v4.app.Fragment implements F
 							// verify the intent is valid, if so pass in the args and load it up
 							if (detailView != null)
 							{
+								// disable the passLock
+								parentView.setDisablePassLock(true);
+								
+								// start the activity
 								startActivity(detailView);
 							}
 						}
@@ -193,6 +197,9 @@ public class PhotosActivity extends android.support.v4.app.Fragment implements F
 			theme = defaults.getData().getString("theme", "4_3");
 			themeB = defaults.getData().getString("themeB", "Dark");
 		}
+		
+		// method for setting the actionBar
+		setupActionBar();
 	}
 	
 	@Override

@@ -20,8 +20,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
-import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
@@ -47,9 +47,6 @@ public class BrowserActivity extends android.support.v4.app.Fragment implements 
 		// load the application settings
 		loadApplicationSettings();
 		
-		// method for setting the actionBar
-		setupActionBar();
-		
 		// turns on options menu in fragment
 		setHasOptionsMenu(true);
 		
@@ -70,7 +67,7 @@ public class BrowserActivity extends android.support.v4.app.Fragment implements 
 		}
 		
 		// get the button from xml ref
-		Button goBtn = (Button) root.findViewById(R.id.goBtn);
+		ImageView goBtn = (ImageView) root.findViewById(R.id.goBtn);
 		
 		// verify the button is created and setup the click listeners
 		if (goBtn != null)
@@ -177,6 +174,9 @@ public class BrowserActivity extends android.support.v4.app.Fragment implements 
 			theme = defaults.getData().getString("theme", "4_3");
 			themeB = defaults.getData().getString("themeB", "Dark");
 		}
+		
+		// method for setting the actionBar
+		setupActionBar();
 	}
 	
 	@Override

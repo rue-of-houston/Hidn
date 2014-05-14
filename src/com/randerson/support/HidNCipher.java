@@ -334,32 +334,22 @@ public class HidNCipher implements EncryptionSetup {
 		SHOULD_SAVE_KEYS = false;
 		
 		// check for previously created keys to overwrite the newly generated keys
-		KEYS = (UniArray) DATA_MANAGER.load(DataManager.ENCRYPTION_DATA);
+		KEYS = (UniArray) DATA_MANAGER.load(DataManager.ENCRYPTION_DATA).getObject("keys");
 		
 		if (KEYS != null)
 		{	
 			// check if the saved data has the public and private keys saved
 			// if so, update the class fields to use those keys
-			if (KEYS.hasObject(DataManager.PUBLIC_KEY) && KEYS.hasObject(DataManager.PRIVATE_KEY))
+			PUBLIC_KEY = (Key) KEYS.getObject(DataManager.PUBLIC_KEY);
+			PRIVATE_KEY = (Key) KEYS.getObject(DataManager.PRIVATE_KEY);
+			
+			if (PUBLIC_KEY != null && PRIVATE_KEY != null)
 			{
-				PUBLIC_KEY = (Key) KEYS.getObject(DataManager.PUBLIC_KEY);
-				PRIVATE_KEY = (Key) KEYS.getObject(DataManager.PRIVATE_KEY);
-				
-				if (PUBLIC_KEY != null && PRIVATE_KEY != null)
-				{
-					Log.i("Key Validation", "Valid Keys Found");
-				}
-				else 
-				{
-					Log.i("Key Validation", "One Or More Invalid Keys Found");
-					
-					// reset the key save bool
-					SHOULD_SAVE_KEYS = true;
-				}
+				Log.i("Key Validation", "Valid Keys Found");
 			}
-			else
+			else 
 			{
-				Log.i("Key Pair Error", "Valid Key Pair Not Found");
+				Log.i("Key Validation", "One Or More Invalid Keys Found");
 				
 				// reset the key save bool
 				SHOULD_SAVE_KEYS = true;
@@ -367,30 +357,19 @@ public class HidNCipher implements EncryptionSetup {
 			
 			// check if the saved data has the secret key saved
 			// if so, update the class field to use that key
-			if (KEYS.hasObject(DataManager.SECRET_KEY))
+			KEY_SPEC = (SecretKeySpec) KEYS.getObject(DataManager.SECRET_KEY);
+			
+			if (KEY_SPEC != null)
 			{
-				KEY_SPEC = (SecretKeySpec) KEYS.getObject(DataManager.SECRET_KEY);
-				
-				if (KEY_SPEC != null)
-				{
-					Log.i("Secret Key Validation", "Valid Secret Key Found");
-				}
-				else 
-				{
-					Log.i("Secret Key Validation", "Invalid Secret Key Found");
-					
-					// reset the key save bool
-					SHOULD_SAVE_KEYS = true;
-				}
+				Log.i("Secret Key Validation", "Valid Secret Key Found");
 			}
-			else
+			else 
 			{
-				Log.i("Secret Key Error", "Secret Key Not Found");
+				Log.i("Secret Key Validation", "Invalid Secret Key Found");
 				
 				// reset the key save bool
 				SHOULD_SAVE_KEYS = true;
 			}
-			
 			
 		}
 	}

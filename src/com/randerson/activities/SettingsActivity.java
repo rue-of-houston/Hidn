@@ -327,7 +327,7 @@ public class SettingsActivity extends Activity {
 	
 	public void loadAppSettings()
 	{
-		ApplicationDefaults defaults = new ApplicationDefaults(this.getApplicationContext());
+		ApplicationDefaults defaults = new ApplicationDefaults(this);
 		
 		// verify the defaults object is valid
 		if (defaults != null)
@@ -347,7 +347,7 @@ public class SettingsActivity extends Activity {
 	
 	public void saveAppSettings()
 	{
-		ApplicationDefaults defaults = new ApplicationDefaults(this.getApplicationContext());
+		ApplicationDefaults defaults = new ApplicationDefaults(this);
 		
 		// verify the defaults object is valid
 		if (defaults != null)
@@ -365,7 +365,7 @@ public class SettingsActivity extends Activity {
 	protected void onPause() {
 		super.onPause();
 		
-		ApplicationDefaults defaults = new ApplicationDefaults(this.getApplicationContext());
+		ApplicationDefaults defaults = new ApplicationDefaults(this);
 		
 		if (defaults != null)
 		{
@@ -385,7 +385,7 @@ public class SettingsActivity extends Activity {
 		// save app settings
 		saveAppSettings();
 		
-		ApplicationDefaults defaults = new ApplicationDefaults(this.getApplicationContext());
+		ApplicationDefaults defaults = new ApplicationDefaults(this);
 		
 		if (defaults != null)
 		{
@@ -399,12 +399,12 @@ public class SettingsActivity extends Activity {
 		if (swipeNav)
 		{
 			// pagerview swipe nav
-			navStyle = new Intent(this.getApplicationContext(), PagerFragmentActivity.class);
+			navStyle = new Intent(this, PagerFragmentActivity.class);
 		}
 		else if (!swipeNav)
 		{
 			// drawerlist nav
-			navStyle = new Intent(this.getApplicationContext(), DrawerFragmentActivity.class);
+			navStyle = new Intent(this, DrawerFragmentActivity.class);
 		}
 		
 		// verify the intent is valid and change the activity

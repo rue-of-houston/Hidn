@@ -343,12 +343,12 @@ public class PasswordActivity extends Activity {
 				if (defaultNavType == true)
 				{
 					// pagerView is default nav type
-					startMain = new Intent(getApplicationContext(), PagerFragmentActivity.class);
+					startMain = new Intent(this, PagerFragmentActivity.class);
 				}
 				else if (defaultNavType == false)
 				{
 					// drawerlayout is functional nav type
-					startMain = new Intent(getApplicationContext(), DrawerFragmentActivity.class);
+					startMain = new Intent(this, DrawerFragmentActivity.class);
 				}
 				
 				// verify that the intent is valid

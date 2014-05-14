@@ -8,4 +8,6 @@ public interface ViewHandler {
 	
 	public void passFragmentToParent(Fragment fragment, int lastViewId);
 	
+	public void setDisablePassLock(boolean state);
+	
 }

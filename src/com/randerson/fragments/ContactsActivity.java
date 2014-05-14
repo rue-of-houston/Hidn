@@ -1,12 +1,15 @@
 package com.randerson.fragments;
 
 import libs.ApplicationDefaults;
+import libs.UniArray;
 
-import com.randerson.activities.NewViewContactActivity;
+import com.randerson.activities.AddContactActivity;
+import com.randerson.activities.ViewContactsActivity;
 import com.randerson.hidn.R;
 import com.randerson.interfaces.Constants;
 import com.randerson.interfaces.FragmentSetup;
 import com.randerson.interfaces.ViewHandler;
+import com.randerson.support.DataManager;
 import com.randerson.support.ThemeMaster;
 
 import android.annotation.SuppressLint;
@@ -34,6 +37,10 @@ public class ContactsActivity extends android.support.v4.app.Fragment implements
 	public String themeB;
 	public boolean defaultNavType;
 	public View root;
+	public String[] contactNames;
+	public String[] contactIds;
+	public DataManager dataManager;
+	public String[] contactPaths;
 	
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -44,19 +51,49 @@ public class ContactsActivity extends android.support.v4.app.Fragment implements
 		// load the application settings
 		loadApplicationSettings();
 		
-		// method for setting the actionBar
-		setupActionBar();
-		
 		// turns on options menu in fragment
 		setHasOptionsMenu(true);
 		
-		String[] contactNames = new String[]{"John Smith", "Harold Moyado", "Charlotte Lopez", "Tommy Jones"};
+		dataManager = new DataManager(getActivity());
 		
+		if (dataManager != null)
+		{
+			// get the contact object of data
+			UniArray contacts = (UniArray) dataManager.load(DataManager.CONTACT_DATA);
+			
+			if (contacts !=  null)
+			{
+				// get the list of contact keys
+				contactIds = contacts.getAllObjectKeys();
+				
+				// init the contactNames array
+				contactNames = new String[contactIds.length];
+				
+				for (int x = 0; x < contactIds.length; x++)
+				{
+					// get the individual contact from the complete contacts object
+					UniArray contact = (UniArray) contacts.getObject(contactIds[x]);
+					
+					if (contact != null)
+					{
+						// set the actual contact name
+						String fName = contact.getString("firstName");
+						String lName = contact.getString("lastName");
+						
+						// set the contact name to display
+						contactNames[x] = (fName + " " + lName);
+					}
+				}
+
+			}
+		}
+		
+		// create the listview from ref file
 		ListView contactsList = (ListView) root.findViewById(R.id.contactsList);
 		
 		if (contactsList != null)
 		{
-			
+			// create a new adapter
 			ArrayAdapter<String> adapter = new ArrayAdapter<String>(getActivity(), R.layout.contact_list_item, R.id.contactListItem, contactNames);
 			
 			// check if the adapter is valid
@@ -75,25 +112,55 @@ public class ContactsActivity extends android.support.v4.app.Fragment implements
 					
 					// create the intent to launch the detail view activity and the bundle for passing
 					// the activity details upon loading
-					Intent detailView = new Intent(getActivity(), NewViewContactActivity.class);
-					
-					// the selected item data will be passed into the detailView intent for showing / editing
-					switch(position)
-					{
-						case 0:
-							
-							break;
-							
-							default:
-								break;
-					}
+					Intent detailView = new Intent(getActivity(), ViewContactsActivity.class);
 					
 					// verify the intent is valid, if so pass in the args and load it up
 					if (detailView != null)
 					{
-						// determine that the view should be ready to show detailed contact information
-						detailView.putExtra("isNewContact", false);
+						// get the key to retrieve the contact data at the given index
+						String contactKey = contactIds[position];
 						
+						// retrieve the contact data array
+						UniArray contacts = (UniArray) dataManager.load(DataManager.CONTACT_DATA);
+						
+						if (contacts !=  null)
+						{
+							// retrieve the contact data for the contactKey
+							UniArray contactItem = (UniArray) contacts.getObject(contactKey);
+							
+							if (contactItem != null)
+							{
+								String fName = "";
+								String lName = "";
+								String address = "";
+								String email = "";
+								String primaryPhone = "";
+								String secondaryPhone = "";
+								
+								// set the string to corresponding data
+								fName = contactItem.getString("firstName");
+								lName = contactItem.getString("lastName");
+								address = contactItem.getString("address");
+								email = contactItem.getString("email");
+								primaryPhone = contactItem.getString("primaryPhone");
+								secondaryPhone = contactItem.getString("secondaryPhone");
+								
+								// make the data available to the intent
+								detailView.putExtra("firstName", fName);
+								detailView.putExtra("lastName", lName);
+								detailView.putExtra("address", address);
+								detailView.putExtra("email", email);
+								detailView.putExtra("primaryPhone", primaryPhone);
+								detailView.putExtra("secondaryPhone", secondaryPhone);
+								
+							}
+
+						}
+						
+						// disable the passLock
+						parentView.setDisablePassLock(true);
+						
+						// start the activity
 						startActivity(detailView);
 					}
 				}
@@ -168,6 +235,9 @@ public class ContactsActivity extends android.support.v4.app.Fragment implements
 			theme = defaults.getData().getString("theme", "4_3");
 			themeB = defaults.getData().getString("themeB", "Dark");
 		}
+		
+		// method for setting the actionBar
+		setupActionBar();
 	}
 	
 	@Override
@@ -195,13 +265,57 @@ public class ContactsActivity extends android.support.v4.app.Fragment implements
 	@Override
 	public void onActionBarItemClicked(int itemId)
 	{
-		switch(itemId)
+		if (itemId == R.id.contact_new_contact)
 		{
-		case R.id.contact_new_contact:
-			break;
+			Intent addContact = new Intent(getActivity(), AddContactActivity.class);
+			
+			if (addContact != null)
+			{
+				startActivityForResult(addContact, 100);
+			}
+		}
+	}
+	
+	@Override
+	public void onActivityResult(int requestCode, int resultCode, Intent data) {
+		super.onActivityResult(requestCode, resultCode, data);
 		
-			default:
-				break;
+		if (requestCode == 100 && resultCode == Activity.RESULT_OK)
+		{
+			
+			// update the list string array resource
+			if (dataManager != null)
+			{
+				// get the contact object of data
+				UniArray contacts = (UniArray) dataManager.load(DataManager.CONTACT_DATA);
+				
+				if (contacts !=  null)
+				{
+					// get the list of contact keys
+					contactIds = contacts.getAllObjectKeys();
+					
+					// init the contactNames array
+					contactNames = new String[contactIds.length];
+					
+					for (int x = 0; x < contactIds.length; x++)
+					{
+						// get the individual contact from the complete contacts object
+						UniArray contact = (UniArray) contacts.getObject(contactIds[x]);
+						
+						if (contact != null)
+						{
+							// set the actual contact name
+							String fName = contact.getString("firstName");
+							String lName = contact.getString("lastName");
+							
+							// set the contact name to display
+							contactNames[x] = (fName + " " + lName);
+						}
+					}
+
+				}
+			}
+			
 		}
 	}
 	

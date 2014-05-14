@@ -44,13 +44,15 @@
         <activity android:name="com.randerson.activities.PagerFragmentActivity" android:screenOrientation="portrait"></activity>
         <activity android:name="com.randerson.activities.PasswordActivity" android:screenOrientation="portrait"></activity>
         <activity android:name="com.randerson.activities.SignupActivity" android:screenOrientation="portrait"></activity>
-        <activity android:name="com.randerson.activities.NewViewContactActivity" android:screenOrientation="portrait"></activity>
-        <activity android:name="com.randerson.activities.NewViewNoteActivity" android:screenOrientation="portrait"></activity>
+        <activity android:name="com.randerson.activities.ViewContactsActivity" android:screenOrientation="portrait"></activity>
+        <activity android:name="com.randerson.activities.ViewNotesActivity" android:screenOrientation="portrait"></activity>
         <activity android:name="com.randerson.activities.SettingsActivity" android:screenOrientation="portrait"></activity>
         <activity android:name="com.randerson.activities.ViewDocumentsActivity" android:screenOrientation="portrait"></activity>
         <activity android:name="com.randerson.activities.ViewPhotosActivity" android:screenOrientation="portrait"></activity>
         <activity android:name="com.randerson.activities.ViewVideosActivity" android:screenOrientation="portrait"></activity>
         <activity android:name="com.randerson.activities.AddPhotosActivity" android:screenOrientation="portrait"></activity>
+        <activity android:name="com.randerson.activities.AddVideosActivity" android:screenOrientation="portrait"></activity>
+        <activity android:name="com.randerson.activities.AddContactActivity"  android:screenOrientation="portrait"></activity>
         
     </application>
 

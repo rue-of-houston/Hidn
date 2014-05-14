@@ -13,6 +13,7 @@
     <string name="done">Done</string>
     <string name="urlHint">http://www.domain.com</string>
     <string name="bugDirections">Report a bug in the field below. Remember to be detailed as possible and describe when (etc: adding file) and where (the screen) the bug occurred.</string>
+    <string name="contactDirections">Only a First name and Primary phone are required.</string>
     <string name="bugHint">Report bug here.</string>
     <string name="cancel">Cancel</string>
     <string name="submit">Submit</string>
@@ -24,8 +25,8 @@
 	<string name="firstName">First Name</string>
 	<string name="lastName">Last Name</string>
 	<string name="address">Address</string>
-	<string name="homePhone">Home</string>
-	<string name="mobilePhone">Mobile</string>
+	<string name="primaryPhone">Primary Phone</string>
+	<string name="secondaryPhone">Secondary Phone</string>
 	<string name="note">Notes</string>
 	<string name="docs">Documents</string>
 	<string name="vids">Videos</string>

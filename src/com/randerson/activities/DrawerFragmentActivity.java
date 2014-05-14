@@ -55,7 +55,7 @@ public class DrawerFragmentActivity extends FragmentActivity implements ViewHand
 									   VideosActivity.TITLE, NotesActivity.TITLE, DocumentsActivity.TITLE};
 		
 		// create the adapter for the list
-		ArrayAdapter<String> adapter = new ArrayAdapter<String>(getApplication(), R.layout.drawer_list, titles);
+		ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, R.layout.drawer_list, titles);
 		
 		// verify the list is created
 		if (list != null)
@@ -154,7 +154,7 @@ public class DrawerFragmentActivity extends FragmentActivity implements ViewHand
 	protected void onPause() {
 		super.onPause();
 		
-		ApplicationDefaults defaults = new ApplicationDefaults(this.getApplicationContext());
+		ApplicationDefaults defaults = new ApplicationDefaults(this);
 		
 		if (defaults != null)
 		{
@@ -224,7 +224,7 @@ public class DrawerFragmentActivity extends FragmentActivity implements ViewHand
 		
 		if (lastViewId != HOME)
 		{
-			ApplicationDefaults defaults = new ApplicationDefaults(this.getApplicationContext());
+			ApplicationDefaults defaults = new ApplicationDefaults(this);
 		
 			if (defaults != null)
 			{
@@ -232,6 +232,12 @@ public class DrawerFragmentActivity extends FragmentActivity implements ViewHand
 				defaults.set("lastView", lastViewId);
 			}
 		}
+	}
+
+	@Override
+	public void setDisablePassLock(boolean state)
+	{
+		shouldDisablePassLock = state;
 	}
 
 }

@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/addContactBg"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@drawable/theme_dark">
+
+    <TextView style="@style/securityTitleStyle" android:textColor="#FFFFFF" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/contactDirections" 
+        android:layout_marginBottom="3dip" android:layout_marginTop="2dip" android:padding="10dip"/>
+    
+   <ScrollView android:layout_width="match_parent" android:layout_height="wrap_content" android:padding="15dip" 
+       android:layout_margin="3dip" android:background="@drawable/theme_dark">
+       
+       <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+       android:orientation="vertical">
+       
+       <TextView style="@style/signupTextView" android:textColor="#FFFFFF" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/firstName" android:layout_marginTop="5dip"/>
+       <EditText android:id="@+id/newFirstName" android:textColor="#43D5FF" android:layout_width="match_parent" android:layout_height="35dip" android:hint="@string/blank"
+           android:inputType="textCapWords" android:maxLength="16" android:background="@drawable/theme_light"/>
+       
+       <TextView style="@style/signupTextView" android:textColor="#FFFFFF" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/lastName" android:layout_marginTop="5dip"/>
+       <EditText android:id="@+id/newLastName" android:textColor="#43D5FF" android:layout_width="match_parent" android:layout_height="35dip" android:hint="@string/blank"
+           android:inputType="textCapWords" android:maxLength="24" android:background="@drawable/theme_light"/>
+       
+       <TextView style="@style/signupTextView" android:textColor="#FFFFFF" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/primaryPhone" android:layout_marginTop="5dip"/>
+       <EditText android:id="@+id/newPrimaryPhone" android:textColor="#43D5FF" android:layout_width="match_parent" android:layout_height="35dip" android:hint="@string/blank"
+           android:inputType="phone" android:maxLength="12" android:background="@drawable/theme_light"/>
+       
+       <TextView style="@style/signupTextView" android:textColor="#FFFFFF" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/secondaryPhone" android:layout_marginTop="5dip"/>
+       <EditText android:id="@+id/newSecondaryPhone" android:textColor="#43D5FF" android:layout_width="match_parent" android:layout_height="35dip" android:hint="@string/blank"
+           android:inputType="phone" android:maxLength="12" android:background="@drawable/theme_light"/>
+       
+       <TextView style="@style/signupTextView" android:textColor="#FFFFFF" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/address" android:layout_marginTop="5dip"/>
+       <EditText android:id="@+id/newAddress" android:textColor="#43D5FF" android:layout_width="match_parent" android:layout_height="35dip" android:hint="@string/blank"
+           android:inputType="textPostalAddress" android:background="@drawable/theme_light"/>
+       
+       <TextView style="@style/signupTextView" android:textColor="#FFFFFF" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/email" android:layout_marginTop="5dip"/>
+       <EditText android:id="@+id/newEmail" android:textColor="#43D5FF" android:layout_width="match_parent" android:layout_height="35dip" android:hint="@string/blank"
+           android:inputType="textEmailAddress" android:background="@drawable/theme_light"/>
+       
+       <Button android:id="@+id/newSubmitBtn" android:layout_gravity="center" android:layout_margin="10dip" android:background="@drawable/button_gradient" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/submit"/>
+       
+   	   </LinearLayout>   
+   </ScrollView>
+</LinearLayout>

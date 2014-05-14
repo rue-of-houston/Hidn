@@ -3,12 +3,12 @@
     android:layout_width="match_parent" android:layout_height="match_parent" style="@style/fragmentContainerStyle" android:background="#111111">
 
  <LinearLayout android:orientation="vertical" android:background="@drawable/theme_light" android:layout_width="match_parent"
-    android:layout_height="match_parent" android:padding="1dip">
+    android:layout_height="match_parent" android:padding="15dip">
  
  <GridView 
     android:id="@+id/photosGrid" android:layout_width="match_parent" android:layout_height="match_parent"
     android:columnWidth="90dip" android:numColumns="auto_fit" android:verticalSpacing="10dip" android:horizontalSpacing="10dip"
-    android:stretchMode="columnWidth" android:gravity="center" />
+    android:stretchMode="columnWidth" android:layout_marginStart="2dip" android:clipChildren="true" android:gravity="center" />
 
 </LinearLayout>
 

@@ -2,11 +2,11 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" android:orientation="vertical" android:id="@+id/browserBg"
     android:layout_width="match_parent" android:layout_height="match_parent" style="@style/fragmentContainerStyle" android:background="#111111">
    
-    <LinearLayout style="?android:attr/buttonBarStyle" android:orientation="horizontal" android:background="#A6D5E5"
+    <LinearLayout android:orientation="horizontal" android:background="#A6D5E5"
     android:layout_width="match_parent" android:layout_height="wrap_content" android:padding="10dip">
         
-        <EditText android:id="@+id/webAddressField" android:layout_width="0dip" android:layout_weight="0.7" android:layout_height="20dip" android:inputType="textWebEditText" android:hint="@string/browserUrlHint" android:background="@android:color/white"/>
-        <Button style="?android:attr/buttonBarButtonStyle" android:textColor="@android:color/white" android:drawableTop="@drawable/go_icon" android:background="#3F48FF" android:id="@+id/goBtn" android:layout_width="0dip" android:layout_weight="0.15" android:layout_height="wrap_content" android:text=""/>
+        <EditText android:id="@+id/webAddressField" android:layout_width="0dip" android:layout_weight="0.7" android:layout_height="35dip" android:inputType="textWebEditText" android:hint="@string/browserUrlHint" android:background="@android:color/white"/>
+        <ImageView android:src="@drawable/ic_navigation_refresh" android:id="@+id/goBtn" android:layout_width="0dip" android:layout_weight="0.15" android:layout_height="35dip" android:contentDescription="@string/blank"/>
          
     </LinearLayout>
     

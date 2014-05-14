@@ -17,10 +17,11 @@ public class ImageAdapter extends BaseAdapter
 	ArrayList<File> GRID_CONTENT = null;
 	BitmapFactory.Options OPTIONS = null;
 	ImageView[] THUMBS = null;
+	int reqSize = 200;
 	
 	public ImageAdapter(Context context, ArrayList<File> content)
 	{
-		CONTEXT = context.getApplicationContext();
+		CONTEXT = context;
 		GRID_CONTENT = content;
 		
 		// the bitmap factory options
@@ -79,6 +80,11 @@ public class ImageAdapter extends BaseAdapter
 				
 				// create bitmap from file path with appropriate options
 				Bitmap image = BitmapFactory.decodeFile(currentFile.getPath(), OPTIONS);
+				
+				imageView.setMinimumHeight(reqSize);
+				imageView.setMinimumWidth(reqSize);
+				imageView.setMaxHeight(reqSize);
+				imageView.setMaxWidth(reqSize);
 				
 				// set the imageview bitmap
 				imageView.setImageBitmap(image);

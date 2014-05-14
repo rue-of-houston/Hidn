@@ -161,7 +161,7 @@ public class DataManager implements DataSetup
 			case CONTACT_DATA:
 				
 					// use the object inner item key as key
-					key = data.getString("mobilePhone");
+					key = data.getString("primaryPhone");
 					
 					// add the updated data to the application save file
 					dataWrapper = (UniArray) APP_DATA.getObject(CONTACT_KEY);
@@ -180,7 +180,7 @@ public class DataManager implements DataSetup
 			case ENCRYPTION_DATA:
 				
 					// use the object inner item key as key
-					key = data.getString("keys");
+					key = "keys";
 					
 					// add the updated data to the application save file
 					dataWrapper = (UniArray) APP_DATA.getObject(ENCRYPTION_KEY);
@@ -260,8 +260,8 @@ public class DataManager implements DataSetup
 			data.putString("lastName", name[1]);
 			data.putString("address", address);
 			data.putString("email", email);
-			data.putString("homePhone", phoneNumbers[0]);
-			data.putString("mobilePhone", phoneNumbers[1]);
+			data.putString("primaryPhone", phoneNumbers[0]);
+			data.putString("secondaryPhone", phoneNumbers[1]);
 		}
 		
 		return data;
