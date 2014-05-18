@@ -56,7 +56,7 @@ public class AddVideosActivity extends Activity implements FragmentSetup {
 			public void run()
 			{
 				// load the application settings
-				loadApplicationSettings();
+				//loadApplicationSettings();
 				
 				// initialize the required support classes
 				dataManager = new DataManager(getApplicationContext());
@@ -138,18 +138,10 @@ public class AddVideosActivity extends Activity implements FragmentSetup {
 		
 		// set the actionBar styling
 		getActionBar().setBackgroundDrawable(getResources().getDrawable(color));
-		
-		if (defaultNavType == false)
-		{	
-			// set the title to appear for the drawerlist view
-			getActionBar().setTitle(TITLE);
-		}
-		else if (defaultNavType)
-		{
-			// remove the title for pagerView
-			getActionBar().setTitle("");
-		}
-		
+			
+		// set the title to appear for the drawerlist view
+		getActionBar().setTitle(TITLE);
+	
 		int themeBId = ThemeMaster.getThemeId(themeB.toLowerCase());
 		
 		// set the background styling
@@ -237,6 +229,7 @@ public class AddVideosActivity extends Activity implements FragmentSetup {
 			@Override
 			public void run() 
 			{
+	
 				// create a root of the app storage directory
 				File root = getApplication().getExternalFilesDir("Movies");
 				
@@ -308,6 +301,7 @@ public class AddVideosActivity extends Activity implements FragmentSetup {
 						}
 					}
 				}
+				
 			}
 		}).run();
 	}

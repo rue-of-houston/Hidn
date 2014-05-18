@@ -2,7 +2,6 @@ package com.randerson.fragments;
 
 import libs.ApplicationDefaults;
 import libs.UniArray;
-
 import com.randerson.activities.ViewNotesActivity;
 import com.randerson.hidn.R;
 import com.randerson.interfaces.Constants;
@@ -50,100 +49,104 @@ public class NotesActivity extends android.support.v4.app.Fragment implements Fr
 			
 			@Override
 			public void run() {
-
-				// load the application settings
-				loadApplicationSettings();
 				
 				// turns on options menu in fragment
 				setHasOptionsMenu(true);
 				
-				// init the dataManager object
-				dataManager = new DataManager(getActivity());
+				// load the application settings
+				loadApplicationSettings();
 				
-				if (dataManager != null)
+				if (parentView != null && parentView.hasValidPin())
 				{
-					// get the notes data object
-					UniArray notes = (UniArray) dataManager.load(DataManager.NOTE_DATA);
 					
-					if (notes !=  null)
+					// init the dataManager object
+					dataManager = new DataManager(getActivity());
+					
+					if (dataManager != null)
 					{
-						// get the note object keys
-						noteNames = notes.getAllObjectKeys();
+						// get the notes data object
+						UniArray notes = (UniArray) dataManager.load(DataManager.NOTE_DATA);
+						
+						if (notes !=  null)
+						{
+							// get the note object keys
+							noteNames = notes.getAllObjectKeys();
 
-					}
-				}
-				
-				// create the listview from layout file
-				ListView notesList = (ListView) root.findViewById(R.id.noteList);
-				
-				if (notesList != null)
-				{
-					// create the adapter
-					ArrayAdapter<String> adapter = new ArrayAdapter<String>(getActivity(), R.layout.note_list_item, R.id.noteListItem, noteNames);
-					
-					// check if the adapter is valid
-					if (adapter != null)
-					{
-						notesList.setAdapter(adapter);
+						}
 					}
 					
-					// setup the single click listeners
-					notesList.setOnItemClickListener(new OnItemClickListener() {
-
-						@Override
-						public void onItemClick(AdapterView<?> parent, View view,
-								int position, long id)
-						{
-							
-							// create the intent to launch the detail view activity and the bundle for passing
-							// the activity details upon loading
-							Intent detailView = new Intent(getActivity(), ViewNotesActivity.class);
-							
-							// the selected item data will be passed into the detailView intent for showing / editing
-							switch(position)
-							{
-								case 0:
-									
-									break;
-									
-									default:
-										break;
-							}
-							
-							// verify the intent is valid, if so pass in the args and load it up
-							if (detailView != null)
-							{
-								
-								// disable the passLock
-								parentView.setDisablePassLock(true);
-								
-								// start the activity
-								startActivity(detailView);
-							}
-						}
-					});
+					// create the listview from layout file
+					ListView notesList = (ListView) root.findViewById(R.id.noteList);
 					
-					// setup the long click listener
-					notesList.setOnItemLongClickListener(new OnItemLongClickListener() {
-
-						@Override
-						public boolean onItemLongClick(AdapterView<?> parent,
-								View view, int position, long id)
+					if (notesList != null && noteNames != null)
+					{
+						// create the adapter
+						ArrayAdapter<String> adapter = new ArrayAdapter<String>(getActivity(), R.layout.note_list_item, R.id.noteListItem, noteNames);
+						
+						// check if the adapter is valid
+						if (adapter != null)
 						{
-							
-							switch(position)
-							{
-								case 0:
-									break;
-								
-									default:
-										break;
-							}
-							
-							// returns false when no click event is consumed
-							return false;
+							notesList.setAdapter(adapter);
 						}
-					});
+						
+						// setup the single click listeners
+						notesList.setOnItemClickListener(new OnItemClickListener() {
+
+							@Override
+							public void onItemClick(AdapterView<?> parent, View view,
+									int position, long id)
+							{
+								
+								// create the intent to launch the detail view activity and the bundle for passing
+								// the activity details upon loading
+								Intent detailView = new Intent(getActivity(), ViewNotesActivity.class);
+								
+								// the selected item data will be passed into the detailView intent for showing / editing
+								switch(position)
+								{
+									case 0:
+										
+										break;
+										
+										default:
+											break;
+								}
+								
+								// verify the intent is valid, if so pass in the args and load it up
+								if (detailView != null)
+								{
+									
+									// disable the passLock
+									parentView.setDisablePassLock(true);
+									
+									// start the activity
+									startActivity(detailView);
+								}
+							}
+						});
+						
+						// setup the long click listener
+						notesList.setOnItemLongClickListener(new OnItemLongClickListener() {
+
+							@Override
+							public boolean onItemLongClick(AdapterView<?> parent,
+									View view, int position, long id)
+							{
+								
+								switch(position)
+								{
+									case 0:
+										break;
+									
+										default:
+											break;
+								}
+								
+								// returns false when no click event is consumed
+								return false;
+							}
+						});
+					}
 				}
 				
 			}
@@ -224,8 +227,18 @@ public class NotesActivity extends android.support.v4.app.Fragment implements Fr
 
 
 	@Override
-	public void onActionBarItemClicked(int itemId) {
-		// TODO Auto-generated method stub
+	public void onActionBarItemClicked(int itemId)
+	{
 		
+		// verify the id matches and the pin was valid
+		if (itemId == R.id.notes_add_note && parentView.hasValidPin())
+		{
+			/*Intent addNote = new Intent(getActivity(), AddNotesActivity.class);
+			
+			if (addNotes != null)
+			{
+				startActivityForResult(addNotes, 100);
+			}*/
+		}
 	}
 }

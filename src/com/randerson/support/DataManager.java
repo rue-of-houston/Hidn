@@ -9,62 +9,65 @@ import android.content.Context;
 public class DataManager implements DataSetup
 {
 	Context CONTEXT = null;
-	UniArray APP_DATA = null;
 	
 	public DataManager(Context context)
 	{
 		CONTEXT = context;
-		APP_DATA = (UniArray) FileSystem.readObjectFile(context, APP_DATA_FILENAME, true);
 	}
 	
 	public UniArray load(int dataType)
 	{
 		UniArray data = null;
+		UniArray APP_DATA;
 		
-		if (APP_DATA != null)
-		{
 			// switch case for retrieving the 1st level UniArray object
 			switch(dataType)
 			{
 			case BROWSER_DATA:
 				
+					APP_DATA = (UniArray) FileSystem.readObjectFile(CONTEXT, APP_BROWSER_FILENAME, false);
 					data = (UniArray) APP_DATA.getObject(BROWSER_KEY);
 				break;
 				
 			case CONTACT_DATA:
 				
+					APP_DATA = (UniArray) FileSystem.readObjectFile(CONTEXT, APP_CONTACTS_FILENAME, false);
 					data = (UniArray) APP_DATA.getObject(CONTACT_KEY);
 				break;
 				
 			case DOCUMENT_DATA:
 				
+					APP_DATA = (UniArray) FileSystem.readObjectFile(CONTEXT, APP_DOCUMENTS_FILENAME, false);
 					data = (UniArray) APP_DATA.getObject(DOCUMENT_KEY);
 				break;
 				
 			case ENCRYPTION_DATA:
 				
+					APP_DATA = (UniArray) FileSystem.readObjectFile(CONTEXT, APP_ENCRYPTION_FILENAME, false);
 					data = (UniArray) APP_DATA.getObject(ENCRYPTION_KEY);
 				break;
 				
 			case NOTE_DATA:
 				
+					APP_DATA = (UniArray) FileSystem.readObjectFile(CONTEXT, APP_NOTES_FILENAME, false);
 					data = (UniArray) APP_DATA.getObject(NOTE_KEY);
 				break;
 				
 			case PHOTO_DATA:
 				
+					APP_DATA = (UniArray) FileSystem.readObjectFile(CONTEXT, APP_PHOTOS_FILENAME, false);
 					data = (UniArray) APP_DATA.getObject(PHOTO_KEY);
 				break;
 				
 			case VIDEO_DATA:
 				
+					APP_DATA = (UniArray) FileSystem.readObjectFile(CONTEXT, APP_VIDEOS_FILENAME, false);
 					data = (UniArray) APP_DATA.getObject(VIDEO_KEY);
 				break;
 			
 				default:
 					break;
 			}
-		}
 		
 		return data;
 	}
@@ -73,6 +76,8 @@ public class DataManager implements DataSetup
 	public boolean saveTopLevel(int dataType, UniArray data)
 	{	
 		boolean success = false;
+		UniArray APP_DATA = null;
+		String APP_DATA_FILENAME = null;
 		
 		if (data != null)
 		{
@@ -81,12 +86,22 @@ public class DataManager implements DataSetup
 			{
 			case BROWSER_DATA:
 				
+					// set the application file name
+					APP_DATA_FILENAME = APP_BROWSER_FILENAME;
+					
+					APP_DATA = (UniArray) FileSystem.readObjectFile(CONTEXT, APP_BROWSER_FILENAME, false);
+				
 					// add the updated data to the application save file
 					APP_DATA.putObject(BROWSER_KEY, data);
 					
 				break;
 				
 			case CONTACT_DATA:
+				
+					// set the application file name
+					APP_DATA_FILENAME = APP_CONTACTS_FILENAME;
+				
+					APP_DATA = (UniArray) FileSystem.readObjectFile(CONTEXT, APP_CONTACTS_FILENAME, false);
 				
 					// add the updated data to the application save file
 					APP_DATA.putObject(CONTACT_KEY, data);
@@ -95,30 +110,55 @@ public class DataManager implements DataSetup
 				
 			case DOCUMENT_DATA:
 				
+					// set the application file name
+					APP_DATA_FILENAME = APP_DOCUMENTS_FILENAME;
+					
+					APP_DATA = (UniArray) FileSystem.readObjectFile(CONTEXT, APP_DOCUMENTS_FILENAME, false);
+				
 					// add the updated data to the application save file
 					APP_DATA.putObject(DOCUMENT_KEY, data);
 				break;
 				
 			case ENCRYPTION_DATA:
+					
+					// set the application file name
+					APP_DATA_FILENAME = APP_ENCRYPTION_FILENAME;
 				
+					APP_DATA = (UniArray) FileSystem.readObjectFile(CONTEXT, APP_ENCRYPTION_FILENAME, false);
+					
 					// add the updated data to the application save file
 					APP_DATA.putObject(ENCRYPTION_KEY, data);
 				break;
 				
 			case NOTE_DATA:
 				
+					// set the application file name
+					APP_DATA_FILENAME = APP_NOTES_FILENAME;
+				
+					APP_DATA = (UniArray) FileSystem.readObjectFile(CONTEXT, APP_NOTES_FILENAME, false);
+					
 					// add the updated data to the application save file
 					APP_DATA.putObject(NOTE_KEY, data);
 				break;
 				
 			case PHOTO_DATA:
 				
+					// set the application file name
+					APP_DATA_FILENAME = APP_PHOTOS_FILENAME;
+				
+					APP_DATA = (UniArray) FileSystem.readObjectFile(CONTEXT, APP_PHOTOS_FILENAME, false);
+					
 					// add the updated data to the application save file
 					APP_DATA.putObject(PHOTO_KEY, data);
 				break;
 				
 			case VIDEO_DATA:
 				
+					// set the application file name
+					APP_DATA_FILENAME = APP_VIDEOS_FILENAME;
+				
+					APP_DATA = (UniArray) FileSystem.readObjectFile(CONTEXT, APP_VIDEOS_FILENAME, false);
+					
 					// add the updated data to the application save file
 					APP_DATA.putObject(VIDEO_KEY, data);
 				break;
@@ -127,10 +167,11 @@ public class DataManager implements DataSetup
 					break;
 			}
 			
-			// save the file to the system and capture the result
-			success = FileSystem.writeObjectFile(CONTEXT, APP_DATA, APP_DATA_FILENAME, true);
-		
-			
+			if (APP_DATA_FILENAME != null && APP_DATA != null)
+			{
+				// save the file to the system and capture the result
+				success = FileSystem.writeObjectFile(CONTEXT, APP_DATA, APP_DATA_FILENAME, false);
+			}
 		}
 		
 		return success;
@@ -142,6 +183,7 @@ public class DataManager implements DataSetup
 		UniArray dataWrapper = null;
 		String key = null;
 		boolean success = false;
+		UniArray APP_DATA = null;
 		
 		if (data != null)
 		{
@@ -150,6 +192,8 @@ public class DataManager implements DataSetup
 			{
 			case BROWSER_DATA:
 				
+					APP_DATA = (UniArray) FileSystem.readObjectFile(CONTEXT, APP_BROWSER_FILENAME, false);
+					
 					// use the object inner item key as key
 					key = data.getString("name");
 					
@@ -159,6 +203,8 @@ public class DataManager implements DataSetup
 				break;
 				
 			case CONTACT_DATA:
+				
+					APP_DATA = (UniArray) FileSystem.readObjectFile(CONTEXT, APP_CONTACTS_FILENAME, false);
 				
 					// use the object inner item key as key
 					key = data.getString("primaryPhone");
@@ -170,6 +216,8 @@ public class DataManager implements DataSetup
 				
 			case DOCUMENT_DATA:
 				
+					APP_DATA = (UniArray) FileSystem.readObjectFile(CONTEXT, APP_DOCUMENTS_FILENAME, false);
+				
 					// use the object inner item key as key
 					key = data.getString("fileName");
 					
@@ -179,14 +227,18 @@ public class DataManager implements DataSetup
 				
 			case ENCRYPTION_DATA:
 				
-					// use the object inner item key as key
-					key = "keys";
+					APP_DATA = (UniArray) FileSystem.readObjectFile(CONTEXT, APP_ENCRYPTION_FILENAME, false);
+				
+					// set the object key
+					key = ENCRYPTION_KEY;
 					
 					// add the updated data to the application save file
 					dataWrapper = (UniArray) APP_DATA.getObject(ENCRYPTION_KEY);
 				break;
 				
 			case NOTE_DATA:
+				
+					APP_DATA = (UniArray) FileSystem.readObjectFile(CONTEXT, APP_NOTES_FILENAME, false);
 				
 					// use the object inner item key as key
 					key = data.getString("name");
@@ -197,6 +249,8 @@ public class DataManager implements DataSetup
 				
 			case PHOTO_DATA:
 				
+					APP_DATA = (UniArray) FileSystem.readObjectFile(CONTEXT, APP_PHOTOS_FILENAME, false);
+				
 					// use the object inner item key as key
 					key = data.getString("fileName");
 					
@@ -205,6 +259,8 @@ public class DataManager implements DataSetup
 				break;
 				
 			case VIDEO_DATA:
+				
+					APP_DATA = (UniArray) FileSystem.readObjectFile(CONTEXT, APP_VIDEOS_FILENAME, false);
 				
 					// use the object inner item key as key
 					key = data.getString("fileName");
@@ -217,11 +273,14 @@ public class DataManager implements DataSetup
 					break;
 			}
 			
-			// add the passed in data to the proper data level in 2nd level UniArray
-			dataWrapper.putObject(key, data);
-			
-			// pass the updated 1st level UniArray to be saved in the top-level
-			success = saveTopLevel(dataType, dataWrapper);
+			if (data != null && dataWrapper != null)
+			{
+				// add the passed in data to the proper data level in 2nd level UniArray
+				dataWrapper.putObject(key, data);
+				
+				// pass the updated 1st level UniArray to be saved in the top-level
+				success = saveTopLevel(dataType, dataWrapper);
+			}
 		}
 		
 		return success;
@@ -285,7 +344,7 @@ public class DataManager implements DataSetup
 	}
 
 	@Override
-	public UniArray createKeysItem(String[] key, Object[] value)
+	public UniArray createKeysItem(String key, String encodedValue)
 	{
 		// create a map file for storing the mediaItem data
 		UniArray data = new UniArray();
@@ -293,10 +352,7 @@ public class DataManager implements DataSetup
 		if (data != null)
 		{
 			// add the data to the map
-			for (int i = 0; i < key.length; i++)
-			{
-				data.putObject(key[i], value[i]);
-			}
+			data.putObject(key, encodedValue);
 		}
 		
 		return data;

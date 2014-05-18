@@ -11,7 +11,10 @@
     <string name="pin">Security Pin</string>
     <string name="refresh">Refresh</string>
     <string name="done">Done</string>
+    <string name="bookmarkAlert">Give a name to this bookmark.</string>
     <string name="urlHint">http://www.domain.com</string>
+    <string name="genericHint">Type text here</string>
+    <string name="bookmarkHint">Type bookmark name</string>
     <string name="bugDirections">Report a bug in the field below. Remember to be detailed as possible and describe when (etc: adding file) and where (the screen) the bug occurred.</string>
     <string name="contactDirections">Only a First name and Primary phone are required.</string>
     <string name="bugHint">Report bug here.</string>
@@ -31,10 +34,11 @@
 	<string name="docs">Documents</string>
 	<string name="vids">Videos</string>
 	<string name="comment">Comments</string>
-	<string name="emailHint">ex: email@domain.com</string>
-	<string name="passwordHint">ex: b1gstaR</string>
-	<string name="usernameHint">ex: sunspot88</string>
-	<string name="pinHint">ex: 445939</string>
+	<string name="emailHint">Type your email</string>
+	<string name="passwordHint">Type a secure password</string>
+	<string name="firstNameHint">Type your first name</string>
+	<string name="lastNameHint">Type your last name</string>
+	<string name="pinHint">Type a 6 digit code</string>
 	<string name="clear">Clear</string>
 	<string name="backspace">BS</string>
 	<string name="contactUsHint">Write questions / suggestions here.</string>
@@ -88,5 +92,8 @@
     <string name="play">Play</string>
     <string name="fileName">Filename</string>
     <string name="browserUrlHint">Type URL here</string>
+    <string name="signInSwitchText">Sign In</string>
+    <string name="signUpSwitchText">Sign Up</string>
+    <string name="AccountSetup">Account Setup</string>
     
 </resources>

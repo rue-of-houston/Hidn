@@ -28,6 +28,7 @@ public class PagerFragmentActivity extends FragmentActivity implements ViewHandl
 	public String theme = "4_3";
 	public boolean shouldDisablePassLock = false;
 	public FragmentAdapter fragAdapter;
+	private boolean hasValidPin = false;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -38,6 +39,21 @@ public class PagerFragmentActivity extends FragmentActivity implements ViewHandl
 		
 		// inflate the layout xml file
 		setContentView(R.layout.activity_main);
+		
+		// get the intent to check if the correct pin was entered
+		Intent intent = getIntent();
+		
+		if (intent != null)
+		{
+			// retrieve the intent extras object
+			Bundle extras = intent.getExtras();
+			
+			if (extras != null)
+			{
+				// get the result of the pin entry
+				hasValidPin = extras.getBoolean("passwordIsValid");
+			}
+		}
 		
 		// reference the pager from layout
 		pager = (ViewPager) findViewById(R.id.mainPager);
@@ -173,6 +189,10 @@ public class PagerFragmentActivity extends FragmentActivity implements ViewHandl
 				// verify the intent is created and start the activity
 				if (settingsActivity != null)
 				{
+					// pass in the valid pin boolean
+					settingsActivity.putExtra("hasValidPin", hasValidPin);
+					
+					// start the activity
 					startActivity(settingsActivity);
 				}
 				
@@ -258,6 +278,11 @@ public class PagerFragmentActivity extends FragmentActivity implements ViewHandl
 	public void setDisablePassLock(boolean state)
 	{
 		shouldDisablePassLock = state;
+	}
+
+	@Override
+	public boolean hasValidPin() {
+		return hasValidPin;
 	}
 	
 }

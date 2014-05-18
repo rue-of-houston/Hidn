@@ -29,6 +29,7 @@ public class SettingsActivity extends Activity {
 	boolean useThemes = true;
 	boolean swipeNav = true;
 	boolean previousNavStyle = true;
+	boolean hasValidPin = false;
 	String theme = "4_3";
 	String themeB = "Dark";
 	
@@ -41,6 +42,20 @@ public class SettingsActivity extends Activity {
 		getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
 	
 		setContentView(R.layout.activity_settings);
+		
+		// get the pin boolean from the calling parent activity
+		Intent intent = getIntent();
+		
+		if (intent != null)
+		{
+			Bundle extras = intent.getExtras();
+			
+			if (extras != null)
+			{
+				// set the passed in value
+				hasValidPin = extras.getBoolean("hasValidPin");
+			}
+		}
 		
 		// load the application options
 		loadAppSettings();
@@ -419,6 +434,11 @@ public class SettingsActivity extends Activity {
 			
 			// set the flag clearing duplicate activities
 			navStyle.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+			
+			// set the password validation arg
+			navStyle.putExtra("passwordIsValid", hasValidPin);
+			
+			// restart the parent
 			startActivity(navStyle);
 		}
 	}

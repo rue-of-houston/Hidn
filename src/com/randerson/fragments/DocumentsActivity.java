@@ -2,7 +2,6 @@ package com.randerson.fragments;
 
 import libs.ApplicationDefaults;
 import libs.UniArray;
-
 import com.randerson.activities.ViewDocumentsActivity;
 import com.randerson.hidn.R;
 import com.randerson.interfaces.Constants;
@@ -49,99 +48,106 @@ public class DocumentsActivity extends android.support.v4.app.Fragment implement
 		new Thread(new Runnable() {
 			
 			@Override
-			public void run() {
+			public void run()
+			{
+				// turns on options menu in fragment
+				setHasOptionsMenu(true);
 
 				// load the application settings
 				loadApplicationSettings();
 				
-				// turns on options menu in fragment
-				setHasOptionsMenu(true);
-				
-				// initialize the object
-				dataManager = new DataManager(getActivity());
-				
-				if (dataManager != null)
+				if (parentView != null && parentView.hasValidPin())
 				{
-					// get the documents data object
-					UniArray documents = (UniArray) dataManager.load(DataManager.DOCUMENT_DATA);
 					
-					if (documents !=  null)
+					// initialize the object
+					dataManager = new DataManager(getActivity());
+					
+					if (dataManager != null)
 					{
-						// get the document object keys
-						documentNames = documents.getAllObjectKeys();
+						// get the documents data object
+						UniArray documents = (UniArray) dataManager.load(DataManager.DOCUMENT_DATA);
+						
+						if (documents !=  null)
+						{
+							// get the document object keys
+							documentNames = documents.getAllObjectKeys();
 
+						}
+					}
+					
+					// create the listview from ref xml
+					ListView documentList = (ListView) root.findViewById(R.id.documentList);
+					
+					if (documentList != null && documentNames != null)
+					{
+						// create the adapter
+						ArrayAdapter<String> adapter = new ArrayAdapter<String>(getActivity(), R.layout.document_list_item, R.id.documentListItem, documentNames);
+						
+						// check if the adapter is valid
+						if (adapter != null)
+						{
+							documentList.setAdapter(adapter);
+						}
+						
+						// setup the single click listeners
+						documentList.setOnItemClickListener(new OnItemClickListener() {
+
+							@Override
+							public void onItemClick(AdapterView<?> parent, View view,
+									int position, long id)
+							{
+								
+								// create the intent to launch the detail view activity and the bundle for passing
+								// the activity details upon loading
+								Intent detailView = new Intent(getActivity(), ViewDocumentsActivity.class);
+								
+								// the selected item data will be passed into the detailView intent for showing / editing
+								switch(position)
+								{
+									case 0:
+										
+										break;
+										
+										default:
+											break;
+								}
+								
+								// verify the intent is valid, if so pass in the args and load it up
+								if (detailView != null)
+								{
+									
+									// disable the passLock
+									parentView.setDisablePassLock(true);
+									
+									// start the activity
+									startActivity(detailView);
+								}
+							}
+						});
+						
+						// setup the long click listener
+						documentList.setOnItemLongClickListener(new OnItemLongClickListener() {
+
+							@Override
+							public boolean onItemLongClick(AdapterView<?> parent,
+									View view, int position, long id)
+							{
+								
+								switch(position)
+								{
+									case 0:
+										break;
+									
+										default:
+											break;
+								}
+								
+								// returns false when no click event is consumed
+								return false;
+							}
+						});
 					}
 				}
-				
-				// create the listview from ref xml
-				ListView documentList = (ListView) root.findViewById(R.id.documentList);
-				
-				// create the adapter
-				ArrayAdapter<String> adapter = new ArrayAdapter<String>(getActivity(), R.layout.document_list_item, R.id.documentListItem, documentNames);
-				
-				// check if the adapter is valid
-				if (adapter != null)
-				{
-					documentList.setAdapter(adapter);
-				}
-				
-				// setup the single click listeners
-				documentList.setOnItemClickListener(new OnItemClickListener() {
-
-					@Override
-					public void onItemClick(AdapterView<?> parent, View view,
-							int position, long id)
-					{
-						
-						// create the intent to launch the detail view activity and the bundle for passing
-						// the activity details upon loading
-						Intent detailView = new Intent(getActivity(), ViewDocumentsActivity.class);
-						
-						// the selected item data will be passed into the detailView intent for showing / editing
-						switch(position)
-						{
-							case 0:
-								
-								break;
-								
-								default:
-									break;
-						}
-						
-						// verify the intent is valid, if so pass in the args and load it up
-						if (detailView != null)
-						{
-							
-							// disable the passLock
-							parentView.setDisablePassLock(true);
-							
-							// start the activity
-							startActivity(detailView);
-						}
-					}
-				});
-				
-				// setup the long click listener
-				documentList.setOnItemLongClickListener(new OnItemLongClickListener() {
-
-					@Override
-					public boolean onItemLongClick(AdapterView<?> parent,
-							View view, int position, long id)
-					{
-						
-						switch(position)
-						{
-							case 0:
-								break;
-							
-								default:
-									break;
-						}
-						
-						// returns false when no click event is consumed
-						return false;
-					}
-				});
 				
 			}
 		}).run();
@@ -221,9 +227,18 @@ public class DocumentsActivity extends android.support.v4.app.Fragment implement
 
 
 	@Override
-	public void onActionBarItemClicked(int itemId) {
-		// TODO Auto-generated method stub
-		
+	public void onActionBarItemClicked(int itemId)
+	{
+		// verify the id matches and the pin was valid
+		if (itemId == R.id.documents_add_doc && parentView.hasValidPin())
+		{
+			/*Intent importDocs = new Intent(getActivity(), AddDocumentsActivity.class);
+			
+			if (importDocs != null)
+			{
+				startActivityForResult(importPhotos, 100);
+			}*/
+		}
 	}
 	
 }

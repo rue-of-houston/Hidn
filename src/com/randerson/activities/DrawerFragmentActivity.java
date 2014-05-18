@@ -32,6 +32,7 @@ public class DrawerFragmentActivity extends FragmentActivity implements ViewHand
 	public Fragment CurrentFragment;
 	public ListView list;
 	public boolean shouldDisablePassLock = false;
+	private boolean hasValidPin = false;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -42,6 +43,21 @@ public class DrawerFragmentActivity extends FragmentActivity implements ViewHand
 		
 		// inflate the layout xml file
 		setContentView(R.layout.activity_main2);
+		
+		// get the intent to check if the correct pin was entered
+		Intent intent = getIntent();
+		
+		if (intent != null)
+		{
+			// retrieve the intent extras object
+			Bundle extras = intent.getExtras();
+			
+			if (extras != null)
+			{
+				// get the result of the pin entry
+				hasValidPin = extras.getBoolean("passwordIsValid");
+			}
+		}
 		
 		// set the titlebar color
 		setTitleColor(getResources().getColor(android.R.color.white));
@@ -115,6 +131,10 @@ public class DrawerFragmentActivity extends FragmentActivity implements ViewHand
 				// verify the intent is created and start the activity
 				if (settingsActivity != null)
 				{
+					// pass in the valid pin boolean
+					settingsActivity.putExtra("hasValidPin", hasValidPin);
+					
+					// start the activity
 					startActivity(settingsActivity);
 				}
 				
@@ -238,6 +258,12 @@ public class DrawerFragmentActivity extends FragmentActivity implements ViewHand
 	public void setDisablePassLock(boolean state)
 	{
 		shouldDisablePassLock = state;
+	}
+
+	@Override
+	public boolean hasValidPin()
+	{
+		return hasValidPin;
 	}
 
 }

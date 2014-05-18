@@ -116,16 +116,8 @@ public class AddPhotosActivity extends Activity implements FragmentSetup{
 		// set the actionBar styling
 		getActionBar().setBackgroundDrawable(getResources().getDrawable(color));
 		
-		if (defaultNavType == false)
-		{	
-			// set the title to appear for the drawerlist view
-			getActionBar().setTitle(TITLE);
-		}
-		else if (defaultNavType)
-		{
-			// remove the title for pagerView
-			getActionBar().setTitle("");
-		}
+		// set the title to appear for the drawerlist view
+		getActionBar().setTitle(TITLE);
 		
 		int themeBId = ThemeMaster.getThemeId(themeB.toLowerCase());
 		
@@ -286,6 +278,7 @@ public class AddPhotosActivity extends Activity implements FragmentSetup{
 					}
 				}
 			}
+			
 		}).run();
 	}
 }

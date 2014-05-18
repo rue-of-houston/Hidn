@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8" ?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" android:orientation="vertical" android:id="@+id/addPhotoBg"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" android:orientation="vertical" android:id="@+id/addPhotoBg" android:padding="10dip"
     android:layout_width="match_parent" android:layout_height="match_parent" style="@style/fragmentContainerStyle" android:background="#111111">
 
  <LinearLayout android:orientation="vertical" android:background="@drawable/theme_light" android:layout_width="match_parent"
-    android:layout_height="match_parent" android:padding="15dip">
+    android:layout_height="match_parent" android:padding="2dip">
  
  <GridView 
     android:id="@+id/photosGrid" android:layout_width="match_parent" android:layout_height="match_parent"

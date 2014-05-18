@@ -4,39 +4,41 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.util.Base64;
 import android.util.Log;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.security.InvalidKeyException;
 import java.security.Key;
-import java.security.KeyPair;
-import java.security.KeyPairGenerator;
 import java.security.NoSuchAlgorithmException;
-import java.security.SecureRandom;
 import java.util.ArrayList;
+
 import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.KeyGenerator;
 import javax.crypto.NoSuchPaddingException;
+import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import libs.UniArray;
 
+import com.randerson.interfaces.DataSetup;
 import com.randerson.interfaces.EncryptionSetup;
 
 public class HidNCipher implements EncryptionSetup {
 
 	// class fields for AES encryption
-	private SecretKeySpec KEY_SPEC = null;
-	private KeyGenerator KEY_GEN = null;
-	private SecureRandom RANDOMIZER = null;
+	private byte[] SECRET_KEY = null;
+	private SecretKeySpec SECRET_KEY_SPEC = null;
 	
 	// class fields for RSA encryption
-	private Key PUBLIC_KEY = null;
-	private Key PRIVATE_KEY = null;
-	private KeyPair KEY_PAIR = null;
-	private KeyPairGenerator KEY_PAIR_GEN = null;
+	//private Key PUBLIC_KEY = null;
+	//private Key PRIVATE_KEY = null;
 	
 	private int ENCRYPTION_ID = 0;
 	
@@ -53,7 +55,7 @@ public class HidNCipher implements EncryptionSetup {
 	// the app data managing class
 	DataManager DATA_MANAGER = null;
 	
-	
+	/** The default constructor used for all operations encoding / decoding objects. */
 	public HidNCipher(Context context, String algorithmType)
 	{
 		CONTEXT = context;
@@ -74,8 +76,12 @@ public class HidNCipher implements EncryptionSetup {
 		// setup the class to use the specific encryption algorithms
 		setupCipher();
 	}
+	
+	/** Only use this method if you only need base64 encoding & decoding. */
+	public HidNCipher(){};
 
 	@Override
+	/** RSA Encryption has been removed */
 	public String encodeData(byte[] objectBytes)
 	{
 		// string for encoded data to return
@@ -94,7 +100,7 @@ public class HidNCipher implements EncryptionSetup {
 				// get an instance of the cipher with specified algorithm
 				// and initialize it with specific key for encryption
 				cipher = Cipher.getInstance(AES_ALGORITHM);
-				cipher.init(Cipher.ENCRYPT_MODE, KEY_SPEC);
+				cipher.init(Cipher.ENCRYPT_MODE, SECRET_KEY_SPEC);
 				
 				// finalize the cipher encryption and capture the byte array
 				codedBytes = cipher.doFinal(objectBytes);
@@ -125,7 +131,7 @@ public class HidNCipher implements EncryptionSetup {
 			}
 			
 		}
-		else if (ENCRYPTION_ID == RSA_ENCRYPTION)
+		/*else if (ENCRYPTION_ID == RSA_ENCRYPTION)
 		{
 			try {
 				
@@ -161,12 +167,13 @@ public class HidNCipher implements EncryptionSetup {
 				
 				Log.i("Cipher (RSA) Final Error ", "Input Data Does Not Have Proper Padding Bytes");
 			}
-		}
+		}*/
 		
 		return encodedData;
 	}
 
 	@Override
+	/** RSA Encryption has been removed */
 	public byte[] decodeData(String encodedData)
 	{
 		// create a cipher for encrypting
@@ -186,7 +193,7 @@ public class HidNCipher implements EncryptionSetup {
 				// get an instance of the cipher with specified algorithm
 				// and initialize it with specific key for encryption
 				cipher = Cipher.getInstance(AES_ALGORITHM);
-				cipher.init(Cipher.DECRYPT_MODE, KEY_SPEC);
+				cipher.init(Cipher.DECRYPT_MODE, SECRET_KEY_SPEC);
 				
 				// finalize the cipher encryption and capture the byte array
 				decodedData = cipher.doFinal(encodedBytes);
@@ -214,7 +221,7 @@ public class HidNCipher implements EncryptionSetup {
 			}
 			
 		}
-		else if (ENCRYPTION_ID == RSA_ENCRYPTION)
+		/*else if (ENCRYPTION_ID == RSA_ENCRYPTION)
 		{
 			try {
 				
@@ -247,7 +254,7 @@ public class HidNCipher implements EncryptionSetup {
 				
 				Log.i("Cipher (RSA Decoding) Final Error ", "Input Data Does Not Have Proper Padding Bytes");
 			}
-		}
+		}*/
 		
 		return decodedData;
 	}
@@ -260,16 +267,16 @@ public class HidNCipher implements EncryptionSetup {
 		// SETTING UP THE AES ALGORITHM SIDE
 			try {
 				
-				// create with default constructor for strongest instance cryptographic provider
-				RANDOMIZER = new SecureRandom();
-				
 				// create generator for specified algorithm
 				// and get an instance with supplied randomness
-				KEY_GEN = KeyGenerator.getInstance(AES_ALGORITHM);
-				KEY_GEN.init(128, RANDOMIZER);
+				KeyGenerator KEY_GEN = KeyGenerator.getInstance(AES_ALGORITHM);
+				KEY_GEN.init(128);
+				
+				// generate a secret key
+				SECRET_KEY = (KEY_GEN.generateKey()).getEncoded();
 				
 				// set the secret key specialization
-				KEY_SPEC = new SecretKeySpec(KEY_GEN.generateKey().getEncoded(), AES_ALGORITHM);
+				SECRET_KEY_SPEC = new SecretKeySpec(SECRET_KEY, AES_ALGORITHM);
 				
 			} catch (NoSuchAlgorithmException e) {
 				
@@ -280,52 +287,31 @@ public class HidNCipher implements EncryptionSetup {
 		
 		
 		// SETTING UP THE RSA ALGORITHM SIDE
-			try {
+		/*	try {
 				
 				// create generator for specified algorithm
 				// and get an instance with supplied randomness
-				KEY_PAIR_GEN = KeyPairGenerator.getInstance(RSA_ALGORITHM);
+				KeyPairGenerator KEY_PAIR_GEN = KeyPairGenerator.getInstance(RSA_ALGORITHM);
 				KEY_PAIR_GEN.initialize(1024);
 				
 				// generate the key pairs
-				KEY_PAIR = KEY_PAIR_GEN.generateKeyPair();
+				KeyPair KEY_PAIR = KEY_PAIR_GEN.generateKeyPair();
 				
 				// get the public and private keys
 				PRIVATE_KEY = KEY_PAIR.getPrivate();
 				PUBLIC_KEY = KEY_PAIR.getPublic();
-				
+							
 			} catch (NoSuchAlgorithmException e) {
 				e.printStackTrace();
 				
 				Log.i("Key Pair Error", "Algorithm Not Found");
 			}
-			
+			*/
 			// load the stored keys
 			loadStoredKeys();
 			
 			// save the keys
 			storeCipherKeys();
-	}
-
-	// method for encoding a byte array into a base64 string
-	@Override
-	public String encodeToBaseString(byte[] encodedBytes)
-	{
-		// encode the bytes into base64 String
-		String encodedString = Base64.encodeToString(encodedBytes, Base64.DEFAULT);
-		
-		return encodedString;
-	}
-
-	
-	// method for decoding an encoding base64 string back into a byte array
-	@Override
-	public byte[] decodeBaseString(String codedString)
-	{
-		// decode the base64 string back into byte array
-		byte[] decodedString = Base64.decode(codedString, Base64.DEFAULT);
-		
-		return decodedString;
 	}
 	
 	private void loadStoredKeys()
@@ -334,14 +320,14 @@ public class HidNCipher implements EncryptionSetup {
 		SHOULD_SAVE_KEYS = false;
 		
 		// check for previously created keys to overwrite the newly generated keys
-		KEYS = (UniArray) DATA_MANAGER.load(DataManager.ENCRYPTION_DATA).getObject("keys");
+		KEYS = (UniArray) DATA_MANAGER.load(DataManager.ENCRYPTION_DATA).getObject(DataManager.ENCRYPTION_KEY);
 		
 		if (KEYS != null)
 		{	
 			// check if the saved data has the public and private keys saved
 			// if so, update the class fields to use those keys
-			PUBLIC_KEY = (Key) KEYS.getObject(DataManager.PUBLIC_KEY);
-			PRIVATE_KEY = (Key) KEYS.getObject(DataManager.PRIVATE_KEY);
+			/*PUBLIC_KEY = (Key) KEYS.getObject(DataManager.PUBLIC_KEY);
+			  PRIVATE_KEY = (Key) KEYS.getObject(DataManager.PRIVATE_KEY);
 			
 			if (PUBLIC_KEY != null && PRIVATE_KEY != null)
 			{
@@ -354,13 +340,17 @@ public class HidNCipher implements EncryptionSetup {
 				// reset the key save bool
 				SHOULD_SAVE_KEYS = true;
 			}
+			*/
 			
-			// check if the saved data has the secret key saved
-			// if so, update the class field to use that key
-			KEY_SPEC = (SecretKeySpec) KEYS.getObject(DataManager.SECRET_KEY);
+			// retrieve the coded secret key and decode it
+			String encodedString = (String) KEYS.getObject(DataManager.SECRET_KEY);
+			SECRET_KEY = decodeBaseString(encodedString);
 			
-			if (KEY_SPEC != null)
+			if (SECRET_KEY != null)
 			{
+				// set the secret key specialization with the decoded secret key
+				SECRET_KEY_SPEC = new SecretKeySpec(SECRET_KEY, AES_ALGORITHM);
+				
 				Log.i("Secret Key Validation", "Valid Secret Key Found");
 			}
 			else 
@@ -372,6 +362,13 @@ public class HidNCipher implements EncryptionSetup {
 			}
 			
 		}
+		else
+		{
+			// reset the key save bool
+			SHOULD_SAVE_KEYS = true;
+			
+			Log.i("Loading Stored Keys", "No Keys Found");
+		}
 	}
 
 	private void storeCipherKeys()
@@ -382,21 +379,22 @@ public class HidNCipher implements EncryptionSetup {
 		{	
 			if (DATA_MANAGER != null)
 			{
-				// create the key mapping
-				String[] keys = new String[]{DataManager.PUBLIC_KEY, 
-											 DataManager.PRIVATE_KEY,
-											 DataManager.SECRET_KEY};
 				
 				// create the value mapping
-				Object[] values = new Object[]{PUBLIC_KEY, PRIVATE_KEY, KEY_SPEC};
+				String codedSecretKey = encodeToBaseString(SECRET_KEY);
 				
 				// pass in the mappings to create a keys item for storing
-				KEYS = DATA_MANAGER.createKeysItem(keys, values);
+				KEYS = DATA_MANAGER.createKeysItem(DataManager.SECRET_KEY, codedSecretKey);
 				
 				// save the keys item
 				DATA_MANAGER.saveItem(DataManager.ENCRYPTION_DATA, KEYS);
-			}
-			
+				
+				Log.i("Storing Keys", "Keys Stored Successfully");
+			}	
+		}
+		else
+		{
+			Log.i("Storing Keys", "Keys Failed To Store");
 		}
 	}
 
@@ -514,5 +512,80 @@ public class HidNCipher implements EncryptionSetup {
 		
 		return masterBytes;
 	}
+	
+	// method for encoding a byte array into a base64 string
+		@Override
+		public String encodeToBaseString(byte[] encodedBytes)
+		{
+			// encode the bytes into base64 String
+			String encodedString = Base64.encodeToString(encodedBytes, Base64.DEFAULT);
+			
+			return encodedString;
+		}
+
+		
+		// method for decoding an encoding base64 string back into a byte array
+		@Override
+		public byte[] decodeBaseString(String codedString)
+		{
+			// decode the base64 string back into byte array
+			byte[] decodedString = Base64.decode(codedString, Base64.DEFAULT);
+			
+			return decodedString;
+		}
+		
+		/** Method for retrieving Keys from the JSON wrapper*/
+		public Object[] unWrapKeys(JSONObject jsonWrappedKeys)
+		{
+			Object[] keys = null;
+			
+			if (jsonWrappedKeys != null)
+			{
+				try {
+					
+					// get the encryption keys from their json wrapper
+					Key publicKey = (Key) jsonWrappedKeys.get(DataSetup.PUBLIC_KEY);
+					Key privateKey = (Key) jsonWrappedKeys.get(DataSetup.PRIVATE_KEY);
+					SecretKey secretKey = (SecretKey) jsonWrappedKeys.get(DataSetup.SECRET_KEY);
+					
+					// create an object array to return the keys in
+					keys = new Object[]{publicKey, privateKey, secretKey};
+					
+				} catch (JSONException e) {
+					e.printStackTrace();
+					
+					Log.i("JSON Error", "Error Retrieving Keys From JSON");
+				}
+			}
+			
+			return keys;
+		}
+		
+		/** Method for wrapping the keys in json for storing remotely*/
+		public JSONObject getWrappedKeys(Key[] values)
+		{	
+			// create a new json object
+			JSONObject wrapper = new JSONObject();
+			
+			String[] keys = new String[]{DataSetup.PUBLIC_KEY, 
+										 DataSetup.PRIVATE_KEY, 
+										 DataSetup.SECRET_KEY};
+			
+			try {
+				
+				for (int i = 0; i < keys.length; i++)
+				{
+					// wrap the keys in a json object
+					wrapper.put(keys[i], values[i]);
+				}
+				
+			} catch (JSONException e) {
+				e.printStackTrace();
+				
+				Log.i("JSON Error", "Error Wrapping Keys In JSON");
+			}
+			
+			return wrapper;
+		}
 	
 }

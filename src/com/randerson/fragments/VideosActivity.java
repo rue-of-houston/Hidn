@@ -52,112 +52,116 @@ public class VideosActivity extends android.support.v4.app.Fragment implements F
 			@Override
 			public void run() {
 
-				// load the application settings
-				loadApplicationSettings();
-				
 				// turns on options menu in fragment
 				setHasOptionsMenu(true);
 				
-				// init the datamanager class
-				dataManager = new DataManager(getActivity());
+				// load the application settings
+				loadApplicationSettings();
 				
-				if (dataManager != null)
+				if (parentView != null && parentView.hasValidPin())
 				{
-					// get the videos data object
-					UniArray videos = (UniArray) dataManager.load(DataManager.VIDEO_DATA);
-					
-					if (videos !=  null)
-					{
-						// get all of the videos data keys
-						videoNames = videos.getAllObjectKeys();
 
-					}
-				}
-				
-				
-				// create the listview from layout file
-				ListView videoList = (ListView) root.findViewById(R.id.videoList);
-				
-				if (videoList != null)
-				{
-					// create the adapter
-					ArrayAdapter<String> adapter = new ArrayAdapter<String>(getActivity(), R.layout.video_list_item, R.id.videoListItem, videoNames);
+					// init the datamanager class
+					dataManager = new DataManager(getActivity());
 					
-					// check if the adapter is valid
-					if (adapter != null)
+					if (dataManager != null)
 					{
-						videoList.setAdapter(adapter);
-					}
-					
-					// setup the single click listeners
-					videoList.setOnItemClickListener(new OnItemClickListener() {
-
-						@Override
-						public void onItemClick(AdapterView<?> parent, View view,
-								int position, long id)
+						// get the videos data object
+						UniArray videos = (UniArray) dataManager.load(DataManager.VIDEO_DATA);
+						
+						if (videos !=  null)
 						{
-							
-							// create the intent to launch the detail view activity and the bundle for passing
-							// the activity details upon loading
-							Intent detailView = new Intent(getActivity(), ViewVideosActivity.class);
-							
-							// verify the intent is valid, if so pass in the args and load it up
-							if (detailView != null)
-							{	
-								if (dataManager != null)
-								{
-									// get the videos data object
-									UniArray videos = (UniArray) dataManager.load(DataManager.VIDEO_DATA);
-									
-									if (videos !=  null)
-									{
-										// get all of the videos data keys
-										UniArray video = (UniArray) videos.getObject(videoNames[position]);
-										
-										if (video != null)
-										{
-											// add the data to the intent
-											String fileName = video.getString("fileName");
-											String sourcePath = video.getString("sourcePath");
-											String hidnPath = video.getString("hidnPath");
-											
-											detailView.putExtra("fileName", fileName);
-											detailView.putExtra("sourcePath", sourcePath);
-											detailView.putExtra("hidnPath", hidnPath);
-										}
+							// get all of the videos data keys
+							videoNames = videos.getAllObjectKeys();
 
-									}
-								}
-								// disable the passLock
-								parentView.setDisablePassLock(true);
-								
-								// start activity
-								startActivity(detailView);
-							}
 						}
-					});
+					}
 					
-					// setup the long click listener
-					videoList.setOnItemLongClickListener(new OnItemLongClickListener() {
-
-						@Override
-						public boolean onItemLongClick(AdapterView<?> parent,
-								View view, int position, long id)
+					
+					// create the listview from layout file
+					ListView videoList = (ListView) root.findViewById(R.id.videoList);
+					
+					if (videoList != null && videoNames != null)
+					{
+						// create the adapter
+						ArrayAdapter<String> adapter = new ArrayAdapter<String>(getActivity(), R.layout.video_list_item, R.id.videoListItem, videoNames);
+						
+						// check if the adapter is valid
+						if (adapter != null)
 						{
-							
-							switch(position)
+							videoList.setAdapter(adapter);
+						}
+						
+						// setup the single click listeners
+						videoList.setOnItemClickListener(new OnItemClickListener() {
+
+							@Override
+							public void onItemClick(AdapterView<?> parent, View view,
+									int position, long id)
 							{
-								case 0:
-									break;
 								
-									default:
-										break;
+								// create the intent to launch the detail view activity and the bundle for passing
+								// the activity details upon loading
+								Intent detailView = new Intent(getActivity(), ViewVideosActivity.class);
+								
+								// verify the intent is valid, if so pass in the args and load it up
+								if (detailView != null)
+								{	
+									if (dataManager != null)
+									{
+										// get the videos data object
+										UniArray videos = (UniArray) dataManager.load(DataManager.VIDEO_DATA);
+										
+										if (videos !=  null)
+										{
+											// get all of the videos data keys
+											UniArray video = (UniArray) videos.getObject(videoNames[position]);
+											
+											if (video != null)
+											{
+												// add the data to the intent
+												String fileName = video.getString("fileName");
+												String sourcePath = video.getString("sourcePath");
+												String hidnPath = video.getString("hidnPath");
+												
+												detailView.putExtra("fileName", fileName);
+												detailView.putExtra("sourcePath", sourcePath);
+												detailView.putExtra("hidnPath", hidnPath);
+											}
+
+										}
+									}
+									// disable the passLock
+									parentView.setDisablePassLock(true);
+									
+									// start activity
+									startActivity(detailView);
+								}
 							}
-							
-							// returns false when no click event is consumed
-							return false;
-						}
-					});
+						});
+						
+						// setup the long click listener
+						videoList.setOnItemLongClickListener(new OnItemLongClickListener() {
+
+							@Override
+							public boolean onItemLongClick(AdapterView<?> parent,
+									View view, int position, long id)
+							{
+								
+								switch(position)
+								{
+									case 0:
+										break;
+									
+										default:
+											break;
+								}
+								
+								// returns false when no click event is consumed
+								return false;
+							}
+						});
+					}
 				}
 				
 			}
@@ -241,7 +245,8 @@ public class VideosActivity extends android.support.v4.app.Fragment implements F
 	@Override
 	public void onActionBarItemClicked(int itemId)
 	{
-		if (itemId == R.id.videos_add_video)
+		// verify the id matches and the pin was valid
+		if (itemId == R.id.videos_add_video && parentView.hasValidPin())
 		{
 			Intent importVideos = new Intent(getActivity(), AddVideosActivity.class);
 			

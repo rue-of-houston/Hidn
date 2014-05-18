@@ -41,6 +41,7 @@ public class ContactsActivity extends android.support.v4.app.Fragment implements
 	public String[] contactIds;
 	public DataManager dataManager;
 	public String[] contactPaths;
+	ArrayAdapter<String> adapter;
 	
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -48,145 +49,149 @@ public class ContactsActivity extends android.support.v4.app.Fragment implements
 
 		root = inflater.inflate(R.layout.activity_contacts, container, false);
 		
-		// load the application settings
-		loadApplicationSettings();
-		
 		// turns on options menu in fragment
 		setHasOptionsMenu(true);
 		
-		dataManager = new DataManager(getActivity());
+		// load the application settings
+		loadApplicationSettings();
 		
-		if (dataManager != null)
+		if (parentView != null && parentView.hasValidPin())
 		{
-			// get the contact object of data
-			UniArray contacts = (UniArray) dataManager.load(DataManager.CONTACT_DATA);
 			
-			if (contacts !=  null)
+			dataManager = new DataManager(getActivity());
+			
+			if (dataManager != null)
 			{
-				// get the list of contact keys
-				contactIds = contacts.getAllObjectKeys();
+				// get the contact object of data
+				UniArray contacts = (UniArray) dataManager.load(DataManager.CONTACT_DATA);
 				
-				// init the contactNames array
-				contactNames = new String[contactIds.length];
-				
-				for (int x = 0; x < contactIds.length; x++)
+				if (contacts !=  null)
 				{
-					// get the individual contact from the complete contacts object
-					UniArray contact = (UniArray) contacts.getObject(contactIds[x]);
+					// get the list of contact keys
+					contactIds = contacts.getAllObjectKeys();
 					
-					if (contact != null)
+					// init the contactNames array
+					contactNames = new String[contactIds.length];
+					
+					for (int x = 0; x < contactIds.length; x++)
 					{
-						// set the actual contact name
-						String fName = contact.getString("firstName");
-						String lName = contact.getString("lastName");
+						// get the individual contact from the complete contacts object
+						UniArray contact = (UniArray) contacts.getObject(contactIds[x]);
 						
-						// set the contact name to display
-						contactNames[x] = (fName + " " + lName);
-					}
-				}
-
-			}
-		}
-		
-		// create the listview from ref file
-		ListView contactsList = (ListView) root.findViewById(R.id.contactsList);
-		
-		if (contactsList != null)
-		{
-			// create a new adapter
-			ArrayAdapter<String> adapter = new ArrayAdapter<String>(getActivity(), R.layout.contact_list_item, R.id.contactListItem, contactNames);
-			
-			// check if the adapter is valid
-			if (adapter != null)
-			{
-				contactsList.setAdapter(adapter);
-			}
-			
-			// setup the single click listeners
-			contactsList.setOnItemClickListener(new OnItemClickListener() {
-
-				@Override
-				public void onItemClick(AdapterView<?> parent, View view,
-						int position, long id)
-				{
-					
-					// create the intent to launch the detail view activity and the bundle for passing
-					// the activity details upon loading
-					Intent detailView = new Intent(getActivity(), ViewContactsActivity.class);
-					
-					// verify the intent is valid, if so pass in the args and load it up
-					if (detailView != null)
-					{
-						// get the key to retrieve the contact data at the given index
-						String contactKey = contactIds[position];
-						
-						// retrieve the contact data array
-						UniArray contacts = (UniArray) dataManager.load(DataManager.CONTACT_DATA);
-						
-						if (contacts !=  null)
+						if (contact != null)
 						{
-							// retrieve the contact data for the contactKey
-							UniArray contactItem = (UniArray) contacts.getObject(contactKey);
+							// set the actual contact name
+							String fName = contact.getString("firstName");
+							String lName = contact.getString("lastName");
 							
-							if (contactItem != null)
-							{
-								String fName = "";
-								String lName = "";
-								String address = "";
-								String email = "";
-								String primaryPhone = "";
-								String secondaryPhone = "";
-								
-								// set the string to corresponding data
-								fName = contactItem.getString("firstName");
-								lName = contactItem.getString("lastName");
-								address = contactItem.getString("address");
-								email = contactItem.getString("email");
-								primaryPhone = contactItem.getString("primaryPhone");
-								secondaryPhone = contactItem.getString("secondaryPhone");
-								
-								// make the data available to the intent
-								detailView.putExtra("firstName", fName);
-								detailView.putExtra("lastName", lName);
-								detailView.putExtra("address", address);
-								detailView.putExtra("email", email);
-								detailView.putExtra("primaryPhone", primaryPhone);
-								detailView.putExtra("secondaryPhone", secondaryPhone);
-								
-							}
+							// set the contact name to display
+							contactNames[x] = (fName + " " + lName);
+						}
+					}
 
+				}
+			}
+			
+			// create the listview from ref file
+			ListView contactsList = (ListView) root.findViewById(R.id.contactsList);
+			
+			if (contactsList != null && contactNames != null)
+			{
+				// create a new adapter
+				adapter = new ArrayAdapter<String>(getActivity(), R.layout.contact_list_item, R.id.contactListItem, contactNames);
+				
+				// check if the adapter is valid
+				if (adapter != null)
+				{
+					contactsList.setAdapter(adapter);
+				}
+				
+				// setup the single click listeners
+				contactsList.setOnItemClickListener(new OnItemClickListener() {
+
+					@Override
+					public void onItemClick(AdapterView<?> parent, View view,
+							int position, long id)
+					{
+						
+						// create the intent to launch the detail view activity and the bundle for passing
+						// the activity details upon loading
+						Intent detailView = new Intent(getActivity(), ViewContactsActivity.class);
+						
+						// verify the intent is valid, if so pass in the args and load it up
+						if (detailView != null)
+						{
+							// get the key to retrieve the contact data at the given index
+							String contactKey = contactIds[position];
+							
+							// retrieve the contact data array
+							UniArray contacts = (UniArray) dataManager.load(DataManager.CONTACT_DATA);
+							
+							if (contacts !=  null)
+							{
+								// retrieve the contact data for the contactKey
+								UniArray contactItem = (UniArray) contacts.getObject(contactKey);
+								
+								if (contactItem != null)
+								{
+									String fName = "";
+									String lName = "";
+									String address = "";
+									String email = "";
+									String primaryPhone = "";
+									String secondaryPhone = "";
+									
+									// set the string to corresponding data
+									fName = contactItem.getString("firstName");
+									lName = contactItem.getString("lastName");
+									address = contactItem.getString("address");
+									email = contactItem.getString("email");
+									primaryPhone = contactItem.getString("primaryPhone");
+									secondaryPhone = contactItem.getString("secondaryPhone");
+									
+									// make the data available to the intent
+									detailView.putExtra("firstName", fName);
+									detailView.putExtra("lastName", lName);
+									detailView.putExtra("address", address);
+									detailView.putExtra("email", email);
+									detailView.putExtra("primaryPhone", primaryPhone);
+									detailView.putExtra("secondaryPhone", secondaryPhone);
+									
+								}
+
+							}
+							
+							// disable the passLock
+							parentView.setDisablePassLock(true);
+							
+							// start the activity
+							startActivity(detailView);
+						}
+					}
+				});
+				
+				// setup the long click listener
+				contactsList.setOnItemLongClickListener(new OnItemLongClickListener() {
+
+					@Override
+					public boolean onItemLongClick(AdapterView<?> parent,
+							View view, int position, long id)
+					{
+						
+						switch(position)
+						{
+							case 0:
+								break;
+							
+								default:
+									break;
 						}
 						
-						// disable the passLock
-						parentView.setDisablePassLock(true);
-						
-						// start the activity
-						startActivity(detailView);
+						// returns false when no click event is consumed
+						return false;
 					}
-				}
-			});
-			
-			// setup the long click listener
-			contactsList.setOnItemLongClickListener(new OnItemLongClickListener() {
-
-				@Override
-				public boolean onItemLongClick(AdapterView<?> parent,
-						View view, int position, long id)
-				{
-					
-					switch(position)
-					{
-						case 0:
-							break;
-						
-							default:
-								break;
-					}
-					
-					// returns false when no click event is consumed
-					return false;
-				}
-			});
+				});
+			}
 		}
 		
 		return root;
@@ -265,7 +270,8 @@ public class ContactsActivity extends android.support.v4.app.Fragment implements
 	@Override
 	public void onActionBarItemClicked(int itemId)
 	{
-		if (itemId == R.id.contact_new_contact)
+		// verify the id matches and the pin was valid
+		if (itemId == R.id.contact_new_contact && parentView.hasValidPin())
 		{
 			Intent addContact = new Intent(getActivity(), AddContactActivity.class);
 			
@@ -312,6 +318,8 @@ public class ContactsActivity extends android.support.v4.app.Fragment implements
 							contactNames[x] = (fName + " " + lName);
 						}
 					}
+					
+					adapter.notifyDataSetChanged();
 
 				}
 			}

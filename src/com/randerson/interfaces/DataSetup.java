@@ -5,7 +5,13 @@ import libs.UniArray;
 public interface DataSetup {
 
 	// application data file name	// UniArray top-level object
-	public final String APP_DATA_FILENAME = "data.hdn";  
+	public final String APP_PHOTOS_FILENAME = "photos.hdn";
+	public final String APP_VIDEOS_FILENAME = "videos.hdn";
+	public final String APP_NOTES_FILENAME = "notes.hdn"; 
+	public final String APP_DOCUMENTS_FILENAME = "documents.hdn";
+	public final String APP_ENCRYPTION_FILENAME = "encryption.hdn";  
+	public final String APP_BROWSER_FILENAME = "browser.hdn";
+	public final String APP_CONTACTS_FILENAME = "contacts.hdn";  
 	
 	// final object values for matching data
 	public final int PHOTO_DATA = 0;
@@ -40,5 +46,5 @@ public interface DataSetup {
 	public UniArray createNoteItem(String name, String encodedContent);
 	public UniArray createContactItem(String[] name, String email, String[] phoneNumbers, String address);
 	public UniArray createBookmarkItem(String name, String url);
-	public UniArray createKeysItem(String[] key, Object[] value);
+	public UniArray createKeysItem(String key, String encodedValue);
 }

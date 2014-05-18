@@ -1,10 +1,11 @@
 package com.randerson.fragments;
 
+import java.io.File;
+
 import libs.ApplicationDefaults;
 import libs.UniArray;
 
 import com.randerson.activities.AddPhotosActivity;
-import com.randerson.activities.ViewPhotosActivity;
 import com.randerson.hidn.R;
 import com.randerson.interfaces.Constants;
 import com.randerson.interfaces.FragmentSetup;
@@ -16,6 +17,7 @@ import com.randerson.support.ThemeMaster;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -37,11 +39,10 @@ public class PhotosActivity extends android.support.v4.app.Fragment implements F
 	public String theme;
 	public String themeB;
 	public View root;
-	public DataManager dataManager;
 	public String[] photoNames;
 	public String[] photoPaths;
 	public ListView photoList;
-	private PhotoAdapter adapter;
+	public PhotoAdapter adapter;
 	
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -50,108 +51,120 @@ public class PhotosActivity extends android.support.v4.app.Fragment implements F
 
 		root = inflater.inflate(R.layout.activity_photos, container, false);
 		
-		new Thread(new Runnable() {
+		// turns on options menu in fragment
+		setHasOptionsMenu(true);
+		
+		// load the application settings
+		loadApplicationSettings();
+		
+		if (parentView != null && parentView.hasValidPin())
+		{
 			
-			@Override
-			public void run()
-			{
-				// load the application settings
-				loadApplicationSettings();
-				
-				// turns on options menu in fragment
-				setHasOptionsMenu(true);
-				
-				// init the datamanager class
-				dataManager = new DataManager(getActivity());
-				
-				if (dataManager != null)
-				{
-					// get the photos data object
-					UniArray photos = (UniArray) dataManager.load(DataManager.PHOTO_DATA);
-					
-					if (photos !=  null)
-					{
-						// get all of the photo object keys
-						photoNames = photos.getAllObjectKeys();
-
-					}
-				}
-				
-				// crete the listview from res file
-				photoList = (ListView) root.findViewById(R.id.photoList);
-				
-				if (photoList != null)
-				{
-					// create the adapter
-					adapter = new PhotoAdapter(getActivity(), R.layout.photo_list_item, R.id.photoListItem, photoNames);
-					
-					// check if the adapter is valid
-					if (adapter != null)
-					{	
-						photoList.setAdapter(adapter);
-					}
-					
-					// setup the single click listeners
-					photoList.setOnItemClickListener(new OnItemClickListener() {
-
-						@Override
-						public void onItemClick(AdapterView<?> parent, View view,
-								int position, long id)
-						{
-							
-							// create the intent to launch the detail view activity and the bundle for passing
-							// the activity details upon loading
-							Intent detailView = new Intent(getActivity(), ViewPhotosActivity.class);
-							
-							// the selected item data will be passed into the detailView intent for showing / editing
-							switch(position)
-							{
-								case 0:
-									
-									break;
-									
-									default:
-										break;
-							}
-							
-							// verify the intent is valid, if so pass in the args and load it up
-							if (detailView != null)
-							{
-								// disable the passLock
-								parentView.setDisablePassLock(true);
-								
-								// start the activity
-								startActivity(detailView);
-							}
-						}
-					});
-					
-					// setup the long click listener
-					photoList.setOnItemLongClickListener(new OnItemLongClickListener() {
-
-						@Override
-						public boolean onItemLongClick(AdapterView<?> parent,
-								View view, int position, long id)
-						{
-							
-							switch(position)
-							{
-								case 0:
-									break;
-								
-									default:
-										break;
-							}
-							
-							// returns false when no click event is consumed
-							return false;
-						}
-					});
-				}
-			}
-		}).run();
+			// method for retrieving the list of photo filenames
+			getPhotoNames();
+			
+			// method for setting the UI elements functionality
+			setupUI();
+			
+		}
 		
 		return root;
+	}
+
+	private void setupUI()
+	{
+		// create the listview from res file
+			photoList = (ListView) root.findViewById(R.id.photoList);
+			
+			if (photoList != null && photoNames != null)
+			{
+				// create the adapter
+				adapter = new PhotoAdapter(getActivity(), R.layout.photo_list_item, R.id.photoListItem, photoNames);
+				
+				// check if the adapter is valid
+				if (adapter != null)
+				{	
+					photoList.setAdapter(adapter);
+				}
+				
+				// setup the single click listeners
+				photoList.setOnItemClickListener(new OnItemClickListener() {
+
+					@Override
+					public void onItemClick(AdapterView<?> parent, View view,
+							int position, long id)
+					{
+						// init the datamanager class
+						DataManager dataManager = new DataManager(getActivity());
+						
+						if (dataManager != null)
+						{
+							// get the photos data object
+							UniArray photos = (UniArray) dataManager.load(DataManager.PHOTO_DATA);
+							
+							if (photos !=  null)
+							{
+								// get data specified at the current position
+								UniArray item = (UniArray) photos.getObject(photoNames[position]);
+								
+								if (item != null)
+								{
+									String path = item.getString("hidnPath");
+									Uri uri = Uri.fromFile(new File(path));
+									
+									Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+									
+									if (intent != null)
+									{
+										
+										startActivity(intent);
+									}
+								}
+							}
+						}
+					}
+				});
+				
+				// setup the long click listener
+				photoList.setOnItemLongClickListener(new OnItemLongClickListener() {
+
+					@Override
+					public boolean onItemLongClick(AdapterView<?> parent,
+							View view, int position, long id)
+					{
+						
+						switch(position)
+						{
+							case 0:
+								break;
+							
+								default:
+									break;
+						}
+						
+						// returns false when no click event is consumed
+						return false;
+					}
+				});
+			}
+	}
+
+	private void getPhotoNames()
+	{
+		// init the datamanager class
+		DataManager dataManager = new DataManager(getActivity());
+		
+		if (dataManager != null)
+		{
+			// get the photos data object
+			UniArray photos = (UniArray) dataManager.load(DataManager.PHOTO_DATA);
+			
+			if (photos !=  null)
+			{
+				// get all of the photo object keys
+				photoNames = photos.getAllObjectKeys();
+			}
+		}
 	}
 
 	@Override
@@ -228,8 +241,8 @@ public class PhotosActivity extends android.support.v4.app.Fragment implements F
 	@Override
 	public void onActionBarItemClicked(int itemId)
 	{
-		
-		if (itemId == R.id.photos_add_photo)
+		// verify the id matches and the pin was valid
+		if (itemId == R.id.photos_add_photo && parentView.hasValidPin())
 		{
 			Intent importPhotos = new Intent(getActivity(), AddPhotosActivity.class);
 			
@@ -246,17 +259,8 @@ public class PhotosActivity extends android.support.v4.app.Fragment implements F
 		
 		if (requestCode == 100 && resultCode == Activity.RESULT_OK)
 		{
-			
-			// update the list string array resource
-			if (dataManager != null)
-			{
-				UniArray photos = (UniArray) dataManager.load(DataManager.PHOTO_DATA);
-				
-				if (photos !=  null)
-				{
-					photoNames = photos.getAllObjectKeys();
-				}
-			}
+			// refetch the photo names
+			getPhotoNames();
 			
 		}
 	}

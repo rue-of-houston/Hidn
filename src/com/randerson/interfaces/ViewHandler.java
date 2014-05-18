@@ -10,4 +10,6 @@ public interface ViewHandler {
 	
 	public void setDisablePassLock(boolean state);
 	
+	public boolean hasValidPin();
+	
 }

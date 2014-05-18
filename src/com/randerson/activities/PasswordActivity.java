@@ -16,11 +16,13 @@ import android.widget.Toast;
 public class PasswordActivity extends Activity {
 
 	Button[] KEYPAD;
-	TextView PASSWORD_FIELD;
-	String PASSWORD = "";
+	TextView SECURITY_FIELD;
+	String PIN_CODE = "";
 	boolean defaultNavType;
 	boolean mockAccess;
 	boolean privateMode;
+	
+	ApplicationDefaults defaults;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -35,6 +37,9 @@ public class PasswordActivity extends Activity {
 		// inflate the xml layout file
 		setContentView(R.layout.activity_password);
 		
+		// setup app pref object
+		defaults = new ApplicationDefaults(this);
+		
 		// create the button id ref array
 		int[] buttonIds = {
 				R.id.num0, R.id.num1, R.id.num2, R.id.num3, R.id.num4, R.id.num5, 
@@ -42,7 +47,7 @@ public class PasswordActivity extends Activity {
 		};
 		
 		// initialize the textview
-		PASSWORD_FIELD = (TextView) findViewById(R.id.passwordField);
+		SECURITY_FIELD = (TextView) findViewById(R.id.passwordField);
 		
 		// initialize the button array
 		KEYPAD = new Button[12];
@@ -71,10 +76,10 @@ public class PasswordActivity extends Activity {
 				public void onClick(View v) {
 					
 					// verify that the password length has not reached maximum
-					if (PASSWORD.length() < 6)
+					if (PIN_CODE.length() < 6)
 					{
 						// append the button value to the string
-						PASSWORD += "0";
+						PIN_CODE += "0";
 						
 						updateKeyField();
 					}
@@ -91,10 +96,10 @@ public class PasswordActivity extends Activity {
 				public void onClick(View v) {
 					
 					// verify that the password length has not reached maximum
-					if (PASSWORD.length() < 6)
+					if (PIN_CODE.length() < 6)
 					{
 						// append the button value to the string
-						PASSWORD += "1";
+						PIN_CODE += "1";
 						
 						updateKeyField();
 					}
@@ -111,10 +116,10 @@ public class PasswordActivity extends Activity {
 				public void onClick(View v) {
 					
 					// verify that the password length has not reached maximum
-					if (PASSWORD.length() < 6)
+					if (PIN_CODE.length() < 6)
 					{
 						// append the button value to the string
-						PASSWORD += "2";
+						PIN_CODE += "2";
 						
 						updateKeyField();
 					}
@@ -131,10 +136,10 @@ public class PasswordActivity extends Activity {
 				public void onClick(View v) {
 					
 					// verify that the password length has not reached maximum
-					if (PASSWORD.length() < 6)
+					if (PIN_CODE.length() < 6)
 					{
 						// append the button value to the string
-						PASSWORD += "3";
+						PIN_CODE += "3";
 						
 						updateKeyField();
 					}
@@ -151,10 +156,10 @@ public class PasswordActivity extends Activity {
 				public void onClick(View v) {
 					
 					// verify that the password length has not reached maximum
-					if (PASSWORD.length() < 6)
+					if (PIN_CODE.length() < 6)
 					{
 						// append the button value to the string
-						PASSWORD += "4";
+						PIN_CODE += "4";
 						
 						updateKeyField();
 					}
@@ -171,10 +176,10 @@ public class PasswordActivity extends Activity {
 				public void onClick(View v) {
 					
 					// verify that the password length has not reached maximum
-					if (PASSWORD.length() < 6)
+					if (PIN_CODE.length() < 6)
 					{
 						// append the button value to the string
-						PASSWORD += "5";
+						PIN_CODE += "5";
 						
 						updateKeyField();
 					}
@@ -191,10 +196,10 @@ public class PasswordActivity extends Activity {
 				public void onClick(View v) {
 					
 					// verify that the password length has not reached maximum
-					if (PASSWORD.length() < 6)
+					if (PIN_CODE.length() < 6)
 					{
 						// append the button value to the string
-						PASSWORD += "6";
+						PIN_CODE += "6";
 						
 						updateKeyField();
 					}
@@ -211,10 +216,10 @@ public class PasswordActivity extends Activity {
 				public void onClick(View v) {
 					
 					// verify that the password length has not reached maximum
-					if (PASSWORD.length() < 6)
+					if (PIN_CODE.length() < 6)
 					{
 						// append the button value to the string
-						PASSWORD += "7";
+						PIN_CODE += "7";
 						
 						updateKeyField();
 					}
@@ -231,10 +236,10 @@ public class PasswordActivity extends Activity {
 				public void onClick(View v) {
 					
 					// verify that the password length has not reached maximum
-					if (PASSWORD.length() < 6)
+					if (PIN_CODE.length() < 6)
 					{
 						// append the button value to the string
-						PASSWORD += "8";
+						PIN_CODE += "8";
 						
 						updateKeyField();
 					}
@@ -251,10 +256,10 @@ public class PasswordActivity extends Activity {
 				public void onClick(View v) {
 					
 					// verify that the password length has not reached maximum
-					if (PASSWORD.length() < 6)
+					if (PIN_CODE.length() < 6)
 					{
 						// append the button value to the string
-						PASSWORD += "9";
+						PIN_CODE += "9";
 						
 						updateKeyField();
 					}
@@ -271,15 +276,15 @@ public class PasswordActivity extends Activity {
 				public void onClick(View v) {
 					
 					// verify that the password length is greater than 0
-					if (PASSWORD.length() > 1)
+					if (PIN_CODE.length() > 1)
 					{
 						// remove the character at the end of the string
-						PASSWORD = PASSWORD.substring(0, (PASSWORD.length() - 1));
+						PIN_CODE = PIN_CODE.substring(0, (PIN_CODE.length() - 1));
 					}
-					else if (PASSWORD.length() > 0)
+					else if (PIN_CODE.length() > 0)
 					{
 						// reset the password string
-						PASSWORD = "";
+						PIN_CODE = "";
 					}
 					
 					updateKeyField();
@@ -296,10 +301,10 @@ public class PasswordActivity extends Activity {
 				public void onClick(View v) {
 					
 					// verify that the password length is greater than 0
-					if (PASSWORD.length() > 0)
+					if (PIN_CODE.length() > 0)
 					{
 						// reset the password string
-						PASSWORD = "";
+						PIN_CODE = "";
 						
 						updateKeyField();
 					}
@@ -312,7 +317,6 @@ public class PasswordActivity extends Activity {
 	// password field update method
 	public void updateKeyField()
 	{
-		ApplicationDefaults defaults = new ApplicationDefaults(this);
 		
 		if (defaults != null)
 		{	
@@ -326,15 +330,15 @@ public class PasswordActivity extends Activity {
 			privateMode = defaults.getData().getBoolean("privateMode", false);
 		}
 		
-		if (PASSWORD_FIELD != null)
+		if (SECURITY_FIELD != null)
 		{
-			PASSWORD_FIELD.setText(PASSWORD);
+			SECURITY_FIELD.setText(PIN_CODE);
 			
 			// check if the password code has reached required length
-			if (PASSWORD.length() == 6)
+			if (PIN_CODE.length() == 6)
 			{
 				// run method to check if password is correct
-				boolean passIsValid = true;
+				boolean passIsValid = verifyPassword(PIN_CODE);
 				
 				// the main activity intent
 				Intent startMain = null;
@@ -380,8 +384,8 @@ public class PasswordActivity extends Activity {
 					else
 					{
 						// incorrect password clear field
-						PASSWORD_FIELD.setText("");
-						PASSWORD = "";
+						SECURITY_FIELD.setText("");
+						PIN_CODE = "";
 						
 						// incorrect password prompt
 						Toast msg = Toast.makeText(this, "Incorrect Pin, try again", Toast.LENGTH_SHORT);
@@ -398,13 +402,37 @@ public class PasswordActivity extends Activity {
 		super.onResume();
 		
 		// reset the password data upon resuming activity
-		PASSWORD_FIELD.setText("");
-		PASSWORD = "";
+		SECURITY_FIELD.setText("");
+		PIN_CODE = "";
 	}
 	
 	@Override
 	public void onBackPressed()
 	{
 		
+	}
+	
+	public boolean verifyPassword(String pin)
+	{
+		boolean result = false;
+		
+		if (defaults != null)
+		{
+			// get the stored pin
+			String storedPin = defaults.getData().getString("pin", null);
+			
+			// verify the two strings are valid
+			if (storedPin != null && pin != null)
+			{
+				// check if the strings are a match
+				if (pin.equals(storedPin))
+				{
+					// set the result to true since the strings match
+					result = true;
+				}
+			}
+		}
+		
+		return result;
 	}
 }
