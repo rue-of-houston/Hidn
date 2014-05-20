@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" android:orientation="vertical" 
+    android:layout_width="match_parent" android:layout_height="match_parent">
+    
+    <TextView android:id="@+id/bookmarkListItem" style="@style/listTextView" android:textColor="#FFFFFF" android:drawableLeft="@drawable/ic_action_star_2" android:drawablePadding="15dip" 
+        android:layout_width="match_parent" android:layout_height="50dip" android:paddingLeft="10dip" />
+    
+</LinearLayout>

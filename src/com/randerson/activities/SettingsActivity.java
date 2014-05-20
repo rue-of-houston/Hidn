@@ -27,11 +27,13 @@ public class SettingsActivity extends Activity {
 	boolean mockAccess = true;
 	boolean privateMode = false;
 	boolean useThemes = true;
-	boolean swipeNav = true;
+	boolean swipeNav = false;
 	boolean previousNavStyle = true;
 	boolean hasValidPin = false;
 	String theme = "4_3";
 	String themeB = "Dark";
+	int themeListA = 0;
+	int themeListB = 0;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState)
@@ -350,7 +352,7 @@ public class SettingsActivity extends Activity {
 			// load stored values and assign to app vars
 			mockAccess = defaults.getData().getBoolean("mockAccess", true);
 			privateMode = defaults.getData().getBoolean("privateMode", false);
-			swipeNav = defaults.getData().getBoolean("defaultNavType", true);
+			swipeNav = defaults.getData().getBoolean("defaultNavType", false);
 			previousNavStyle = swipeNav;
 			theme = defaults.getData().getString("theme", "4_3");
 			themeB = defaults.getData().getString("themeB", "Dark");
@@ -373,6 +375,8 @@ public class SettingsActivity extends Activity {
 			defaults.set("defaultNavType", swipeNav);
 			defaults.set("theme", theme);
 			defaults.set("themeB", themeB);
+			defaults.set("themeListA", themeListA);
+			defaults.set("themeListB", themeListB);
 		}
 	}
 	
@@ -445,12 +449,16 @@ public class SettingsActivity extends Activity {
 	
 	public void setupActionBar()
 	{
-		int themeId = ThemeMaster.getThemeId(theme);
+		int[] themeIds = ThemeMaster.getThemeId(theme);
+		
+		int themeId = themeIds[0];
+		themeListA = themeIds[1];
+		themeListB = themeIds[2];
 		
 		// set the actionBar styling
 		getActionBar().setBackgroundDrawable(getResources().getDrawable(themeId));
 		
-		int themeBId = ThemeMaster.getThemeId(themeB.toLowerCase());
+		int themeBId = ThemeMaster.getThemeId(themeB.toLowerCase())[0];
 		
 		// set the background styling
 		ScrollView settingsBg = (ScrollView) findViewById(R.id.settingsBg);

@@ -241,7 +241,7 @@ public class DataManager implements DataSetup
 					APP_DATA = (UniArray) FileSystem.readObjectFile(CONTEXT, APP_NOTES_FILENAME, false);
 				
 					// use the object inner item key as key
-					key = data.getString("name");
+					key = data.getString("id");
 					
 					// add the updated data to the application save file
 					dataWrapper = (UniArray) APP_DATA.getObject(NOTE_KEY);
@@ -366,11 +366,103 @@ public class DataManager implements DataSetup
 		
 		if (data != null)
 		{
+			int randomIdNumber = (int) (Math.random() * 1000000);
+			String id = name.substring(0, 3) + "-" + randomIdNumber;
+			
 			// add the data to the map
-			data.putString("name", name);
+			data.putString("title", name);
+			data.putString("id", id);
 			data.putString("encodedContent", encodedContent);
 		}
 		
 		return data;
+	}
+
+	@Override
+	public boolean removeItem(int dataType, String key)
+	{
+		UniArray dataWrapper = null;
+		boolean success = false;
+		UniArray APP_DATA = null;
+		
+		if (key != null)
+		{
+			// switch case for setting the data to the appropriate field in the 1st level Uniarray
+			switch(dataType)
+			{
+			case BROWSER_DATA:
+				
+					APP_DATA = (UniArray) FileSystem.readObjectFile(CONTEXT, APP_BROWSER_FILENAME, false);
+					
+					// add the updated data to the application save file
+					dataWrapper = (UniArray) APP_DATA.getObject(BROWSER_KEY);
+					
+				break;
+				
+			case CONTACT_DATA:
+				
+					APP_DATA = (UniArray) FileSystem.readObjectFile(CONTEXT, APP_CONTACTS_FILENAME, false);
+				
+					// add the updated data to the application save file
+					dataWrapper = (UniArray) APP_DATA.getObject(CONTACT_KEY);
+				
+				break;
+				
+			case DOCUMENT_DATA:
+				
+					APP_DATA = (UniArray) FileSystem.readObjectFile(CONTEXT, APP_DOCUMENTS_FILENAME, false);
+				
+					// add the updated data to the application save file
+					dataWrapper = (UniArray) APP_DATA.getObject(DOCUMENT_KEY);
+				break;
+				
+			case ENCRYPTION_DATA:
+				
+					APP_DATA = (UniArray) FileSystem.readObjectFile(CONTEXT, APP_ENCRYPTION_FILENAME, false);
+				
+					// add the updated data to the application save file
+					dataWrapper = (UniArray) APP_DATA.getObject(ENCRYPTION_KEY);
+				break;
+				
+			case NOTE_DATA:
+				
+					APP_DATA = (UniArray) FileSystem.readObjectFile(CONTEXT, APP_NOTES_FILENAME, false);
+				
+					// add the updated data to the application save file
+					dataWrapper = (UniArray) APP_DATA.getObject(NOTE_KEY);
+				break;
+				
+			case PHOTO_DATA:
+				
+					APP_DATA = (UniArray) FileSystem.readObjectFile(CONTEXT, APP_PHOTOS_FILENAME, false);
+				
+					// add the updated data to the application save file
+					dataWrapper = (UniArray) APP_DATA.getObject(PHOTO_KEY);
+				break;
+				
+			case VIDEO_DATA:
+				
+					APP_DATA = (UniArray) FileSystem.readObjectFile(CONTEXT, APP_VIDEOS_FILENAME, false);
+				
+					// add the updated data to the application save file
+					dataWrapper = (UniArray) APP_DATA.getObject(VIDEO_KEY);
+				break;
+			
+				default:
+					break;
+			}
+			
+			if (dataWrapper != null)
+			{
+				// add the passed in data to the proper data level in 2nd level UniArray
+				dataWrapper.removeObject(key);
+				
+				// pass the updated 1st level UniArray to be saved in the top-level
+				success = saveTopLevel(dataType, dataWrapper);
+			}
+		}
+		
+		return success;
+		
 	}
 }

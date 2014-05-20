@@ -14,10 +14,15 @@
     <string name="bookmarkAlert">Give a name to this bookmark.</string>
     <string name="urlHint">http://www.domain.com</string>
     <string name="genericHint">Type text here</string>
+    <string name="renameFile">Enter a name for this file including an extension</string>
     <string name="bookmarkHint">Type bookmark name</string>
     <string name="bugDirections">Report a bug in the field below. Remember to be detailed as possible and describe when (etc: adding file) and where (the screen) the bug occurred.</string>
     <string name="contactDirections">Only a First name and Primary phone are required.</string>
+    <string name="noteDirections">Compose a note here. A Title is required to save.</string>
     <string name="bugHint">Report bug here.</string>
+    <string name="title">Title</string>
+    <string name="content">Content</string>
+    <string name="date">Date</string>
     <string name="cancel">Cancel</string>
     <string name="submit">Submit</string>
     <string name="directions">Welcome to Hidn, to get started please fill out the form to create a new account.</string>

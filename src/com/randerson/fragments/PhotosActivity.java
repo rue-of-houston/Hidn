@@ -1,11 +1,9 @@
 package com.randerson.fragments;
 
-import java.io.File;
-
 import libs.ApplicationDefaults;
 import libs.UniArray;
-
 import com.randerson.activities.AddPhotosActivity;
+import com.randerson.activities.ViewPhotosActivity;
 import com.randerson.hidn.R;
 import com.randerson.interfaces.Constants;
 import com.randerson.interfaces.FragmentSetup;
@@ -13,11 +11,9 @@ import com.randerson.interfaces.ViewHandler;
 import com.randerson.support.DataManager;
 import com.randerson.support.PhotoAdapter;
 import com.randerson.support.ThemeMaster;
-
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -79,13 +75,17 @@ public class PhotosActivity extends android.support.v4.app.Fragment implements F
 			if (photoList != null && photoNames != null)
 			{
 				// create the adapter
-				adapter = new PhotoAdapter(getActivity(), R.layout.photo_list_item, R.id.photoListItem, photoNames);
+				adapter = new PhotoAdapter(getActivity().getApplicationContext(), R.layout.photo_list_item, R.id.photoListItem, photoNames);
 				
 				// check if the adapter is valid
 				if (adapter != null)
 				{	
 					photoList.setAdapter(adapter);
 				}
+				
+				// set the drawable for the listView bg
+				int color = ThemeMaster.getThemeId(theme)[2];
+				photoList.setBackgroundColor(color);
 				
 				// setup the single click listeners
 				photoList.setOnItemClickListener(new OnItemClickListener() {
@@ -110,12 +110,21 @@ public class PhotosActivity extends android.support.v4.app.Fragment implements F
 								if (item != null)
 								{
 									String path = item.getString("hidnPath");
-									Uri uri = Uri.fromFile(new File(path));
+									String name = item.getString("fileName");
 									
-									Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+									Intent intent = new Intent(getActivity(), ViewPhotosActivity.class);
 									
 									if (intent != null)
 									{
+										// disable the passLock
+										parentView.setDisablePassLock(true);
+										
+										// add the parameters
+										intent.putExtra("key", photoNames[position]);
+										intent.putExtra("fileName", name);
+										intent.putExtra("filePath", path);
+										
+										intent.setFlags(Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);
 										
 										startActivity(intent);
 									}
@@ -170,7 +179,7 @@ public class PhotosActivity extends android.support.v4.app.Fragment implements F
 	@Override
 	public void setupActionBar() {
 		
-		int color = ThemeMaster.getThemeId(theme);
+		int color = ThemeMaster.getThemeId(theme)[0];
 		
 		// set the actionBar styling
 		getActivity().getActionBar().setBackgroundDrawable(getResources().getDrawable(color));
@@ -186,7 +195,7 @@ public class PhotosActivity extends android.support.v4.app.Fragment implements F
 			getActivity().getActionBar().setTitle("");
 		}
 		
-		int themeBId = ThemeMaster.getThemeId(themeB.toLowerCase());
+		int themeBId = ThemeMaster.getThemeId(themeB.toLowerCase())[0];
 		
 		// set the background styling
 		LinearLayout layoutBg = (LinearLayout) root.findViewById(R.id.photosBg);
@@ -248,20 +257,10 @@ public class PhotosActivity extends android.support.v4.app.Fragment implements F
 			
 			if (importPhotos != null)
 			{
-				startActivityForResult(importPhotos, 100);
+				importPhotos.setFlags(Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);
+				
+				startActivity(importPhotos);
 			}
-		}
-	}
-	
-	@Override
-	public void onActivityResult(int requestCode, int resultCode, Intent data) {
-		super.onActivityResult(requestCode, resultCode, data);
-		
-		if (requestCode == 100 && resultCode == Activity.RESULT_OK)
-		{
-			// refetch the photo names
-			getPhotoNames();
-			
 		}
 	}
 }

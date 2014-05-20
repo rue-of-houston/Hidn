@@ -1,17 +1,18 @@
 <?xml version='1.0' encoding="utf-8" ?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" android:orientation="vertical" android:id="@+id/browserBg"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" android:orientation="vertical" android:id="@+id/browserBg" android:paddingLeft="10dip" android:paddingRight="10dip" android:paddingBottom="5dip"
     android:layout_width="match_parent" android:layout_height="match_parent" style="@style/fragmentContainerStyle" android:background="#111111">
    
-    <LinearLayout android:orientation="horizontal" android:background="#A6D5E5"
-    android:layout_width="match_parent" android:layout_height="wrap_content" android:padding="10dip">
+    <LinearLayout android:orientation="horizontal" android:background="#A6D5E5" android:id="@+id/browserBar"
+    android:layout_width="match_parent" android:layout_height="wrap_content" android:padding="5dip">
         
-        <EditText android:id="@+id/webAddressField" android:layout_width="0dip" android:layout_weight="0.7" android:layout_height="35dip" android:inputType="textWebEditText" android:hint="@string/browserUrlHint" android:background="@android:color/white"/>
+        <EditText android:id="@+id/webAddressField" android:layout_width="0dip" android:layout_weight="0.7" android:layout_height="35dip" android:inputType="textWebEditText" android:hint="@string/browserUrlHint" 
+            android:background="@android:color/white"/>
         <ImageView android:src="@drawable/ic_navigation_refresh" android:id="@+id/goBtn" android:layout_width="0dip" android:layout_weight="0.15" android:layout_height="35dip" android:contentDescription="@string/blank"/>
          
     </LinearLayout>
     
     <LinearLayout android:orientation="vertical" android:background="@drawable/theme_light" android:layout_width="match_parent"
-         android:layout_height="wrap_content" android:padding="1dip">
+         android:layout_height="wrap_content">
      
     <WebView android:layout_width="match_parent" android:layout_height="match_parent" android:id="@+id/browser"/>
     

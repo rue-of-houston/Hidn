@@ -79,7 +79,7 @@ public class PagerFragmentActivity extends FragmentActivity implements ViewHandl
 			if (tabStrip != null)
 			{
 				// set the pagerview background color to match the theme
-				int color = ThemeMaster.getThemeId(theme);
+				int color = ThemeMaster.getThemeId(theme)[0];
 				tabStrip.setBackground(getResources().getDrawable(color));
 			}
 			

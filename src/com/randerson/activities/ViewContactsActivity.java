@@ -223,7 +223,7 @@ public class ViewContactsActivity extends Activity implements FragmentSetup {
 	@Override
 	public void setupActionBar() {
 		
-		int color = ThemeMaster.getThemeId(theme);
+		int color = ThemeMaster.getThemeId(theme)[0];
 		
 		// set the actionBar styling
 		getActionBar().setBackgroundDrawable(getResources().getDrawable(color));
@@ -231,7 +231,7 @@ public class ViewContactsActivity extends Activity implements FragmentSetup {
 		// set the title to appear for the drawerlist view
 		getActionBar().setTitle(TITLE);
 		
-		int themeBId = ThemeMaster.getThemeId(themeB.toLowerCase());
+		int themeBId = ThemeMaster.getThemeId(themeB.toLowerCase())[0];
 		
 		// set the background styling
 		ScrollView layoutBg = (ScrollView) findViewById(R.id.viewContactBg);
@@ -262,7 +262,6 @@ public class ViewContactsActivity extends Activity implements FragmentSetup {
 
 	@Override
 	public void onActionBarItemClicked(int itemId) {
-		// TODO Auto-generated method stub
 		
 	}
 	

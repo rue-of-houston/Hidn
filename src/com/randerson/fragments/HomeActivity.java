@@ -16,6 +16,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.ScrollView;
 
 @SuppressLint("DefaultLocale")
@@ -42,13 +43,22 @@ public class HomeActivity extends android.support.v4.app.Fragment implements Fra
 		// turns on options menu in fragment
 		setHasOptionsMenu(true);
 		
+		LinearLayout layout = (LinearLayout) root.findViewById(R.id.homeContentWrapper);
+		
+		if (layout != null)
+		{
+			// set the drawable for the listView bg
+			int color = ThemeMaster.getThemeId(theme)[2];
+			layout.setBackgroundColor(color);
+		}
+		
 		return root;
 	}
 
 	@Override
 	public void setupActionBar() {
 		
-		int color = ThemeMaster.getThemeId(theme);
+		int color = ThemeMaster.getThemeId(theme)[0];
 		
 		// set the actionBar styling
 		getActivity().getActionBar().setBackgroundDrawable(getResources().getDrawable(color));
@@ -64,7 +74,7 @@ public class HomeActivity extends android.support.v4.app.Fragment implements Fra
 			getActivity().getActionBar().setTitle("");
 		}
 		
-		int themeBId = ThemeMaster.getThemeId(themeB.toLowerCase());
+		int themeBId = ThemeMaster.getThemeId(themeB.toLowerCase())[0];
 		
 		// set the background styling
 		ScrollView layoutBg = (ScrollView) root.findViewById(R.id.homeBg);

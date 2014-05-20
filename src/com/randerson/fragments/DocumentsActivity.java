@@ -2,12 +2,14 @@ package com.randerson.fragments;
 
 import libs.ApplicationDefaults;
 import libs.UniArray;
+
 import com.randerson.activities.ViewDocumentsActivity;
 import com.randerson.hidn.R;
 import com.randerson.interfaces.Constants;
 import com.randerson.interfaces.FragmentSetup;
 import com.randerson.interfaces.ViewHandler;
 import com.randerson.support.DataManager;
+import com.randerson.support.ListViewAdapter;
 import com.randerson.support.ThemeMaster;
 
 import android.annotation.SuppressLint;
@@ -20,7 +22,6 @@ import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.AdapterView.OnItemClickListener;
@@ -81,13 +82,17 @@ public class DocumentsActivity extends android.support.v4.app.Fragment implement
 					if (documentList != null && documentNames != null)
 					{
 						// create the adapter
-						ArrayAdapter<String> adapter = new ArrayAdapter<String>(getActivity(), R.layout.document_list_item, R.id.documentListItem, documentNames);
+						ListViewAdapter adapter = new ListViewAdapter(getActivity(), R.layout.document_list_item, R.id.documentListItem, documentNames);
 						
 						// check if the adapter is valid
 						if (adapter != null)
 						{
 							documentList.setAdapter(adapter);
 						}
+						
+						// set the drawable for the listView bg
+						int color = ThemeMaster.getThemeId(theme)[2];
+						documentList.setBackgroundColor(color);
 						
 						// setup the single click listeners
 						documentList.setOnItemClickListener(new OnItemClickListener() {
@@ -158,7 +163,7 @@ public class DocumentsActivity extends android.support.v4.app.Fragment implement
 	@Override
 	public void setupActionBar() {
 		
-		int color = ThemeMaster.getThemeId(theme);
+		int color = ThemeMaster.getThemeId(theme)[0];
 		
 		// set the actionBar styling
 		getActivity().getActionBar().setBackgroundDrawable(getResources().getDrawable(color));
@@ -174,7 +179,7 @@ public class DocumentsActivity extends android.support.v4.app.Fragment implement
 			getActivity().getActionBar().setTitle("");
 		}
 		
-		int themeBId = ThemeMaster.getThemeId(themeB.toLowerCase());
+		int themeBId = ThemeMaster.getThemeId(themeB.toLowerCase())[0];
 		
 		// set the background styling
 		LinearLayout layoutBg = (LinearLayout) root.findViewById(R.id.documentsBg);

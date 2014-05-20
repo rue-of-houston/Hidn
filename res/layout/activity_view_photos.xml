@@ -2,13 +2,14 @@
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android" android:id="@+id/viewPhotosBg"
     android:layout_width="match_parent" android:layout_height="match_parent" android:padding="10dip">
     
-    <LinearLayout  android:orientation="vertical" android:layout_width="match_parent" android:layout_height="wrap_content" android:background="@drawable/theme_light" android:padding="2dip">
+    <LinearLayout  android:orientation="vertical" android:layout_width="match_parent" android:layout_height="wrap_content" android:background="@drawable/theme_light" android:padding="0dip">
         
-        <ImageView android:layout_margin="5dip" android:id="@+id/photoViewer" android:layout_width="match_parent" android:layout_height="wrap_content" android:contentDescription="@string/blank"/>
+        <TextView android:id="@+id/photoName" android:layout_width="match_parent" android:layout_height="50dip" android:text="@string/blank" android:background="@android:color/black"
+            android:textColor="@android:color/white" android:textStyle="bold"  android:gravity="center" android:textSize="20sp"/>
         
-        <TextView android:layout_marginBottom="2dip" android:layout_width="match_parent" android:layout_height="wrap_content" android:labelFor="@+id/photoViewerNameField" android:text="@string/fileName"/>
-        <EditText android:id="@+id/photoViewerNameField" android:inputType="textCapWords" android:hint="@string/blank" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/blank"/>
-        
+        <ImageView android:layout_margin="5dip" android:id="@+id/photoViewer" android:layout_width="match_parent" android:layout_height="wrap_content" android:contentDescription="@string/blank"
+            android:layout_gravity="center" android:padding="10dip" android:layout_marginBottom="10dip"/>
+     
     </LinearLayout>
     
 </ScrollView>

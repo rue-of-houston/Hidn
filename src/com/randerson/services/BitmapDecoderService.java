@@ -30,6 +30,10 @@ public class BitmapDecoderService extends IntentService {
 		String filePath = null;
 		Messenger messenger = null;
 		int serviceCode = 0;
+		int targetHeight = 30;
+		int targetWidth = 30;
+		int sampleSize = 1;
+		boolean shouldDecodeSample = true;
 		
 		// get the passed in intent data
 		if (intent != null)
@@ -47,12 +51,29 @@ public class BitmapDecoderService extends IntentService {
 				
 				// get the service id
 				serviceCode = extras.getInt("serviceCode");
+				
+				// check if the decoder should decode at sampling rate
+				if (extras.containsKey("decodeSample"))
+				{
+					shouldDecodeSample = extras.getBoolean("decodeSample");
+				}
+				
+				// check if new sampling code has been supplied
+				if (extras.containsKey("height") && extras.containsKey("width"))
+				{
+					targetHeight = extras.getInt("height");
+					targetWidth = extras.getInt("width");
+				}
 			}
 		}
 		
-		// get the bitmap sample size
-		int sampleSize = HidNExplorer.calulateBitmapSampleSize(filePath, 30, 30);
-		
+		// check if the image should be sampled
+		if (shouldDecodeSample)
+		{
+			// get the bitmap sample size
+			sampleSize = HidNExplorer.calulateBitmapSampleSize(filePath, targetHeight, targetWidth);
+		}
+			
 		// create and set the bitmap factory options
 		BitmapFactory.Options options = new BitmapFactory.Options();
 		
@@ -61,6 +82,7 @@ public class BitmapDecoderService extends IntentService {
 			options.inPurgeable = true;
 			options.inTempStorage = new byte[1024];
 			options.inSampleSize = sampleSize;
+			options.inPreferQualityOverSpeed = true;
 		}
 		
 		// create the bitmap

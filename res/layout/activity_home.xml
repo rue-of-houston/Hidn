@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent" android:layout_height="match_parent" android:id="@+id/homeBg"
-     style="@style/fragmentContainerStyle" android:background="#111111" android:padding="10dip">
+     style="@style/fragmentContainerStyle" android:background="#111111" android:paddingLeft="10dip" android:paddingRight="10dip" android:paddingBottom="5dip">
      
     <LinearLayout android:orientation="vertical" android:background="@drawable/theme_light" android:layout_width="match_parent"
-         android:layout_height="wrap_content">
+         android:layout_height="wrap_content" android:id="@+id/homeContentWrapper">
         
         <LinearLayout android:orientation="vertical" android:layout_width="match_parent" android:background="#EEEEEE"
          android:layout_height="wrap_content" android:padding="10dip" android:layout_marginTop="5dip">
@@ -36,7 +36,7 @@
         		<EditText android:id="@+id/homeReportBug" android:layout_width="match_parent" android:layout_height="100dip" android:inputType="textCapSentences" 
         		    android:hint="@string/bugHint" android:text="@string/blank" android:maxLines="10"/>
         		
-        		<Button android:layout_margin="2dip" android:id="@+id/reportBugBtn" android:layout_width="match_parent" android:layout_height="wrap_content"  android:background="@drawable/button_gradient"
+        		<Button android:layout_margin="2dip" android:id="@+id/reportBugBtn" android:layout_width="match_parent" android:layout_height="wrap_content"  android:background="@drawable/button_click"
         		    android:text="@string/submit" android:textColor="@android:color/white"/>
         
         </LinearLayout>
@@ -48,7 +48,7 @@
         		<EditText android:id="@+id/homeContactUs" android:layout_width="match_parent" android:layout_height="100dip" android:inputType="textCapSentences" 
         		    android:hint="@string/contactUsHint" android:text="@string/blank" android:maxLines="10"/>
         		
-        		<Button android:layout_margin="2dip" android:id="@+id/sendFeedbackBtn" android:layout_width="match_parent" android:layout_height="wrap_content"  android:background="@drawable/button_gradient"
+        		<Button android:layout_margin="2dip" android:id="@+id/sendFeedbackBtn" android:layout_width="match_parent" android:layout_height="wrap_content"  android:background="@drawable/button_click"
         		    android:text="@string/submit" android:textColor="@android:color/white"/>
         
         </LinearLayout>

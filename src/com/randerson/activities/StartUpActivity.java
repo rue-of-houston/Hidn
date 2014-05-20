@@ -9,6 +9,7 @@ import com.randerson.interfaces.Constants;
 import com.randerson.interfaces.DataSetup;
 import com.randerson.interfaces.KinveySetup;
 import com.randerson.kinvey.KinveyManager;
+import com.randerson.support.ThemeMaster;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
@@ -138,7 +139,7 @@ public class StartUpActivity extends Activity implements Constants{
 			defaults.set("themeB", "Dark");
 			
 			// set the default nav tyle
-			defaults.set("defaultNavType", true);
+			defaults.set("defaultNavType", false);
 			
 			// set the mock access setting
 			defaults.set("mockAccess", true);
@@ -151,6 +152,10 @@ public class StartUpActivity extends Activity implements Constants{
 			
 			// set the lastView setting
 			defaults.set("lastView", HOME);
+			
+			// set the list theme colors
+			defaults.set("themeListA", ThemeMaster.getColor("#9FA6A4"));
+			defaults.set("themeListB", ThemeMaster.getColor("#000000"));
 		}
 		
 		// create the top-level UniArray

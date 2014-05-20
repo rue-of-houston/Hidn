@@ -21,6 +21,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.GridView;
@@ -44,6 +45,9 @@ public class AddPhotosActivity extends Activity implements FragmentSetup{
 	protected void onCreate(Bundle savedInstanceState) 
 	{
 		super.onCreate(savedInstanceState);
+		
+		// set the activity to full screen
+		getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);		
 		
 		setContentView(R.layout.activity_add_photos);
 		
@@ -73,6 +77,10 @@ public class AddPhotosActivity extends Activity implements FragmentSetup{
 				
 				if (gridView != null && photos != null)
 				{
+					// set the drawable for the listView bg
+					int color = ThemeMaster.getThemeId(theme)[2];
+					gridView.setBackgroundColor(color);
+					
 					// set the gridView to allow multiple item selections
 					gridView.setChoiceMode(GridView.CHOICE_MODE_MULTIPLE);
 					
@@ -111,7 +119,7 @@ public class AddPhotosActivity extends Activity implements FragmentSetup{
 	@SuppressLint("DefaultLocale")
 	public void setupActionBar() {
 			
-		int color = ThemeMaster.getThemeId(theme);
+		int color = ThemeMaster.getThemeId(theme)[0];
 		
 		// set the actionBar styling
 		getActionBar().setBackgroundDrawable(getResources().getDrawable(color));
@@ -119,7 +127,7 @@ public class AddPhotosActivity extends Activity implements FragmentSetup{
 		// set the title to appear for the drawerlist view
 		getActionBar().setTitle(TITLE);
 		
-		int themeBId = ThemeMaster.getThemeId(themeB.toLowerCase());
+		int themeBId = ThemeMaster.getThemeId(themeB.toLowerCase())[0];
 		
 		// set the background styling
 		LinearLayout layoutBg = (LinearLayout) findViewById(R.id.addPhotoBg);
@@ -164,8 +172,8 @@ public class AddPhotosActivity extends Activity implements FragmentSetup{
 		
 		// method for saving the selected files
 		saveFiles();
-		
-		super.onBackPressed();
+	
+		finish();
 	}
 	
 	@Override

@@ -10,6 +10,7 @@ import com.randerson.interfaces.Constants;
 import com.randerson.interfaces.FragmentSetup;
 import com.randerson.interfaces.ViewHandler;
 import com.randerson.support.DataManager;
+import com.randerson.support.ListViewAdapter;
 import com.randerson.support.ThemeMaster;
 
 import android.annotation.SuppressLint;
@@ -24,7 +25,6 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemLongClickListener;
-import android.widget.ArrayAdapter;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 
@@ -41,7 +41,7 @@ public class ContactsActivity extends android.support.v4.app.Fragment implements
 	public String[] contactIds;
 	public DataManager dataManager;
 	public String[] contactPaths;
-	ArrayAdapter<String> adapter;
+	ListViewAdapter adapter;
 	
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -98,13 +98,17 @@ public class ContactsActivity extends android.support.v4.app.Fragment implements
 			if (contactsList != null && contactNames != null)
 			{
 				// create a new adapter
-				adapter = new ArrayAdapter<String>(getActivity(), R.layout.contact_list_item, R.id.contactListItem, contactNames);
+				adapter = new ListViewAdapter(getActivity(), R.layout.contact_list_item, R.id.contactListItem, contactNames);
 				
 				// check if the adapter is valid
 				if (adapter != null)
 				{
 					contactsList.setAdapter(adapter);
 				}
+				
+				// set the drawable for the listView bg
+				int color = ThemeMaster.getThemeId(theme)[2];
+				contactsList.setBackgroundColor(color);
 				
 				// setup the single click listeners
 				contactsList.setOnItemClickListener(new OnItemClickListener() {
@@ -157,6 +161,8 @@ public class ContactsActivity extends android.support.v4.app.Fragment implements
 									detailView.putExtra("primaryPhone", primaryPhone);
 									detailView.putExtra("secondaryPhone", secondaryPhone);
 									
+									detailView.setFlags(Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);
+									
 								}
 
 							}
@@ -200,7 +206,7 @@ public class ContactsActivity extends android.support.v4.app.Fragment implements
 	@Override
 	public void setupActionBar() {
 		
-		int color = ThemeMaster.getThemeId(theme);
+		int color = ThemeMaster.getThemeId(theme)[0];
 		
 		// set the actionBar styling
 		getActivity().getActionBar().setBackgroundDrawable(getResources().getDrawable(color));
@@ -216,7 +222,7 @@ public class ContactsActivity extends android.support.v4.app.Fragment implements
 			getActivity().getActionBar().setTitle("");
 		}
 		
-		int themeBId = ThemeMaster.getThemeId(themeB.toLowerCase());
+		int themeBId = ThemeMaster.getThemeId(themeB.toLowerCase())[0];
 		
 		// set the background styling
 		LinearLayout layoutBg = (LinearLayout) root.findViewById(R.id.contactsBg);
@@ -277,53 +283,10 @@ public class ContactsActivity extends android.support.v4.app.Fragment implements
 			
 			if (addContact != null)
 			{
-				startActivityForResult(addContact, 100);
-			}
-		}
-	}
-	
-	@Override
-	public void onActivityResult(int requestCode, int resultCode, Intent data) {
-		super.onActivityResult(requestCode, resultCode, data);
-		
-		if (requestCode == 100 && resultCode == Activity.RESULT_OK)
-		{
-			
-			// update the list string array resource
-			if (dataManager != null)
-			{
-				// get the contact object of data
-				UniArray contacts = (UniArray) dataManager.load(DataManager.CONTACT_DATA);
+				addContact.setFlags(Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);
 				
-				if (contacts !=  null)
-				{
-					// get the list of contact keys
-					contactIds = contacts.getAllObjectKeys();
-					
-					// init the contactNames array
-					contactNames = new String[contactIds.length];
-					
-					for (int x = 0; x < contactIds.length; x++)
-					{
-						// get the individual contact from the complete contacts object
-						UniArray contact = (UniArray) contacts.getObject(contactIds[x]);
-						
-						if (contact != null)
-						{
-							// set the actual contact name
-							String fName = contact.getString("firstName");
-							String lName = contact.getString("lastName");
-							
-							// set the contact name to display
-							contactNames[x] = (fName + " " + lName);
-						}
-					}
-					
-					adapter.notifyDataSetChanged();
-
-				}
+				startActivity(addContact);
 			}
-			
 		}
 	}
 	

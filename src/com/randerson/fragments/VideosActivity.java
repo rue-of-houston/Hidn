@@ -10,6 +10,7 @@ import com.randerson.interfaces.Constants;
 import com.randerson.interfaces.FragmentSetup;
 import com.randerson.interfaces.ViewHandler;
 import com.randerson.support.DataManager;
+import com.randerson.support.ListViewAdapter;
 import com.randerson.support.ThemeMaster;
 
 import android.annotation.SuppressLint;
@@ -22,7 +23,6 @@ import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.AdapterView.OnItemClickListener;
@@ -84,13 +84,17 @@ public class VideosActivity extends android.support.v4.app.Fragment implements F
 					if (videoList != null && videoNames != null)
 					{
 						// create the adapter
-						ArrayAdapter<String> adapter = new ArrayAdapter<String>(getActivity(), R.layout.video_list_item, R.id.videoListItem, videoNames);
+						ListViewAdapter adapter = new ListViewAdapter(getActivity(), R.layout.video_list_item, R.id.videoListItem, videoNames);
 						
 						// check if the adapter is valid
 						if (adapter != null)
 						{
 							videoList.setAdapter(adapter);
 						}
+						
+						// set the drawable for the listView bg
+						int color = ThemeMaster.getThemeId(theme)[2];
+						videoList.setBackgroundColor(color);
 						
 						// setup the single click listeners
 						videoList.setOnItemClickListener(new OnItemClickListener() {
@@ -121,16 +125,18 @@ public class VideosActivity extends android.support.v4.app.Fragment implements F
 											{
 												// add the data to the intent
 												String fileName = video.getString("fileName");
-												String sourcePath = video.getString("sourcePath");
-												String hidnPath = video.getString("hidnPath");
+												String filePath = video.getString("hidnPath");
 												
+												detailView.putExtra("key", videoNames[position]);
 												detailView.putExtra("fileName", fileName);
-												detailView.putExtra("sourcePath", sourcePath);
-												detailView.putExtra("hidnPath", hidnPath);
+												detailView.putExtra("filePath", filePath);
+												
+												detailView.setFlags(Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);
 											}
 
 										}
 									}
+									
 									// disable the passLock
 									parentView.setDisablePassLock(true);
 									
@@ -174,7 +180,7 @@ public class VideosActivity extends android.support.v4.app.Fragment implements F
 	@Override
 	public void setupActionBar() {
 		
-		int color = ThemeMaster.getThemeId(theme);
+		int color = ThemeMaster.getThemeId(theme)[0];
 		
 		// set the actionBar styling
 		getActivity().getActionBar().setBackgroundDrawable(getResources().getDrawable(color));
@@ -190,7 +196,7 @@ public class VideosActivity extends android.support.v4.app.Fragment implements F
 			getActivity().getActionBar().setTitle("");
 		}
 		
-		int themeBId = ThemeMaster.getThemeId(themeB.toLowerCase());
+		int themeBId = ThemeMaster.getThemeId(themeB.toLowerCase())[0];
 		
 		// set the background styling
 		LinearLayout layoutBg = (LinearLayout) root.findViewById(R.id.videosBg);
@@ -252,29 +258,10 @@ public class VideosActivity extends android.support.v4.app.Fragment implements F
 			
 			if (importVideos != null)
 			{
-				startActivityForResult(importVideos, 100);
-			}
-		}
-	}
-	
-	@Override
-	public void onActivityResult(int requestCode, int resultCode, Intent data) {
-		super.onActivityResult(requestCode, resultCode, data);
-		
-		if (requestCode == 100 && resultCode == Activity.RESULT_OK)
-		{
-			
-			// update the list string array resource
-			if (dataManager != null)
-			{
-				UniArray videos = (UniArray) dataManager.load(DataManager.VIDEO_DATA);
+				importVideos.setFlags(Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);
 				
-				if (videos !=  null)
-				{
-					videoNames = videos.getAllObjectKeys();
-				}
+				startActivity(importVideos);
 			}
-			
 		}
 	}
 	

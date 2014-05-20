@@ -9,9 +9,6 @@ import java.nio.channels.FileChannel;
 import java.nio.channels.NonReadableChannelException;
 import java.nio.channels.NonWritableChannelException;
 import java.util.ArrayList;
-import java.util.HashMap;
-
-import libs.ApplicationManager;
 import android.content.Context;
 import android.graphics.BitmapFactory;
 import android.graphics.BitmapFactory.Options;
@@ -219,7 +216,7 @@ public class HidNExplorer implements ExplorerSetup {
 		if (file.exists())
 		{
 			// string representation of the file path and the file name
-			String path = file.getParentFile().toString();
+			String path = file.getParent().toString();
 			String name = file.getName();
 			
 			// attempt to hide the file on the system level and
@@ -238,7 +235,7 @@ public class HidNExplorer implements ExplorerSetup {
 		if (file.exists())
 		{
 			// string representation of the file path
-			String path = file.getParentFile().toString();
+			String path = file.getParent();
 			
 			// attempt to rename the file and capture the operation result
 			success = file.renameTo(new File(path, name));
@@ -290,23 +287,12 @@ public class HidNExplorer implements ExplorerSetup {
 			{
 				try {
 					
-					HashMap<String, Number> heapSize= ApplicationManager.getHeapSize(CONTEXT);
-					
 					long count = 0;
-					long size = 1024;
-					
-					if (heapSize != null)
-					{
-						// get the smaller of the two byte sizes
-						long minSize = Math.min(heapSize.get("freeMemory").longValue(), sourceChannel.size());
-						
-						// set the size to the smaller of the two sizes
-						size = (long) Math.min((minSize * 0.1), 1024);
-					}
+					long size = sourceChannel.size();
 					
 					while (count < size)
 					{
-						count += sourceChannel.transferTo(0, size - count, destinationChannel);
+						count += sourceChannel.transferTo(0, size-count, destinationChannel);
 						
 						Log.i("File Channel", count + " Bytes Transferred Out Of " + size);
 					}

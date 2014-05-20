@@ -1,23 +1,19 @@
 package com.randerson.support;
 import com.randerson.services.BitmapDecoderService;
 
+import libs.ApplicationDefaults;
 import libs.UniArray;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Handler;
 import android.os.Message;
 import android.os.Messenger;
-import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -31,6 +27,8 @@ public class PhotoAdapter extends ArrayAdapter<String> {
 	int LAYOUT_ID = 0;
 	int TEXT_VIEW_ID = 0;
 	DataManager DATA_MANAGER = null;
+	int themeListA = 0;
+	int themeListB = 0;
 	
 	public PhotoAdapter(Context context, int resource, int textViewResourceId,
 			String[] objects) 
@@ -43,6 +41,14 @@ public class PhotoAdapter extends ArrayAdapter<String> {
 		TEXT_VIEW_ID = textViewResourceId;
 		
 		DATA_MANAGER = new DataManager(context);
+		
+		ApplicationDefaults defaults = new ApplicationDefaults(CONTEXT);
+		
+		if (defaults != null)
+		{
+			themeListA = defaults.getData().getInt("themeListA", ThemeMaster.getColor("#9FA6A4"));
+			themeListB = ThemeMaster.getColor("#FFFFFF");
+		}
 	}
 
 	@Override
@@ -73,15 +79,12 @@ public class PhotoAdapter extends ArrayAdapter<String> {
 	public View getView(final int position, final View convertView, final ViewGroup parent)
 	{
 		LinearLayout layout = (LinearLayout) super.getView(position, convertView, parent);
-		TextView textView = null;
-		ImageView imageView = null;
-		
+		 
 		// get the hidn photo paths
 		LIST_DATA_PATHS = getPaths();
 		
 		
-			textView = (TextView) layout.findViewById(TEXT_VIEW_ID);
-			imageView = (ImageView) layout.findViewById(com.randerson.hidn.R.id.photoListIcon);
+		final TextView textView = (TextView) layout.findViewById(TEXT_VIEW_ID);
 			
 				if (textView != null)
 				{
@@ -89,98 +92,77 @@ public class PhotoAdapter extends ArrayAdapter<String> {
 					{
 						// set the text view text
 						textView.setText(LIST_DATA[position]);
+						
+						
+						// check if the position is even or odd and set the background to appropriate drawable
+						if (position % 2 == 0)
+						{
+							textView.setBackgroundColor(themeListB);
+							textView.setTextColor(ThemeMaster.getColor("#000000"));
+						}
+						else
+						{
+							textView.setBackgroundColor(themeListA);
+						}
 					}
 					
 					if (LIST_DATA_PATHS != null)
 					{
-						// get the bitmap sample size
-						int sampleSize = HidNExplorer.calulateBitmapSampleSize(LIST_DATA_PATHS[position], 30, 30);
+						// get a random number for the id
+						final int serviceCode = (int) (Math.random() * 1000000);
 						
-						// create and set the bitmap factory options
-						BitmapFactory.Options options = new BitmapFactory.Options();
-						
-						if (options != null)
+						Handler handler = new Handler()
 						{
-							options.inPurgeable = true;
-							options.inSampleSize = sampleSize;
-						}
+							@Override
+							public void handleMessage(Message msg) {
+								super.handleMessage(msg);
+								
+								// check the message results
+								if (msg.arg1 == Activity.RESULT_OK && msg.arg2 == serviceCode)
+								{
+									if (msg.obj != null)
+									{
+										// retrieve the Drawable from the message
+										Drawable image = (Drawable) msg.obj;
+										
+										// set the image bounds for the compound drawable state
+										image.setBounds(0, 0, 72, 72);
+								
+										// set the compound drawable
+										textView.setCompoundDrawables(image, null, null, null);
+									}
+								}
+							}
+						}; 
 						
-						// create the bitmap
-						Drawable image = null;
+						// instantiate the decoding service
+						Intent decoderService = new Intent(CONTEXT, BitmapDecoderService.class);
 						
-						// decode the file into a bitmap
-						Bitmap baseImage = BitmapFactory.decodeFile(LIST_DATA_PATHS[position], options);
-						
-						if (baseImage != null)
+						if (decoderService != null)
 						{
-							// convert the bitmap into a drawable
-							image = new BitmapDrawable(CONTEXT.getResources(), baseImage);
+							// create the messenger for the handler
+							Messenger messenger = new Messenger(handler);
 							
-							if (imageView != null)
-							{	
-								// set the drawable
-								imageView.setBackground(image);
+							if (messenger != null)
+							{
+								// get the filepath for the selected item
+								String filePath = LIST_DATA_PATHS[position];
+								
+								// add the service args
+								decoderService.putExtra("filePath", filePath);
+								decoderService.putExtra("messenger", messenger);
+								decoderService.putExtra("serviceCode", serviceCode);
+								
+								// start the service
+								CONTEXT.startService(decoderService);
 							}
 						}
 					}
 				}
-				
-					
-					/*// get a random number for the id
-					final int serviceCode = (int) (Math.random() * 1000000);
-					
-					Handler handler = new Handler()
-					{
-						@Override
-						public void handleMessage(Message msg) {
-							super.handleMessage(msg);
-							
-							// check the message results
-							if (msg.arg1 == Activity.RESULT_OK && msg.arg2 == serviceCode)
-							{
-								if (msg.obj != null)
-								{
-									// set the text view text
-									textView.setText(LIST_DATA[position]);
-									
-									// retrieve the Drawable from the message
-									Drawable image = (Drawable) msg.obj;
-									
-									if (imageView != null)
-									{	
-										// set the drawable
-										imageView.setBackground(image);
-									}
-								}
-							}
-						}
-					}; 
-					
-					// instantiate the decoding service
-					Intent decoderService = new Intent(CONTEXT, BitmapDecoderService.class);
-					
-					if (decoderService != null)
-					{
-						// create the messenger for the handler
-						Messenger messenger = new Messenger(handler);
 						
-						if (messenger != null)
-						{
-							// get the filepath for the selected item
-							String filePath = LIST_DATA_PATHS[position];
-							
-							// add the service args
-							decoderService.putExtra("filePath", filePath);
-							decoderService.putExtra("messenger", messenger);
-							decoderService.putExtra("serviceCode", serviceCode);
-							
-							// start the service
-							CONTEXT.startService(decoderService);
-						}
-					}*/
-		
 		return layout;
 	}
+	
 	
 	@Override
 	public boolean hasStableIds()
@@ -219,9 +201,5 @@ public class PhotoAdapter extends ArrayAdapter<String> {
 		
 		return photoPaths;
 	}
-	
-	
-	
-	
 
 }

@@ -27,7 +27,8 @@
         android:icon="@drawable/ic_launcher"
         android:logo="@drawable/hidn_branding"
         android:label="@string/blank"
-        android:theme="@style/AppTheme">
+        android:theme="@style/AppTheme"
+        android:largeHeap="true">
         <activity
             android:name="com.randerson.activities.StartUpActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
@@ -51,8 +52,10 @@
         <activity android:name="com.randerson.activities.ViewVideosActivity" android:screenOrientation="portrait"></activity>
         <activity android:name="com.randerson.activities.AddPhotosActivity" android:screenOrientation="portrait"></activity>
         <activity android:name="com.randerson.activities.AddVideosActivity" android:screenOrientation="portrait"></activity>
-        <activity android:name="com.randerson.activities.AddContactActivity"  android:screenOrientation="portrait"></activity>
+        <activity android:name="com.randerson.activities.AddContactActivity" android:screenOrientation="portrait"></activity>
         <service android:name="com.randerson.services.BitmapDecoderService"></service>
+        <activity android:name="com.randerson.activities.AddNotesActivity" android:screenOrientation="portrait"></activity>
+        <activity android:name="com.randerson.activities.ViewBookmarks" android:screenOrientation="portrait"></activity>
         
     </application>
 

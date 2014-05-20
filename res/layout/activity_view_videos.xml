@@ -4,21 +4,24 @@
     
     <LinearLayout android:orientation="vertical" android:layout_width="match_parent" android:layout_height="wrap_content" android:background="@drawable/theme_light" android:padding="2dip">
         
-        <VideoView android:id="@+id/videoPlayer" android:layout_width="match_parent" android:layout_height="wrap_content"/>
+        <TextView android:id="@+id/videoName" android:layout_width="match_parent" android:layout_height="50dip" android:text="@string/blank" android:background="@android:color/black"
+            android:textColor="@android:color/white" android:textStyle="bold"  android:gravity="center" android:textSize="20sp"/>
         
+        <VideoView android:id="@+id/videoPlayer" android:layout_width="match_parent" android:layout_height="wrap_content"/>
+       
         <LinearLayout style="@attr/buttonBarStyle" android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal">
             
             <Button style="@attr/buttonBarButtonStyle" android:drawableTop="@drawable/ic_av_rewind" android:layout_width="0dip" android:layout_weight="0.25" 
-                android:layout_height="wrap_content" android:text="@string/rewind"/>
+                android:layout_height="wrap_content" android:text="@string/rewind" android:id="@+id/rewindBtn"/>
             
             <Button style="@attr/buttonBarButtonStyle" android:id="@+id/playBtn" android:drawableTop="@drawable/ic_av_play" android:layout_width="0dip" android:layout_weight="0.25" 
-                android:layout_height="wrap_content" android:text="@string/rewind"/>
+                android:layout_height="wrap_content" android:text="@string/play"/>
             
             <Button style="@attr/buttonBarButtonStyle" android:id="@+id/pauseBtn" android:drawableTop="@drawable/ic_av_pause" android:layout_width="0dip" android:layout_weight="0.25" 
-                android:layout_height="wrap_content" android:text="@string/rewind"/>
+                android:layout_height="wrap_content" android:text="@string/pause"/>
             
             <Button style="@attr/buttonBarButtonStyle" android:id="@+id/fastForwardBtn" android:drawableTop="@drawable/ic_av_fast_forward" android:layout_width="0dip" android:layout_weight="0.25" 
-                android:layout_height="wrap_content" android:text="@string/rewind"/>
+                android:layout_height="wrap_content" android:text="@string/fastForward"/>
             
         </LinearLayout>
         

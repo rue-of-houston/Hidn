@@ -4,6 +4,7 @@ import libs.ApplicationDefaults;
 import libs.RegExManager;
 import libs.UniArray;
 
+import com.randerson.activities.ViewBookmarks;
 import com.randerson.hidn.R;
 import com.randerson.interfaces.Constants;
 import com.randerson.interfaces.FragmentSetup;
@@ -16,6 +17,7 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -47,7 +49,7 @@ public class BrowserActivity extends android.support.v4.app.Fragment implements 
 			Bundle savedInstanceState) {
 		
 		root = inflater.inflate(R.layout.activity_browser, container, false);
-		
+	
 		// turns on options menu in fragment
 		setHasOptionsMenu(true);
 		
@@ -57,6 +59,15 @@ public class BrowserActivity extends android.support.v4.app.Fragment implements 
 		if (parentView != null && parentView.hasValidPin())
 		{
 			urlField = (EditText) root.findViewById(R.id.webAddressField);
+			
+			LinearLayout browserBar = (LinearLayout) root.findViewById(R.id.browserBar);
+			
+			if (browserBar != null)
+			{
+				// set the drawable for the layout bg
+				int color = ThemeMaster.getThemeId(theme)[2];
+				browserBar.setBackgroundColor(color);
+			}
 			
 			if (urlField != null)
 			{
@@ -80,7 +91,7 @@ public class BrowserActivity extends android.support.v4.app.Fragment implements 
 			{
 				
 				// inflate the xml resource in the view
-				View view = inflater.inflate(R.layout.alert_dialog, null);
+				View view = inflater.inflate(R.layout.browser_alert_dialog, null);
 				
 				// create the input field and button from res
 				final EditText alertInputField = (EditText) view.findViewById(R.id.alertField);
@@ -223,7 +234,7 @@ public class BrowserActivity extends android.support.v4.app.Fragment implements 
 	@Override
 	public void setupActionBar() {
 		
-		int color = ThemeMaster.getThemeId(theme);
+		int color = ThemeMaster.getThemeId(theme)[0];
 		
 		// set the actionBar styling
 		getActivity().getActionBar().setBackgroundDrawable(getResources().getDrawable(color));
@@ -239,7 +250,7 @@ public class BrowserActivity extends android.support.v4.app.Fragment implements 
 			getActivity().getActionBar().setTitle("");
 		}
 		
-		int themeBId = ThemeMaster.getThemeId(themeB.toLowerCase());
+		int themeBId = ThemeMaster.getThemeId(themeB.toLowerCase())[0];
 		
 		// set the background styling
 		LinearLayout layoutBg = (LinearLayout) root.findViewById(R.id.browserBg);
@@ -306,7 +317,16 @@ public class BrowserActivity extends android.support.v4.app.Fragment implements 
 			}
 			else if (itemId == R.id.browser_view_bookmark)
 			{
+				// create the intent to launch the bookmark activity
+				Intent viewBookmarks = new Intent(getActivity(), ViewBookmarks.class);
 				
+				if (viewBookmarks != null)
+				{
+					viewBookmarks.setFlags(Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);
+					
+					// start the bookmark viewing activity
+					startActivityForResult(viewBookmarks, 100);
+				}
 			}
 		}
 	}
@@ -336,6 +356,33 @@ public void addBookmark(String name, String bookmark)
 			{
 				// add the bookmark
 				dataManager.saveItem(DataManager.BROWSER_DATA, bookmarkItem);
+			}
+		}
+	}
+
+	@Override
+	public void onActivityResult(int requestCode, int resultCode, Intent data) {
+		super.onActivityResult(requestCode, resultCode, data);
+		
+		// verify the result and request codes
+		if (requestCode == 100 && resultCode == Activity.RESULT_OK)
+		{
+			// check for non null data object
+			if (data != null)
+			{
+				Bundle extras = data.getExtras();
+				
+				if (extras != null)
+				{
+					// get the returned url
+					String url = extras.getString("url");
+					
+					if (url != null)
+					{
+						// set the urlField to the url
+						urlField.setText(url);
+					}
+				}
 			}
 		}
 	}

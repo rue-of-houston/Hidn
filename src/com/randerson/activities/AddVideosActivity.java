@@ -11,8 +11,8 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.LinearLayout;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
@@ -45,6 +45,9 @@ public class AddVideosActivity extends Activity implements FragmentSetup {
 	{
 		super.onCreate(savedInstanceState);
 		
+		// set the activity to full screen
+		getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);		
+				
 		setContentView(R.layout.activity_add_videos);
 		
 		// set fail result code
@@ -91,10 +94,17 @@ public class AddVideosActivity extends Activity implements FragmentSetup {
 					// set the gridView to allow multiple item selections
 					listView.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
 					
-					ArrayAdapter<String> adapter = new ListViewAdapter(getApplicationContext(), R.layout.video_list_item, R.id.videoListItem, videoNames);
+					ListViewAdapter adapter = new ListViewAdapter(getApplicationContext(), R.layout.video_list_item, R.id.videoListItem, videoNames);
 					
-					// set the listView adapter
-					listView.setAdapter(adapter);
+					if (adapter != null)
+					{
+						// set the listView adapter
+						listView.setAdapter(adapter);
+					}
+					
+					// set the drawable for the listView bg
+					int color = ThemeMaster.getThemeId(theme)[2];
+					listView.setBackgroundColor(color);
 					
 					// set the on item click listener
 					listView.setOnItemClickListener(new OnItemClickListener() {
@@ -134,7 +144,7 @@ public class AddVideosActivity extends Activity implements FragmentSetup {
 	@SuppressLint("DefaultLocale")
 	public void setupActionBar() {
 			
-		int color = ThemeMaster.getThemeId(theme);
+		int color = ThemeMaster.getThemeId(theme)[0];
 		
 		// set the actionBar styling
 		getActionBar().setBackgroundDrawable(getResources().getDrawable(color));
@@ -142,7 +152,7 @@ public class AddVideosActivity extends Activity implements FragmentSetup {
 		// set the title to appear for the drawerlist view
 		getActionBar().setTitle(TITLE);
 	
-		int themeBId = ThemeMaster.getThemeId(themeB.toLowerCase());
+		int themeBId = ThemeMaster.getThemeId(themeB.toLowerCase())[0];
 		
 		// set the background styling
 		LinearLayout layoutBg = (LinearLayout) findViewById(R.id.addVideoBg);
@@ -188,7 +198,7 @@ public class AddVideosActivity extends Activity implements FragmentSetup {
 		// method for saving the selected files
 		saveFiles();
 		
-		super.onBackPressed();
+		finish();
 	}
 	
 	@Override

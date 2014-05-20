@@ -7,6 +7,7 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.os.Bundle;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
@@ -27,6 +28,9 @@ public class AddContactActivity extends Activity implements FragmentSetup {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		
+		// set the activity to full screen
+		getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);		
 		
 		setContentView(R.layout.activity_add_contact);
 		
@@ -56,7 +60,7 @@ public class AddContactActivity extends Activity implements FragmentSetup {
 	@SuppressLint("DefaultLocale")
 	public void setupActionBar() {
 			
-		int color = ThemeMaster.getThemeId(theme);
+		int color = ThemeMaster.getThemeId(theme)[0];
 		
 		// set the actionBar styling
 		getActionBar().setBackgroundDrawable(getResources().getDrawable(color));
@@ -64,7 +68,7 @@ public class AddContactActivity extends Activity implements FragmentSetup {
 		// set the title to appear for the drawerlist view
 		getActionBar().setTitle(TITLE);
 		
-		int themeBId = ThemeMaster.getThemeId(themeB.toLowerCase());
+		int themeBId = ThemeMaster.getThemeId(themeB.toLowerCase())[0];
 		
 		// set the background styling
 		LinearLayout layoutBg = (LinearLayout) findViewById(R.id.addContactBg);

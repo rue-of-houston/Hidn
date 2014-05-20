@@ -40,6 +40,7 @@ public interface DataSetup {
 	public UniArray load(int dataType);
 	public boolean saveTopLevel(int dataType, UniArray data);
 	public boolean saveItem(int dataType, UniArray data);
+	public boolean removeItem(int dataType, String key);
 	
 	// methods for creating items for storing 1st-level UniArray
 	public UniArray createMediaItem(String filename, String sourcePath, String hidnPath, String[] encodedData);

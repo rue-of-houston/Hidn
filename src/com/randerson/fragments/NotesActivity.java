@@ -2,12 +2,14 @@ package com.randerson.fragments;
 
 import libs.ApplicationDefaults;
 import libs.UniArray;
-import com.randerson.activities.ViewNotesActivity;
+
+import com.randerson.activities.AddNotesActivity;
 import com.randerson.hidn.R;
 import com.randerson.interfaces.Constants;
 import com.randerson.interfaces.FragmentSetup;
 import com.randerson.interfaces.ViewHandler;
 import com.randerson.support.DataManager;
+import com.randerson.support.ListViewAdapter;
 import com.randerson.support.ThemeMaster;
 
 import android.annotation.SuppressLint;
@@ -20,7 +22,6 @@ import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.AdapterView.OnItemClickListener;
@@ -36,8 +37,10 @@ public class NotesActivity extends android.support.v4.app.Fragment implements Fr
 	public boolean defaultNavType;
 	public View root;
 	public String[] noteNames;
+	public String[] noteTitles;
 	public DataManager dataManager;
 	public String[] notePaths;
+	public ListView notesList;
 	
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -45,120 +48,126 @@ public class NotesActivity extends android.support.v4.app.Fragment implements Fr
 	{
 		root = inflater.inflate(R.layout.activity_notes, container, false);
 		
-		new Thread(new Runnable() {
+		// turns on options menu in fragment
+		setHasOptionsMenu(true);
+		
+		// load the application settings
+		loadApplicationSettings();
+		
+		if (parentView != null && parentView.hasValidPin())
+		{
 			
-			@Override
-			public void run() {
+			// init the dataManager object
+			dataManager = new DataManager(getActivity());
+			
+			if (dataManager != null)
+			{
+				// get the notes data object
+				UniArray notes = (UniArray) dataManager.load(DataManager.NOTE_DATA);
 				
-				// turns on options menu in fragment
-				setHasOptionsMenu(true);
-				
-				// load the application settings
-				loadApplicationSettings();
-				
-				if (parentView != null && parentView.hasValidPin())
+				if (notes !=  null)
 				{
+					// get the note object keys
+					noteNames = notes.getAllObjectKeys();
 					
-					// init the dataManager object
-					dataManager = new DataManager(getActivity());
+					// create an array to hold the note titles
+					noteTitles = new String[noteNames.length];
 					
-					if (dataManager != null)
+					// iterate over the noteNames array to extract the actual note titles
+					// for display inside the listview
+					for (int x = 0; x < noteNames.length; x++)
 					{
-						// get the notes data object
-						UniArray notes = (UniArray) dataManager.load(DataManager.NOTE_DATA);
+						UniArray item = (UniArray) notes.getObject(noteNames[x]);
 						
-						if (notes !=  null)
+						if (item != null)
 						{
-							// get the note object keys
-							noteNames = notes.getAllObjectKeys();
-
+							// set the note titles
+							noteTitles[x] = item.getString("title");
 						}
 					}
-					
-					// create the listview from layout file
-					ListView notesList = (ListView) root.findViewById(R.id.noteList);
-					
-					if (notesList != null && noteNames != null)
-					{
-						// create the adapter
-						ArrayAdapter<String> adapter = new ArrayAdapter<String>(getActivity(), R.layout.note_list_item, R.id.noteListItem, noteNames);
-						
-						// check if the adapter is valid
-						if (adapter != null)
-						{
-							notesList.setAdapter(adapter);
-						}
-						
-						// setup the single click listeners
-						notesList.setOnItemClickListener(new OnItemClickListener() {
 
-							@Override
-							public void onItemClick(AdapterView<?> parent, View view,
-									int position, long id)
-							{
-								
-								// create the intent to launch the detail view activity and the bundle for passing
-								// the activity details upon loading
-								Intent detailView = new Intent(getActivity(), ViewNotesActivity.class);
-								
-								// the selected item data will be passed into the detailView intent for showing / editing
-								switch(position)
-								{
-									case 0:
-										
-										break;
-										
-										default:
-											break;
-								}
-								
-								// verify the intent is valid, if so pass in the args and load it up
-								if (detailView != null)
-								{
-									
-									// disable the passLock
-									parentView.setDisablePassLock(true);
-									
-									// start the activity
-									startActivity(detailView);
-								}
-							}
-						});
-						
-						// setup the long click listener
-						notesList.setOnItemLongClickListener(new OnItemLongClickListener() {
-
-							@Override
-							public boolean onItemLongClick(AdapterView<?> parent,
-									View view, int position, long id)
-							{
-								
-								switch(position)
-								{
-									case 0:
-										break;
-									
-										default:
-											break;
-								}
-								
-								// returns false when no click event is consumed
-								return false;
-							}
-						});
-					}
+				}
+			}
+			
+			
+			// create the listview from layout file
+			notesList = (ListView) root.findViewById(R.id.noteList);
+			
+			if (notesList != null && noteNames != null)
+			{
+				// create the adapter
+				ListViewAdapter adapter = new ListViewAdapter(getActivity(), R.layout.note_list_item, R.id.noteListItem, noteTitles);
+				
+				// check if the adapter is valid
+				if (adapter != null)
+				{
+					notesList.setAdapter(adapter);
 				}
 				
+				// set the drawable for the listView bg
+				int color = ThemeMaster.getThemeId(theme)[2];
+				notesList.setBackgroundColor(color);
+				
+				// setup the single click listeners
+				notesList.setOnItemClickListener(new OnItemClickListener() {
+
+					@Override
+					public void onItemClick(AdapterView<?> parent, View view,
+							int position, long id)
+					{
+						
+						// create the intent to launch the view/edit note activity
+						Intent viewNote = new Intent(getActivity(), AddNotesActivity.class);
+						
+						if (viewNote != null)
+						{
+							// disable the passLock
+							parentView.setDisablePassLock(true);
+							
+							// add the new note parameter to false
+							viewNote.putExtra("isNew", false);
+							
+							// pass in the current selected note item key
+							viewNote.putExtra("key", noteNames[position]);
+							
+							viewNote.setFlags(Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);
+							
+							startActivity(viewNote);
+						}
+					}
+				});
+				
+				// setup the long click listener
+				notesList.setOnItemLongClickListener(new OnItemLongClickListener() {
+
+					@Override
+					public boolean onItemLongClick(AdapterView<?> parent,
+							View view, int position, long id)
+					{
+						
+						switch(position)
+						{
+							case 0:
+								break;
+							
+								default:
+									break;
+						}
+						
+						// returns false when no click event is consumed
+						return false;
+					}
+				});
 			}
-		}).run();
-		
+		}
+
 		return root;
 	}
 
 	@Override
 	public void setupActionBar() {
 		
-		int color = ThemeMaster.getThemeId(theme);
+		int color = ThemeMaster.getThemeId(theme)[0];
 		
 		// set the actionBar styling
 		getActivity().getActionBar().setBackgroundDrawable(getResources().getDrawable(color));
@@ -174,7 +183,7 @@ public class NotesActivity extends android.support.v4.app.Fragment implements Fr
 			getActivity().getActionBar().setTitle("");
 		}
 		
-		int themeBId = ThemeMaster.getThemeId(themeB.toLowerCase());
+		int themeBId = ThemeMaster.getThemeId(themeB.toLowerCase())[0];
 		
 		// set the background styling
 		LinearLayout layoutBg = (LinearLayout) root.findViewById(R.id.notesBg);
@@ -233,12 +242,17 @@ public class NotesActivity extends android.support.v4.app.Fragment implements Fr
 		// verify the id matches and the pin was valid
 		if (itemId == R.id.notes_add_note && parentView.hasValidPin())
 		{
-			/*Intent addNote = new Intent(getActivity(), AddNotesActivity.class);
+			Intent addNote = new Intent(getActivity(), AddNotesActivity.class);
 			
-			if (addNotes != null)
+			if (addNote != null)
 			{
-				startActivityForResult(addNotes, 100);
-			}*/
+				// add the new note parameter to true
+				addNote.putExtra("isNew", true);
+				
+				addNote.setFlags(Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);
+				
+				startActivity(addNote);
+			}
 		}
 	}
 }

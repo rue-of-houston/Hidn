@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" android:layout_gravity="center" android:layout_width="match_parent"
+    android:layout_height="match_parent" android:orientation="vertical" android:id="@+id/alertLayout" android:padding="10dip">
+    
+    <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/renameFile"
+        android:layout_gravity="center" android:labelFor="@+id/alertRenamePhoto" android:padding="5dip"/>
+    
+    <EditText android:id="@+id/alertRenamePhoto" android:layout_width="match_parent" android:layout_height="35dip" android:layout_gravity="center"
+        android:inputType="textCapWords" android:hint="@string/genericHint" android:layout_margin="3dip"/>
+    
+</LinearLayout>
