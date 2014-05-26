@@ -5,20 +5,23 @@ import libs.RegExManager;
 import libs.UniArray;
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.ScrollView;
 import android.widget.Toast;
 
 import com.randerson.hidn.R;
 import com.randerson.interfaces.FragmentSetup;
+import com.randerson.interfaces.Refresher;
 import com.randerson.support.DataManager;
 import com.randerson.support.ThemeMaster;
 
-public class AddContactActivity extends Activity implements FragmentSetup {
+public class AddContactActivity extends Activity implements FragmentSetup, Refresher {
 
 	public final String TITLE = "New Contact";
 	public boolean defaultNavType;
@@ -78,6 +81,15 @@ public class AddContactActivity extends Activity implements FragmentSetup {
 		{
 			layoutBg.setBackground(getResources().getDrawable(themeBId));
 		}
+		
+		ScrollView layoutBg2 = (ScrollView) findViewById(R.id.addContactBg2);
+		
+		if (layoutBg2 != null)
+		{
+			// set the drawable for the listView bg
+			int color2 = ThemeMaster.getThemeId(theme)[2];
+			layoutBg2.setBackgroundColor(color2);
+		}
 	}
 
 	@Override
@@ -104,7 +116,8 @@ public class AddContactActivity extends Activity implements FragmentSetup {
 	
 	@Override
 	public void onBackPressed() {
-		super.onBackPressed();
+		
+		restartParent();
 	}
 	
 	@Override
@@ -266,6 +279,57 @@ public class AddContactActivity extends Activity implements FragmentSetup {
 		}
 		
 		return hasValidForms;
+	}
+	
+	@Override
+	public void restartParent()
+	{
+		boolean privateMode = false;
+		
+		ApplicationDefaults defaults = new ApplicationDefaults(this);
+		
+		if (defaults != null)
+		{
+			// set the app to reload the last view upon restart
+			defaults.set("loadLastView", true);
+			
+			// get the private boolean
+			privateMode = defaults.getData().getBoolean("privateMode", false);
+		}
+		
+		Intent navStyle = null;
+		
+		// create intent on navStyle that is selected
+		if (defaultNavType)
+		{
+			// pagerview swipe nav
+			navStyle = new Intent(this, PagerFragmentActivity.class);
+		}
+		else if (!defaultNavType)
+		{
+			// drawerlist nav
+			navStyle = new Intent(this, DrawerFragmentActivity.class);
+		}
+		
+		// verify the intent is valid and change the activity
+		if (navStyle != null)
+		{
+			// check if private mode is enabled
+			if (privateMode)
+			{
+				// set the flag to exclude from recent menu
+				navStyle.setFlags(Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);
+			}
+			
+			// set the flag clearing duplicate activities
+			navStyle.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+			
+			// set the password validation arg
+			navStyle.putExtra("passwordIsValid", true);
+			
+			// restart the parent
+			startActivity(navStyle);
+		}
 	}
 
 }

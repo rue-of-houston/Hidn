@@ -18,7 +18,9 @@ public interface ExplorerSetup
 	public final String MOVIES = Environment.DIRECTORY_MOVIES;
 	public final String DOWNLOADS = Environment.DIRECTORY_DOWNLOADS;
 	public final String MUSIC = Environment.DIRECTORY_MUSIC;
-	public final String MAIN_DIRECTORY = Environment.getExternalStorageDirectory().toString(); 
+	public final String BLUETOOTH = Environment.getExternalStorageDirectory().getPath() + "/Bluetooth";
+	public final String DOCUMENTS = Environment.getExternalStorageDirectory().getPath() + "/Documents";
+	public final String MAIN_DIRECTORY = Environment.getExternalStorageDirectory().getPath(); 
 	
 	public ArrayList<File> getDirectories(File directory);
 	public ArrayList<File> getListOfPhotos();

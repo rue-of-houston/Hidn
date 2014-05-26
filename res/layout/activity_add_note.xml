@@ -5,15 +5,15 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:background="@drawable/theme_dark">
-
-    <TextView style="@style/securityTitleStyle" android:textColor="#FFFFFF" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/noteDirections" 
-        android:layout_marginBottom="3dip" android:layout_marginTop="2dip" android:padding="10dip" android:id="@+id/noteInstructions"/>
     
    <ScrollView android:layout_width="match_parent" android:layout_height="wrap_content" android:padding="15dip" 
-       android:layout_margin="3dip" android:background="@drawable/theme_dark">
+       android:layout_margin="3dip" android:background="@drawable/theme_dark" android:id="@+id/addNoteBg2">
        
        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
        android:orientation="vertical">
+      
+       <TextView style="@style/securityTitleStyle" android:textColor="#FFFFFF" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/noteDirections" 
+        android:layout_marginBottom="3dip" android:layout_marginTop="2dip" android:padding="10dip" android:id="@+id/noteInstructions"/>
        
        <TextView style="@style/signupTextView" android:textColor="#FFFFFF" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/title" android:layout_marginTop="5dip"/>
        <EditText android:id="@+id/noteTitle" android:textColor="#000000" android:layout_width="match_parent" android:layout_height="35dip" android:hint="@string/blank"

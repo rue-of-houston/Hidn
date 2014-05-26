@@ -1,30 +1,14 @@
 <?xml version="1.0" encoding="utf-8" ?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android" android:id="@+id/viewVideosBg"
-    android:layout_width="match_parent" android:layout_height="match_parent" android:padding="10dip">
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" android:id="@+id/viewVideosBg" android:background="#000000"
+    android:layout_width="match_parent" android:layout_height="match_parent" android:orientation="vertical" android:padding="10dip">
     
-    <LinearLayout android:orientation="vertical" android:layout_width="match_parent" android:layout_height="wrap_content" android:background="@drawable/theme_light" android:padding="2dip">
+    <LinearLayout android:id="@+id/videoBg2" android:orientation="vertical" android:layout_width="match_parent" android:layout_height="wrap_content" android:background="@drawable/theme_light" android:padding="2dip">
         
-        <TextView android:id="@+id/videoName" android:layout_width="match_parent" android:layout_height="50dip" android:text="@string/blank" android:background="@android:color/black"
+        <TextView android:id="@+id/videoName" android:layout_width="match_parent" android:layout_height="50dip" android:text="@string/blank" android:background="@android:color/transparent"
             android:textColor="@android:color/white" android:textStyle="bold"  android:gravity="center" android:textSize="20sp"/>
         
-        <VideoView android:id="@+id/videoPlayer" android:layout_width="match_parent" android:layout_height="wrap_content"/>
-       
-        <LinearLayout style="@attr/buttonBarStyle" android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal">
-            
-            <Button style="@attr/buttonBarButtonStyle" android:drawableTop="@drawable/ic_av_rewind" android:layout_width="0dip" android:layout_weight="0.25" 
-                android:layout_height="wrap_content" android:text="@string/rewind" android:id="@+id/rewindBtn"/>
-            
-            <Button style="@attr/buttonBarButtonStyle" android:id="@+id/playBtn" android:drawableTop="@drawable/ic_av_play" android:layout_width="0dip" android:layout_weight="0.25" 
-                android:layout_height="wrap_content" android:text="@string/play"/>
-            
-            <Button style="@attr/buttonBarButtonStyle" android:id="@+id/pauseBtn" android:drawableTop="@drawable/ic_av_pause" android:layout_width="0dip" android:layout_weight="0.25" 
-                android:layout_height="wrap_content" android:text="@string/pause"/>
-            
-            <Button style="@attr/buttonBarButtonStyle" android:id="@+id/fastForwardBtn" android:drawableTop="@drawable/ic_av_fast_forward" android:layout_width="0dip" android:layout_weight="0.25" 
-                android:layout_height="wrap_content" android:text="@string/fastForward"/>
-            
-        </LinearLayout>
+        <VideoView android:id="@+id/vPlayer" android:layout_width="match_parent" android:layout_height="match_parent" android:layout_gravity="center"/>
         
     </LinearLayout>
     
-</ScrollView>
+</LinearLayout>

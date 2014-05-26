@@ -5,7 +5,7 @@
 	<LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical"
 	    android:padding="2dip">
 	    
-	 <LinearLayout android:orientation="horizontal" android:layout_marginBottom="5dip" android:padding="10dip" android:layout_width="match_parent" android:layout_height="wrap_content" android:background="@drawable/contact_gradient">
+	 <LinearLayout android:id="@+id/contactHeader" android:orientation="horizontal" android:layout_marginBottom="5dip" android:padding="10dip" android:layout_width="match_parent" android:layout_height="wrap_content" android:background="@drawable/contact_gradient">
       
         <ImageView android:layout_marginBottom="5dip" android:layout_width="0dip" android:minHeight="120dip" android:minWidth="120dip" android:layout_height="wrap_content" android:layout_weight="0.5" android:contentDescription="@string/blank" android:src="@drawable/image_icon"/>
         <EditText android:id="@+id/contactNameField" android:layout_marginLeft="4dip" android:layout_marginBottom="20dip" android:enabled="false" android:layout_weight="0.5" android:inputType="textCapWords" android:hint="@string/blank" android:layout_width="match_parent" 

@@ -21,6 +21,9 @@
     <uses-permission android:name="android.permission.WRITE_SMS"/>
     <uses-permission android:name="android.permission.SEND_SMS"/>
     <uses-permission android:name="android.permission.CALL_PHONE"/>
+    <uses-permission android:name="android.permission.WRITE_CALL_LOG"/>
+    <uses-permission android:name="android.permission.WRITE_CONTACTS"/>
+    <uses-permission android:name="android.permission.READ_PHONE_STATE"/>
 
     <application
         android:allowBackup="true"
@@ -56,6 +59,8 @@
         <service android:name="com.randerson.services.BitmapDecoderService"></service>
         <activity android:name="com.randerson.activities.AddNotesActivity" android:screenOrientation="portrait"></activity>
         <activity android:name="com.randerson.activities.ViewBookmarks" android:screenOrientation="portrait"></activity>
+        <service android:name="com.randerson.services.VideoPlayerService"></service>
+        <activity android:name="com.randerson.activities.AddDocumentsActivity" android:screenOrientation="portrait"></activity>
         
     </application>
 

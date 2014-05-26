@@ -10,6 +10,7 @@ import libs.UniArray;
 import com.randerson.hidn.R;
 import com.randerson.interfaces.DataSetup;
 import com.randerson.interfaces.FragmentSetup;
+import com.randerson.interfaces.Refresher;
 import com.randerson.services.BitmapDecoderService;
 import com.randerson.support.DataManager;
 import com.randerson.support.HidNExplorer;
@@ -31,11 +32,12 @@ import android.view.View.OnClickListener;
 import android.view.WindowManager;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-public class ViewPhotosActivity extends Activity implements FragmentSetup {
+public class ViewPhotosActivity extends Activity implements FragmentSetup, Refresher {
 
 	public String TITLE = "Photo Viewer";
 	public String theme;
@@ -101,23 +103,29 @@ public class ViewPhotosActivity extends Activity implements FragmentSetup {
 			
 		}
 	
+		// alert builder for building the custom rename file alert
 		AlertDialog.Builder builder = new AlertDialog.Builder(this);
 		
 		if (builder != null)
 		{
 			// inflate the xml resource in the view
-			
 			View view =  getLayoutInflater().inflate(R.layout.rename_photo_alert, null);
 			
 			// create the input field and button from res
 			final EditText alertInputField = (EditText) view.findViewById(R.id.alertRenamePhoto);
+			
+			if (alertInputField != null)
+			{
+				// set the filename to appear
+				alertInputField.setText(fileName);
+			}
 			
 			// set the builder params
 			builder.setCancelable(false);
 			builder.setView(view);
 			builder.setTitle("Rename File");
 			
-			builder.setPositiveButton("Add", new DialogInterface.OnClickListener() {
+			builder.setPositiveButton("Done", new DialogInterface.OnClickListener() {
 				
 				public void onClick(DialogInterface dialog, int which)
 				{
@@ -211,7 +219,7 @@ public class ViewPhotosActivity extends Activity implements FragmentSetup {
 							// dismiss the dialog
 							dialog.dismiss();
 							
-							finish();
+							onBackPressed();
 						}
 						else
 						{
@@ -265,6 +273,7 @@ public class ViewPhotosActivity extends Activity implements FragmentSetup {
 							
 							// set the drawable
 							imageView.setBackground(image);
+							
 						}
 					}
 				}
@@ -299,6 +308,7 @@ public class ViewPhotosActivity extends Activity implements FragmentSetup {
 		}
 	}
 	
+	
 	@Override
 	public void setupActionBar() {
 		
@@ -319,6 +329,16 @@ public class ViewPhotosActivity extends Activity implements FragmentSetup {
 		if (layoutBg != null)
 		{
 			layoutBg.setBackground(getResources().getDrawable(themeBId));
+		}
+		
+		// set the background styling
+		LinearLayout layoutBg2 = (LinearLayout) findViewById(R.id.photoBg2);
+		
+		if (layoutBg2 != null)
+		{
+			// set the drawable for the border bg
+			int color2 = ThemeMaster.getThemeId(theme)[2];
+			layoutBg2.setBackgroundColor(color2);
 		}
 	}
 
@@ -366,6 +386,64 @@ public class ViewPhotosActivity extends Activity implements FragmentSetup {
 		if (msg != null)
 		{
 			msg.show();
+		}
+	}
+	
+	@Override
+	public void onBackPressed() {
+	
+		restartParent();
+		
+	}
+	
+	@Override
+	public void restartParent()
+	{
+		boolean privateMode = false;
+		
+		ApplicationDefaults defaults = new ApplicationDefaults(this);
+		
+		if (defaults != null)
+		{
+			// set the app to reload the last view upon restart
+			defaults.set("loadLastView", true);
+			
+			// get the private boolean
+			privateMode = defaults.getData().getBoolean("privateMode", false);
+		}
+		
+		Intent navStyle = null;
+		
+		// create intent on navStyle that is selected
+		if (defaultNavType)
+		{
+			// pagerview swipe nav
+			navStyle = new Intent(this, PagerFragmentActivity.class);
+		}
+		else if (!defaultNavType)
+		{
+			// drawerlist nav
+			navStyle = new Intent(this, DrawerFragmentActivity.class);
+		}
+		
+		// verify the intent is valid and change the activity
+		if (navStyle != null)
+		{
+			// check if private mode is enabled
+			if (privateMode)
+			{
+				// set the flag to exclude from recent menu
+				navStyle.setFlags(Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);
+			}
+			
+			// set the flag clearing duplicate activities
+			navStyle.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+			
+			// set the password validation arg
+			navStyle.putExtra("passwordIsValid", true);
+			
+			// restart the parent
+			startActivity(navStyle);
 		}
 	}
 	

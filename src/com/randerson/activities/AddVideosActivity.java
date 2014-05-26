@@ -7,6 +7,7 @@ import libs.ApplicationDefaults;
 import libs.UniArray;
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -21,13 +22,14 @@ import android.widget.TextView;
 import com.randerson.hidn.R;
 import com.randerson.interfaces.EncryptionSetup;
 import com.randerson.interfaces.FragmentSetup;
+import com.randerson.interfaces.Refresher;
 import com.randerson.support.DataManager;
 import com.randerson.support.HidNCipher;
 import com.randerson.support.HidNExplorer;
 import com.randerson.support.ListViewAdapter;
 import com.randerson.support.ThemeMaster;
 
-public class AddVideosActivity extends Activity implements FragmentSetup {
+public class AddVideosActivity extends Activity implements FragmentSetup, Refresher {
 
 	public final String TITLE = "Video Browser";
 	ArrayList<File> videos;
@@ -53,92 +55,85 @@ public class AddVideosActivity extends Activity implements FragmentSetup {
 		// set fail result code
 		setResult(RESULT_CANCELED);
 		
-		new Thread(new Runnable() {
+		// load the application settings
+		loadApplicationSettings();
+		
+		// initialize the required support classes
+		dataManager = new DataManager(getApplicationContext());
+		cipher = new HidNCipher(getApplicationContext(), EncryptionSetup.AES_ALGORITHM);
+		explorer = new HidNExplorer(getApplicationContext());
+		
+		if (explorer != null)
+		{
+			videos = explorer.getListOfVideos();
 			
-			@Override
-			public void run()
+			if (videos != null)
 			{
-				// load the application settings
-				//loadApplicationSettings();
+				// initialize the video names resource
+				videoNames = new String[videos.size()];
 				
-				// initialize the required support classes
-				dataManager = new DataManager(getApplicationContext());
-				cipher = new HidNCipher(getApplicationContext(), EncryptionSetup.AES_ALGORITHM);
-				explorer = new HidNExplorer(getApplicationContext());
-				
-				if (explorer != null)
+				for (int n = 0; n < videos.size(); n++)
 				{
-					videos = explorer.getListOfVideos();
+					// get the file name for the file at current index
+					String filename = videos.get(n).getName();
 					
-					if (videos != null)
-					{
-						// initialize the video names resource
-						videoNames = new String[videos.size()];
-						
-						for (int n = 0; n < videos.size(); n++)
-						{
-							// get the file name for the file at current index
-							String filename = videos.get(n).getName();
-							
-							// add the filename to the resource string array
-							videoNames[n] = filename;
-						}
-					}
-				}
-				
-				// create gridview from layout xml res
-				listView = (ListView) findViewById(R.id.videosList);
-				
-				if (listView != null && videos != null)
-				{
-					// set the gridView to allow multiple item selections
-					listView.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
-					
-					ListViewAdapter adapter = new ListViewAdapter(getApplicationContext(), R.layout.video_list_item, R.id.videoListItem, videoNames);
-					
-					if (adapter != null)
-					{
-						// set the listView adapter
-						listView.setAdapter(adapter);
-					}
-					
-					// set the drawable for the listView bg
-					int color = ThemeMaster.getThemeId(theme)[2];
-					listView.setBackgroundColor(color);
-					
-					// set the on item click listener
-					listView.setOnItemClickListener(new OnItemClickListener() {
-
-						@Override
-						public void onItemClick(AdapterView<?> parent, View view,
-								int position, long id) {
-							
-							// get instance of the linearLayout
-							LinearLayout layout = (LinearLayout) view;
-							TextView txtView = null;
-							
-							if (layout != null)
-							{
-								txtView = (TextView) layout.findViewById(R.id.videoListItem);
-							}
-							
-							// get the check state of the item at current position
-							boolean state = listView.isItemChecked(position);
-							
-							// highlight checked items and un-highlight unchecked items
-							if (state == true && txtView != null)
-							{
-								txtView.setBackgroundColor(getResources().getColor(android.R.color.holo_orange_dark));
-							}
-							else
-							{
-								txtView.setBackgroundColor(getResources().getColor(android.R.color.transparent));
-							}
-						}
-					});
+					// add the filename to the resource string array
+					videoNames[n] = filename;
 				}
 			}
-		}).run();
+		}
+		
+		// create list from layout xml res
+		listView = (ListView) findViewById(R.id.videosList);
+		
+		if (listView != null && videos != null)
+		{
+			// set the gridView to allow multiple item selections
+			listView.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
+			
+			ListViewAdapter adapter = new ListViewAdapter(getApplicationContext(), R.layout.video_list_item, R.id.videoListItem, videoNames);
+			
+			if (adapter != null)
+			{
+				// set the listView adapter
+				listView.setAdapter(adapter);
+			}
+			
+			// set the drawable for the listView bg
+			int color = ThemeMaster.getThemeId(theme)[2];
+			listView.setBackgroundColor(color);
+			
+			// set the on item click listener
+			listView.setOnItemClickListener(new OnItemClickListener() {
+
+				@Override
+				public void onItemClick(AdapterView<?> parent, View view,
+						int position, long id) {
+					
+					// get instance of the linearLayout
+					LinearLayout layout = (LinearLayout) view;
+					TextView txtView = null;
+					
+					if (layout != null)
+					{
+						txtView = (TextView) layout.findViewById(R.id.videoListItem);
+					}
+					
+					// get the check state of the item at current position
+					boolean state = listView.isItemChecked(position);
+					
+					// highlight checked items and un-highlight unchecked items
+					if (state == true && txtView != null)
+					{
+						txtView.setBackgroundColor(getResources().getColor(android.R.color.holo_orange_dark));
+					}
+					else
+					{
+						txtView.setBackgroundColor(getResources().getColor(android.R.color.transparent));
+					}
+				}
+			});
+		}
 	}
 	
 	@SuppressLint("DefaultLocale")
@@ -198,7 +193,7 @@ public class AddVideosActivity extends Activity implements FragmentSetup {
 		// method for saving the selected files
 		saveFiles();
 		
-		finish();
+		restartParent();
 	}
 	
 	@Override
@@ -314,6 +309,57 @@ public class AddVideosActivity extends Activity implements FragmentSetup {
 				
 			}
 		}).run();
+	}
+	
+	@Override
+	public void restartParent()
+	{
+		boolean privateMode = false;
+		
+		ApplicationDefaults defaults = new ApplicationDefaults(this);
+		
+		if (defaults != null)
+		{
+			// set the app to reload the last view upon restart
+			defaults.set("loadLastView", true);
+			
+			// get the private boolean
+			privateMode = defaults.getData().getBoolean("privateMode", false);
+		}
+		
+		Intent navStyle = null;
+		
+		// create intent on navStyle that is selected
+		if (defaultNavType)
+		{
+			// pagerview swipe nav
+			navStyle = new Intent(this, PagerFragmentActivity.class);
+		}
+		else if (!defaultNavType)
+		{
+			// drawerlist nav
+			navStyle = new Intent(this, DrawerFragmentActivity.class);
+		}
+		
+		// verify the intent is valid and change the activity
+		if (navStyle != null)
+		{
+			// check if private mode is enabled
+			if (privateMode)
+			{
+				// set the flag to exclude from recent menu
+				navStyle.setFlags(Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);
+			}
+			
+			// set the flag clearing duplicate activities
+			navStyle.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+			
+			// set the password validation arg
+			navStyle.putExtra("passwordIsValid", true);
+			
+			// restart the parent
+			startActivity(navStyle);
+		}
 	}
 	
 }

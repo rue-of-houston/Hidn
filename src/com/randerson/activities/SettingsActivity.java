@@ -14,6 +14,7 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
 import android.widget.CompoundButton;
+import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.Spinner;
@@ -467,6 +468,15 @@ public class SettingsActivity extends Activity {
 		if (settingsBg != null)
 		{
 			settingsBg.setBackground(getResources().getDrawable(themeBId));
+		}
+		
+		LinearLayout settingsBg2 = (LinearLayout) findViewById(R.id.settingsBg2);
+		
+		if (settingsBg2 != null)
+		{
+			// set the drawable for the listView bg
+			int color = ThemeMaster.getThemeId(theme)[2];
+			settingsBg2.setBackgroundColor(color);
 		}
 	}
 	

@@ -3,6 +3,6 @@
     android:layout_width="match_parent" android:layout_height="match_parent" android:orientation="vertical" style="@style/fragmentContainerStyle" android:background="#111111">
     
     <ListView android:id="@+id/bookmarksList" android:background="#A6D5E5" android:layout_width="match_parent" android:layout_height="match_parent"
-        android:dividerHeight="2dip"/>
+        android:dividerHeight="2dip" android:padding="1dip"/>
     
 </LinearLayout>

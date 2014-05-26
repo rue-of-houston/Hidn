@@ -73,6 +73,7 @@ public class HidNExplorer implements ExplorerSetup {
 		File[] directories = new File[] {
 											getPublicDirectory(PICTURES),
 											getPublicDirectory(DCIM),
+											new File(BLUETOOTH),
 											getPublicDirectory(DOWNLOADS)
 										};
 		
@@ -96,7 +97,8 @@ public class HidNExplorer implements ExplorerSetup {
 		File[] directories = new File[] {
 											getPublicDirectory(MOVIES),
 											getPublicDirectory(DCIM),
-											getPublicDirectory(DOWNLOADS)
+											getPublicDirectory(DOWNLOADS),
+											new File(BLUETOOTH)
 										};
 		
 		// get a list of all video files in the provided directories
@@ -113,7 +115,7 @@ public class HidNExplorer implements ExplorerSetup {
 		ArrayList<File> documentList = new ArrayList<File>();
 				
 		// file types to query and return
-		String[] fileTypes = new String[] {".pdf", ".txt", ".doc"};
+		String[] fileTypes = new String[] {".pdf", ".txt", ".doc", "docx"};
 		
 		// system directories to query in
 		File[] directories = new File[] {
@@ -141,7 +143,10 @@ public class HidNExplorer implements ExplorerSetup {
 			// iterate over the passed in directories / files
 			for (int n = 0; n < directories.length; n++)
 			{
-				fileList = query(directories[n], fileList);
+				if (directories[n] != null && directories[n].exists())
+				{
+					fileList = query(directories[n], fileList);
+				}
 			}
 			
 			// iterate over each file in the fileList
@@ -184,8 +189,8 @@ public class HidNExplorer implements ExplorerSetup {
 	// method for returning all files and nested files in a filepath
 	private ArrayList<File> query(File filePath, ArrayList<File> listOfFiles)
 	{
-		// check if the file is a directory to be re-queried or a file to be added
-		if (filePath.isDirectory())
+		// check if the file is a directory to be re-queried or a file to be added ** checks to not query app folder **
+		if (filePath.isDirectory() && filePath.getPath().equals("/storage/emulated/0/Android/data/com.randerson.hidn") == false)
 		{
 			// get a list of the files inside this directory
 			File[] filesArray = filePath.listFiles();
@@ -267,19 +272,31 @@ public class HidNExplorer implements ExplorerSetup {
 		// get the source file filename
 		String filename = source.getName();
 		
+		// hide the file if true, otherwise unhide if hidden
 		if (shouldHideFile)
 		{
 			filename = "." + filename;
 		}
+		else if (!shouldHideFile)
+		{
+			if (filename.startsWith("."))
+			{
+				// unhide the previously hidden file
+				filename = filename.substring(1);
+			}
+		}
 		
+		// the destination path for the file
 		destination = new File(destination.getPath(), filename);
 		Log.i("Path", destination.getPath());
 		
 		try {
 			
+			// open an input and output stream for the files
 			FileInputStream inputStream = new FileInputStream(source);
 			FileOutputStream outputStream = new FileOutputStream(destination);
 			
+			// get the file channels
 			FileChannel sourceChannel = inputStream.getChannel();
 			FileChannel destinationChannel = outputStream.getChannel();
 			
@@ -290,6 +307,7 @@ public class HidNExplorer implements ExplorerSetup {
 					long count = 0;
 					long size = sourceChannel.size();
 					
+					// transfer the bytes
 					while (count < size)
 					{
 						count += sourceChannel.transferTo(0, size-count, destinationChannel);
@@ -297,6 +315,7 @@ public class HidNExplorer implements ExplorerSetup {
 						Log.i("File Channel", count + " Bytes Transferred Out Of " + size);
 					}
 					
+					// close the channels
 					sourceChannel.close();
 					destinationChannel.close();
 					
@@ -322,6 +341,7 @@ public class HidNExplorer implements ExplorerSetup {
 				}
 			}
 			
+			// close the streams
 			inputStream.close();
 			outputStream.close();
 			

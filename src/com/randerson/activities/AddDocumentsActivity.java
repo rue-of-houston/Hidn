@@ -1,5 +1,4 @@
 package com.randerson.activities;
-
 import java.io.File;
 import java.util.ArrayList;
 
@@ -13,7 +12,7 @@ import com.randerson.interfaces.Refresher;
 import com.randerson.support.DataManager;
 import com.randerson.support.HidNCipher;
 import com.randerson.support.HidNExplorer;
-import com.randerson.support.ImageAdapter;
+import com.randerson.support.ListViewAdapter;
 import com.randerson.support.ThemeMaster;
 
 import android.annotation.SuppressLint;
@@ -25,97 +24,112 @@ import android.view.Menu;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.AdapterView;
-import android.widget.AdapterView.OnItemClickListener;
-import android.widget.GridView;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ListView;
+import android.widget.TextView;
+import android.widget.AdapterView.OnItemClickListener;
 
-@SuppressLint("DefaultLocale")
-public class AddPhotosActivity extends Activity implements FragmentSetup, Refresher {
+public class AddDocumentsActivity extends Activity implements FragmentSetup, Refresher {
 
-	public final String TITLE = "Photo Browser";
-	ArrayList<File> photos;
+	public final String TITLE = "Document Browser";
 	public boolean defaultNavType;
 	public String theme;
 	public String themeB;
-	GridView gridView;
+	ListView docList;
 	HidNExplorer explorer;
 	DataManager dataManager;
 	HidNCipher cipher;
+	String[] documentNames;
+	ArrayList<File> documents;
 	
 	@Override
-	protected void onCreate(Bundle savedInstanceState) 
-	{
+	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		
 		// set the activity to full screen
 		getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);		
 		
-		setContentView(R.layout.activity_add_photos);
+		setContentView(R.layout.activity_add_documents);
 		
-		// set fail result code
-		setResult(RESULT_CANCELED);
+		// load the application settings
+		loadApplicationSettings();
 		
-		new Thread(new Runnable() {
+		// initialize the required support classes
+		dataManager = new DataManager(getApplicationContext());
+		cipher = new HidNCipher(getApplicationContext(), EncryptionSetup.AES_ALGORITHM);
+		explorer = new HidNExplorer(getApplicationContext());
+		
+		if (explorer != null)
+		{
+			documents = explorer.getListOfDocuments();
 			
-			@Override
-			public void run()
+			if (documents != null)
 			{
-				// load the application settings
-				loadApplicationSettings();
+				// initialize the document names resource
+				documentNames = new String[documents.size()];
 				
-				// initialize the required support classes
-				dataManager = new DataManager(getApplicationContext());
-				cipher = new HidNCipher(getApplicationContext(), EncryptionSetup.AES_ALGORITHM);
-				explorer = new HidNExplorer(getApplicationContext());
-				
-				if (explorer != null)
+				for (int n = 0; n < documents.size(); n++)
 				{
-					photos = explorer.getListOfPhotos();
-				}
-				
-				// create gridview from layout xml res
-				gridView = (GridView) findViewById(R.id.photosGrid);
-				
-				if (gridView != null && photos != null)
-				{
-					// set the drawable for the listView bg
-					int color = ThemeMaster.getThemeId(theme)[2];
-					gridView.setBackgroundColor(color);
+					// get the file name for the file at current index
+					String filename = documents.get(n).getName();
 					
-					// set the gridView to allow multiple item selections
-					gridView.setChoiceMode(GridView.CHOICE_MODE_MULTIPLE);
-					
-					// set the gridView custom adapter
-					gridView.setAdapter(new ImageAdapter(getApplicationContext(), photos));
-					
-					// set the on item click listener
-					gridView.setOnItemClickListener(new OnItemClickListener() {
-
-						@Override
-						public void onItemClick(AdapterView<?> parent, View view,
-								int position, long id) {
-							
-							// get instance of the imageView
-							ImageView img = (ImageView) view;
-							
-							// get the check state of the item at current position
-							boolean state = gridView.isItemChecked(position);
-							
-							// highlight checked items and un-highlight unchecked items
-							if (state == true)
-							{
-								img.setBackgroundColor(getResources().getColor(android.R.color.holo_orange_dark));
-							}
-							else
-							{
-								img.setBackgroundColor(getResources().getColor(android.R.color.transparent));
-							}
-						}
-					});
+					// add the filename to the resource string array
+					documentNames[n] = filename;
 				}
 			}
-		}).run();
+		}
+		
+		// create list from layout xml res
+		docList = (ListView) findViewById(R.id.documentsList);
+		
+		if (docList != null && documents != null)
+		{
+			// set the gridView to allow multiple item selections
+			docList.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
+			
+			ListViewAdapter adapter = new ListViewAdapter(getApplicationContext(), R.layout.document_list_item, R.id.documentListItem, documentNames);
+			
+			if (adapter != null)
+			{
+				// set the listView adapter
+				docList.setAdapter(adapter);
+			}
+			
+			// set the drawable for the listView bg
+			int color = ThemeMaster.getThemeId(theme)[2];
+			docList.setBackgroundColor(color);
+			
+			// set the on item click listener
+			docList.setOnItemClickListener(new OnItemClickListener() {
+
+				@Override
+				public void onItemClick(AdapterView<?> parent, View view,
+						int position, long id) {
+					
+					// get instance of the linearLayout
+					LinearLayout layout = (LinearLayout) view;
+					TextView txtView = null;
+					
+					if (layout != null)
+					{
+						txtView = (TextView) layout.findViewById(R.id.documentListItem);
+					}
+					
+					// get the check state of the item at current position
+					boolean state = docList.isItemChecked(position);
+					
+					// highlight checked items and un-highlight unchecked items
+					if (state == true && txtView != null)
+					{
+						txtView.setBackgroundColor(getResources().getColor(android.R.color.holo_orange_dark));
+					}
+					else
+					{
+						txtView.setBackgroundColor(getResources().getColor(android.R.color.transparent));
+					}
+				}
+			});
+		}
 	}
 	
 	@SuppressLint("DefaultLocale")
@@ -125,14 +139,14 @@ public class AddPhotosActivity extends Activity implements FragmentSetup, Refres
 		
 		// set the actionBar styling
 		getActionBar().setBackgroundDrawable(getResources().getDrawable(color));
-		
+			
 		// set the title to appear for the drawerlist view
 		getActionBar().setTitle(TITLE);
-		
+	
 		int themeBId = ThemeMaster.getThemeId(themeB.toLowerCase())[0];
 		
 		// set the background styling
-		LinearLayout layoutBg = (LinearLayout) findViewById(R.id.addPhotoBg);
+		LinearLayout layoutBg = (LinearLayout) findViewById(R.id.addDocumentsBg);
 		
 		// verify the view is valid first
 		if (layoutBg != null)
@@ -145,7 +159,7 @@ public class AddPhotosActivity extends Activity implements FragmentSetup, Refres
 	public void loadApplicationSettings()
 	{
 		// create a application defaults object to load app settings
-		ApplicationDefaults defaults = new ApplicationDefaults(this);
+		ApplicationDefaults defaults = new ApplicationDefaults(this.getApplicationContext());
 		
 		if (defaults != null)
 		{
@@ -174,7 +188,7 @@ public class AddPhotosActivity extends Activity implements FragmentSetup, Refres
 		
 		// method for saving the selected files
 		saveFiles();
-	
+		
 		restartParent();
 	}
 	
@@ -182,7 +196,7 @@ public class AddPhotosActivity extends Activity implements FragmentSetup, Refres
 	protected void onPause() {
 		super.onPause();
 		
-		ApplicationDefaults defaults = new ApplicationDefaults(this);
+		ApplicationDefaults defaults = new ApplicationDefaults(this.getApplicationContext());
 		
 		if (defaults != null)
 		{
@@ -195,15 +209,15 @@ public class AddPhotosActivity extends Activity implements FragmentSetup, Refres
 	
 	public void saveFiles()
 	{
-		long[] itemIds = gridView.getCheckedItemIds();
+		long[] itemIds = docList.getCheckedItemIds();
 		File[] selectedImages = new File[itemIds.length];
 				
-		if (photos != null)
+		if (documents != null)
 		{
 			for (int i = 0; i < itemIds.length; i++)
 			{
 				int index = (int) itemIds[i];
-				selectedImages[i] = photos.get(index);
+				selectedImages[i] = documents.get(index);
 			}
 		}
 		
@@ -216,8 +230,9 @@ public class AddPhotosActivity extends Activity implements FragmentSetup, Refres
 			@Override
 			public void run() 
 			{
+	
 				// create a root of the app storage directory
-				File root = getApplication().getExternalFilesDir("Album");
+				File root = getApplication().getExternalFilesDir("Documents");
 				
 				if (explorer != null)
 				{
@@ -259,7 +274,7 @@ public class AddPhotosActivity extends Activity implements FragmentSetup, Refres
 							if (mediaItem != null)
 							{
 								// save the encoded item
-								boolean didSave = dataManager.saveItem(DataManager.PHOTO_DATA, mediaItem);
+								boolean didSave = dataManager.saveItem(DataManager.DOCUMENT_DATA, mediaItem);
 								
 								// verify the item was saved
 								if (didSave)
@@ -287,11 +302,11 @@ public class AddPhotosActivity extends Activity implements FragmentSetup, Refres
 						}
 					}
 				}
+				
 			}
-			
 		}).run();
 	}
-	
+
 	@Override
 	public void restartParent()
 	{
@@ -342,4 +357,5 @@ public class AddPhotosActivity extends Activity implements FragmentSetup, Refres
 			startActivity(navStyle);
 		}
 	}
+	
 }

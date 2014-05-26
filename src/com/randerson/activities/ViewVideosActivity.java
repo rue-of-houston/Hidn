@@ -2,28 +2,39 @@ package com.randerson.activities;
 import java.io.File;
 
 import libs.ApplicationDefaults;
+import libs.RegExManager;
+import libs.UniArray;
 
 import com.randerson.hidn.R;
+import com.randerson.interfaces.DataSetup;
 import com.randerson.interfaces.FragmentSetup;
+import com.randerson.interfaces.Refresher;
+import com.randerson.support.DataManager;
+import com.randerson.support.HidNExplorer;
 import com.randerson.support.ThemeMaster;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.media.MediaPlayer;
+import android.media.MediaPlayer.OnPreparedListener;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.WindowManager;
-import android.widget.Button;
+import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.MediaController;
-import android.widget.ProgressBar;
-import android.widget.ScrollView;
+import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.VideoView;
 
-public class ViewVideosActivity extends Activity implements FragmentSetup {
+@SuppressLint("HandlerLeak")
+public class ViewVideosActivity extends Activity implements FragmentSetup, Refresher {
 
 	public String TITLE = "Video Viewer";
 	public String theme;
@@ -31,12 +42,11 @@ public class ViewVideosActivity extends Activity implements FragmentSetup {
 	public boolean defaultNavType;
 	public String filePath;
 	public String fileName;
+	public String tempPath;
 	public AlertDialog alert;
 	public String key;
-	public VideoView videoPlayer;
-	public ProgressBar elapsedTime;
-	public boolean isPaused = false;
-	public int duration;
+	public VideoView vPlayer;
+	public TextView textView;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState)
@@ -63,204 +73,211 @@ public class ViewVideosActivity extends Activity implements FragmentSetup {
 				filePath = extras.getString("filePath");
 				fileName = extras.getString("fileName");
 				key = extras.getString("key");
-				
-				boolean exists = new File(filePath).exists();
-				
-				if (exists)
-				{
-					Toast msg = Toast.makeText(this, "File found", Toast.LENGTH_SHORT);
-					msg.show();
-				}
 			}
 		}
 
 		// load the application settings
 		loadApplicationSettings();
 		
-		// create the view from layout res
-		videoPlayer = (VideoView) findViewById(R.id.videoPlayer);
-		//elapsedTime = (ProgressBar) findViewById(R.id.videoProgress);
-		Button pause = (Button) findViewById(R.id.pauseBtn);
-		Button play = (Button) findViewById(R.id.playBtn);
-		Button rewind = (Button) findViewById(R.id.rewindBtn);
-		Button fastForward = (Button) findViewById(R.id.fastForwardBtn);
+		// create the views from layout res
+		vPlayer = (VideoView) findViewById(R.id.vPlayer);
+		textView = (TextView) findViewById(R.id.videoName);
 		
-		if (videoPlayer != null)
+		// create the media controller
+		MediaController controller = new MediaController(this);
+		
+		// verify the textView is valid
+		if (textView != null)
 		{
-			// set the video file path
-			videoPlayer.setVideoPath(new File(filePath).getAbsolutePath());
+			// set the file name for the view
+			textView.setText(fileName);
 			
-			videoPlayer.requestFocus();
+			textView.setOnClickListener(new OnClickListener() {
+				
+				@Override
+				public void onClick(View v) {
+					
+					// show the rename alert
+					alert.show();
+				}
+			});
+		}
 		
-			MediaController controller = new MediaController(getApplicationContext());
+		// alert builder for building the custom rename file alert
+		AlertDialog.Builder builder = new AlertDialog.Builder(this);
+		
+		if (builder != null)
+		{
+			// inflate the xml resource in the view
+			View view =  getLayoutInflater().inflate(R.layout.rename_photo_alert, null);
 			
+			// create the input field and button from res
+			final EditText alertInputField = (EditText) view.findViewById(R.id.alertRenamePhoto);
+			
+			if (alertInputField != null)
+			{
+				// set the filename to appear
+				alertInputField.setText(fileName);
+			}
+			
+			// set the builder params
+			builder.setCancelable(false);
+			builder.setView(view);
+			builder.setTitle("Rename File");
+			
+			builder.setPositiveButton("Done", new DialogInterface.OnClickListener() {
+				
+				public void onClick(DialogInterface dialog, int which)
+				{
+					
+					if (alertInputField != null)
+					{
+						// get the text field value
+						String name = alertInputField.getText().toString();
+						
+						if (name.length() < 3)
+						{
+							// show the message
+							showMessage("File name must be at least 3 characters long");
+						}
+						else if (RegExManager.checkPattern(name, RegExManager.FILE_NAME) == true)
+						{
+							// reset the text view
+							textView.setText(name);
+							
+							// set the new filename
+							fileName = name;
+							
+							// instantiate the required classes
+							HidNExplorer explorer = new HidNExplorer(getApplicationContext());
+							DataManager dataManager = new DataManager(getApplicationContext());
+							
+							if (dataManager != null)
+							{
+								// get the photos object
+								UniArray videos = dataManager.load(DataSetup.VIDEO_DATA);
+								
+								// verify the req. classes are valid
+								if (videos != null && explorer != null)
+								{
+									// retrieve the actual data item
+									UniArray item = (UniArray) videos.getObject(key);
+									
+									if (item != null)
+									{
+										// create the new file
+										File currentFile = new File(filePath);
+										
+										// rename the hidnPath
+										boolean isRenamed = explorer.renameFile(currentFile, ("." + name));
+										
+										if (isRenamed)
+										{
+											Log.i("Video Renaming", "Video Renamed");
+											
+											// create the new hidden path
+											String hidNPath = currentFile.getParent() + "/." + name;
+											Log.i("Renamed to: ", hidNPath);
+											
+											// get the unchanged data
+											String sourcePath = item.getString("sourcePath");
+											String[] encodedData = (String[]) item.getObject("encodedData");
+											
+											// create new save item
+											UniArray newItem = dataManager.createMediaItem(name, sourcePath, hidNPath, encodedData);
+											
+											if (newItem != null)
+											{
+												// try to save the item and capture the result
+												boolean didSave = dataManager.saveItem(DataManager.VIDEO_DATA, newItem);
+												
+												// if it saved
+												if (didSave)
+												{
+													// try to remove the old item and capture the result
+													boolean isRemoved = dataManager.removeItem(DataManager.VIDEO_DATA, key);
+													
+													if (isRemoved)
+													{
+														Log.i("Video Success", "Item successfully added");
+													}
+												}
+											}
+											
+										}
+										else
+										{
+											Log.i("Video Renaming", "Video Rename Failed");
+										}
+									}
+								}
+							}
+							
+							// show the message
+							showMessage("File renamed");
+							
+							// dismiss the dialog
+							dialog.dismiss();
+							
+							onBackPressed();
+						}
+						else
+						{
+							// show the message
+							showMessage("File must contain a valid extension format");
+						}
+					}
+				}
+
+			});
+			
+			builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+				
+				@Override
+				public void onClick(DialogInterface dialog, int which) {
+					
+					// show the message
+					showMessage("File not renamed");
+		
+					// cancel the dialog
+					dialog.cancel();
+				}
+			});
+			
+			// create the dialog alert
+			alert = builder.create();
+		}
+		
+		// verify the videoView is valid
+		if (vPlayer != null)
+		{
 			if (controller != null)
 			{
-				controller.setAnchorView(videoPlayer);
-				videoPlayer.setMediaController(controller);
+				// sets the anchor view
+				controller.setAnchorView(vPlayer);
+				
+				// set the media controller
+				vPlayer.setMediaController(controller);
 			}
-
-			
-			videoPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
+		
+			// create the onprep listener
+			vPlayer.setOnPreparedListener(new OnPreparedListener() {
 				
 				@Override
 				public void onPrepared(MediaPlayer mp) {
 					
-					videoPlayer.requestFocus();
-					
-					// play the file
-					videoPlayer.start();
-					
-					// get the video duration
-					duration = videoPlayer.getDuration();
-					
-					Log.i("Duration: ", "" + duration);
+					// start the video
+					mp.start();
 				}
 			});
+			
+			// request focus for the player
+			vPlayer.requestFocus();
+			
+			// set the video data
+			vPlayer.setVideoURI(Uri.parse(filePath));
 		}
-		
-		if (elapsedTime != null)
-		{
-			elapsedTime.setMax(duration);
-		}
-		
-		if (pause != null)
-		{
-			pause.setOnClickListener(new OnClickListener() {
-				
-				@Override
-				public void onClick(View v)
-				{
-					// check if the video player is playing, if so pause it
-					if (videoPlayer.isPlaying() && videoPlayer.canPause())
-					{
-						videoPlayer.pause();
-						
-						// set the pause bool
-						isPaused = true;
-					}
-					else if (videoPlayer.isPlaying() == false && isPaused == true)
-					{
-						// resume the playing
-						videoPlayer.resume();
-						
-						// reset the pause bool
-						isPaused = false;
-					}
-				}
-			});
-		}
-		
-		if (play != null)
-		{
-			play.setOnClickListener(new OnClickListener() {
-				
-				@Override
-				public void onClick(View v)
-				{
-					// check if the video player is playing, if not start it
-					if (videoPlayer.isPlaying() == false && isPaused == false)
-					{
-						videoPlayer.requestFocus();
-						videoPlayer.start();
-						
-					/*	Timer timer = new Timer();
-						
-						if (timer != null)
-						{
-							timer.scheduleAtFixedRate(new TimerTask() {
-								
-								@Override
-								public void run() {
-									
-									// increment the progress
-									elapsedTime.setProgress(videoPlayer.getCurrentPosition());
-								}
-							}, 0, 1000);
-						}*/
-					}
-					else if (videoPlayer.isPlaying() == false && isPaused == true)
-					{
-						// resume the video playback
-						videoPlayer.resume();
-						
-						// reset the pause bool
-						isPaused = false;
-					}
-				}
-			});
-		}
-		
-		if (rewind != null)
-		{
-			rewind.setOnClickListener(new OnClickListener() {
-				
-				@Override
-				public void onClick(View v) 
-				{
-					// check if the video player is playing, if so begin back seeking
-					if (videoPlayer.isPlaying() && videoPlayer.canSeekBackward())
-					{
-						int position = videoPlayer.getCurrentPosition();
-						int seekAmount = 10000;
-						
-						// check if there is less than 10 seconds passed
-						if (position < seekAmount)
-						{
-							// check if there has passed less than 1 second
-							if (position < 1000)
-							{
-								// seek the entire elapsed time
-								seekAmount = position;
-							}
-							else
-							{
-								// set the seek to 1 second
-								seekAmount = 1000;
-							}
-						}
-						
-						// back seek the video
-						videoPlayer.seekTo(position - seekAmount);
-					}
-				}
-			});
-		}
-		
-		if (fastForward != null)
-		{
-			fastForward.setOnClickListener(new OnClickListener() {
-				
-				@Override
-				public void onClick(View v)
-				{
-					if (videoPlayer.isPlaying() && videoPlayer.canSeekForward())
-					{
-						int position = videoPlayer.getCurrentPosition();
-						int seekAmount = 10000;
-						
-						// check if there is less than 10 seconds left
-						if ((seekAmount + position) > duration)
-						{
-							// check if there is less than 1 sec left
-							if ((1000 + position) > duration)
-							{
-								// seek the entire elapsed time
-								seekAmount = duration;
-							}
-							else
-							{
-								// set the seek to 1 second
-								seekAmount = 1000;
-							}
-						}
-						
-						// forward seek the video
-						videoPlayer.seekTo(position + seekAmount);
-					}
-				}
-			});
-		}
+	
 	}
 	
 	@Override
@@ -277,12 +294,22 @@ public class ViewVideosActivity extends Activity implements FragmentSetup {
 		int themeBId = ThemeMaster.getThemeId(themeB.toLowerCase())[0];
 		
 		// set the background styling
-		ScrollView layoutBg = (ScrollView) findViewById(R.id.viewVideosBg);
+		LinearLayout layoutBg = (LinearLayout) findViewById(R.id.viewVideosBg);
 		
 		// verify the view is valid first
 		if (layoutBg != null)
 		{
 			layoutBg.setBackground(getResources().getDrawable(themeBId));
+		}
+		
+		// set the background styling
+		LinearLayout layoutBg2 = (LinearLayout) findViewById(R.id.videoBg2);
+		
+		if (layoutBg2 != null)
+		{
+			// set the drawable for the border bg
+			int color2 = ThemeMaster.getThemeId(theme)[2];
+			layoutBg2.setBackgroundColor(color2);
 		}
 	}
 
@@ -322,6 +349,79 @@ public class ViewVideosActivity extends Activity implements FragmentSetup {
 		}
 		
 		finish();
+	}
+	
+	@Override
+	public void onBackPressed() 
+	{
+		restartParent();
+	}
+	
+	@Override
+	public void finish() {
+		super.finish();
+		
+	}
+	
+	public void showMessage(String message)
+	{
+		Toast msg = Toast.makeText(getApplication(), message, Toast.LENGTH_SHORT);
+		
+		if (msg != null)
+		{
+			msg.show();
+		}
+	}
+	
+	@Override
+	public void restartParent()
+	{
+		boolean privateMode = false;
+		
+		ApplicationDefaults defaults = new ApplicationDefaults(this);
+		
+		if (defaults != null)
+		{
+			// set the app to reload the last view upon restart
+			defaults.set("loadLastView", true);
+			
+			// get the private boolean
+			privateMode = defaults.getData().getBoolean("privateMode", false);
+		}
+		
+		Intent navStyle = null;
+		
+		// create intent on navStyle that is selected
+		if (defaultNavType)
+		{
+			// pagerview swipe nav
+			navStyle = new Intent(this, PagerFragmentActivity.class);
+		}
+		else if (!defaultNavType)
+		{
+			// drawerlist nav
+			navStyle = new Intent(this, DrawerFragmentActivity.class);
+		}
+		
+		// verify the intent is valid and change the activity
+		if (navStyle != null)
+		{
+			// check if private mode is enabled
+			if (privateMode)
+			{
+				// set the flag to exclude from recent menu
+				navStyle.setFlags(Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);
+			}
+			
+			// set the flag clearing duplicate activities
+			navStyle.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+			
+			// set the password validation arg
+			navStyle.putExtra("passwordIsValid", true);
+			
+			// restart the parent
+			startActivity(navStyle);
+		}
 	}
 	
 }

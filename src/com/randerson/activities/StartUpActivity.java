@@ -1,9 +1,10 @@
 package com.randerson.activities;
 
+import java.io.File;
+
 import libs.ApplicationDefaults;
 import libs.FileSystem;
 import libs.UniArray;
-
 import com.randerson.hidn.R;
 import com.randerson.interfaces.Constants;
 import com.randerson.interfaces.DataSetup;
@@ -16,6 +17,7 @@ import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
@@ -194,6 +196,10 @@ public class StartUpActivity extends Activity implements Constants{
 				Log.i("App Setup", "Data container " + CONTAINER_NAMES[n] + " failed to create and save");
 			}
 		}
+		
+		// setup the app public folder
+		File publicDir = new File(Environment.getExternalStorageDirectory() + "/HidN/"); 
+		publicDir.mkdir();
 	}
 	
 

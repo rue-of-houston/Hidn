@@ -8,6 +8,11 @@
     <style name="AppBaseTheme" parent="android:Theme.Holo.Light">
         <!-- API 14 theme customizations can go here. -->
         <item name="android:actionBarStyle">@style/Custom.ActionBarStyle</item>
+        <item name="android:actionOverflowButtonStyle">@style/Custom.Overflow</item>
+    </style>
+    
+    <style name="Custom.Overflow" parent="@android:style/Widget.Holo.ActionButton.Overflow">
+        <item name="android:src">@drawable/ic_action_round_overflow</item>
     </style>
     
     <style name="Custom.ActionBarStyle" parent="@android:style/Widget.Holo.Light.ActionBar">

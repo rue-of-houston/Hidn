@@ -11,6 +11,7 @@
     <string name="pin">Security Pin</string>
     <string name="refresh">Refresh</string>
     <string name="done">Done</string>
+    <string name="textHint">Write your text here</string>
     <string name="bookmarkAlert">Give a name to this bookmark.</string>
     <string name="urlHint">http://www.domain.com</string>
     <string name="genericHint">Type text here</string>
