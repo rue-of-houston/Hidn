@@ -32,6 +32,7 @@ public class AddNotesActivity extends Activity implements FragmentSetup, Refresh
 	public String theme;
 	public String themeB;
 	public boolean defaultNavType;
+	public boolean privateMode = false;
 	boolean isNewNote = false;
 	String key = null;
 	
@@ -293,6 +294,9 @@ public class AddNotesActivity extends Activity implements FragmentSetup, Refresh
 			defaultNavType = defaults.getData().getBoolean("defaultNavType", true);
 			theme = defaults.getData().getString("theme", "4_3");
 			themeB = defaults.getData().getString("themeB", "Dark");
+			
+			// get the private boolean
+			privateMode = defaults.getData().getBoolean("privateMode", false);
 		}
 		
 		// method for setting the actionBar
@@ -317,11 +321,15 @@ public class AddNotesActivity extends Activity implements FragmentSetup, Refresh
 			defaults.set("loadLastView", true);
 		}
 		
-		finish();
+		if (privateMode)
+		{
+			onBackPressed();
+		}
 	}
 	
 	@Override
 	public void onBackPressed() {
+		super.onBackPressed();
 		
 		restartParent();
 	}
@@ -329,17 +337,12 @@ public class AddNotesActivity extends Activity implements FragmentSetup, Refresh
 	@Override
 	public void restartParent()
 	{
-		boolean privateMode = false;
-		
 		ApplicationDefaults defaults = new ApplicationDefaults(this);
 		
 		if (defaults != null)
 		{
 			// set the app to reload the last view upon restart
 			defaults.set("loadLastView", true);
-			
-			// get the private boolean
-			privateMode = defaults.getData().getBoolean("privateMode", false);
 		}
 		
 		Intent navStyle = null;

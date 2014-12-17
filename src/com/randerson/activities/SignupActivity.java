@@ -3,6 +3,7 @@ package com.randerson.activities;
 import com.kinvey.java.Query;
 import com.randerson.hidn.R;
 import com.randerson.interfaces.Constants;
+import com.randerson.interfaces.DataSetup;
 import com.randerson.interfaces.EncryptionSetup;
 import com.randerson.interfaces.KinveySetup;
 import com.randerson.kinvey.AccountsEntity;
@@ -11,6 +12,7 @@ import com.randerson.support.DataManager;
 import com.randerson.support.HidNCipher;
 
 import libs.ApplicationDefaults;
+import libs.FileSystem;
 import libs.NetManager;
 import libs.RegExManager;
 import libs.UniArray;
@@ -20,6 +22,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
@@ -53,6 +56,7 @@ public class SignupActivity extends Activity implements Constants {
 	TextView pinTitle;
 	
 	boolean returningUser = false;
+	boolean setupComplete = false;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -360,6 +364,7 @@ public class SignupActivity extends Activity implements Constants {
 										
 										if (securityScreen != null)
 										{
+											setupComplete = true;
 											startActivity(securityScreen);
 										}
 									}
@@ -373,6 +378,47 @@ public class SignupActivity extends Activity implements Constants {
 		}
 	}
 	
+	
+	
+	@Override
+	protected void onStop() {
+		super.onStop();
+		
+		// verify the user quit before setup finished
+		if (setupComplete != true)
+		{
+			// get an instance of the defaults
+			ApplicationDefaults defaults = new ApplicationDefaults(this);
+			
+			if (defaults != null)
+			{
+				// set the first run boolean to true since setup did not finish
+				defaults.set("firstRun", true);
+				
+				// create the top-level UniArray
+				String[] CONTAINER_PATHS = new String[]{DataSetup.APP_BROWSER_FILENAME, DataSetup.APP_CONTACTS_FILENAME,
+												   DataSetup.APP_DOCUMENTS_FILENAME, DataSetup.APP_ENCRYPTION_FILENAME,
+												   DataSetup.APP_NOTES_FILENAME, DataSetup.APP_PHOTOS_FILENAME, DataSetup.APP_VIDEOS_FILENAME
+												  };
+				
+				for (int i = 0; i < CONTAINER_PATHS.length; i++)
+				{
+					FileSystem.deleteFile(this, CONTAINER_PATHS[i], false);
+					
+					Log.i("Removing Setup Data", CONTAINER_PATHS[i] + " removed");
+				}
+			}
+		}
+				
+				finish();
+	}
+
+	@Override
+	public void finish() {
+		
+		super.finish();
+	}
+
 	public void syncData()
 	{
 		// init the storage managing class
@@ -431,6 +477,7 @@ public class SignupActivity extends Activity implements Constants {
 										
 											if (securityScreen != null)
 											{
+												setupComplete = true;
 												startActivity(securityScreen);
 											}
 										}

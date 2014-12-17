@@ -23,6 +23,7 @@ public class ViewBookmarks extends Activity implements FragmentSetup{
 	public String theme;
 	public String themeB;
 	public boolean defaultNavType;
+	public boolean privateMode = false;
 	public String TITLE = "Bookmark Viewer";
 	
 	@Override
@@ -158,6 +159,9 @@ public class ViewBookmarks extends Activity implements FragmentSetup{
 			defaultNavType = defaults.getData().getBoolean("defaultNavType", true);
 			theme = defaults.getData().getString("theme", "4_3");
 			themeB = defaults.getData().getString("themeB", "Dark");
+			
+			// get the private boolean
+			privateMode = defaults.getData().getBoolean("privateMode", false);
 		}
 		
 		// method for setting the actionBar
@@ -179,9 +183,13 @@ public class ViewBookmarks extends Activity implements FragmentSetup{
 		{
 			// set the app to reload the last view upon restart
 			defaults.set("loadLastView", true);
+			
 		}
 		
-		finish();
+		if (privateMode)
+		{
+			onBackPressed();
+		}
 	}
 
 }

@@ -40,6 +40,7 @@ public class ViewVideosActivity extends Activity implements FragmentSetup, Refre
 	public String theme;
 	public String themeB;
 	public boolean defaultNavType;
+	public boolean privateMode = false;
 	public String filePath;
 	public String fileName;
 	public String tempPath;
@@ -324,6 +325,9 @@ public class ViewVideosActivity extends Activity implements FragmentSetup, Refre
 			defaultNavType = defaults.getData().getBoolean("defaultNavType", true);
 			theme = defaults.getData().getString("theme", "4_3");
 			themeB = defaults.getData().getString("themeB", "Dark");
+			
+			// get the private boolean
+			privateMode = defaults.getData().getBoolean("privateMode", false);
 		}
 		
 		// method for setting the actionBar
@@ -348,19 +352,16 @@ public class ViewVideosActivity extends Activity implements FragmentSetup, Refre
 			defaults.set("loadLastView", true);
 		}
 		
-		finish();
+		if (privateMode)
+		{
+			onBackPressed();
+		}
 	}
 	
 	@Override
 	public void onBackPressed() 
 	{
 		restartParent();
-	}
-	
-	@Override
-	public void finish() {
-		super.finish();
-		
 	}
 	
 	public void showMessage(String message)

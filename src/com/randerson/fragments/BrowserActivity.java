@@ -38,6 +38,7 @@ public class BrowserActivity extends android.support.v4.app.Fragment implements 
 	public static final String TITLE = "Browser";
 	public ViewHandler parentView;
 	public boolean defaultNavType;
+	public boolean privateMode = false;
 	public String theme;
 	public String themeB;
 	public View root;
@@ -273,6 +274,9 @@ public class BrowserActivity extends android.support.v4.app.Fragment implements 
 			defaultNavType = defaults.getData().getBoolean("defaultNavType", true);
 			theme = defaults.getData().getString("theme", "4_3");
 			themeB = defaults.getData().getString("themeB", "Dark");
+			
+			// get the private boolean
+			privateMode = defaults.getData().getBoolean("privateMode", false);
 		}
 		
 		// method for setting the actionBar
@@ -322,7 +326,10 @@ public class BrowserActivity extends android.support.v4.app.Fragment implements 
 				
 				if (viewBookmarks != null)
 				{
-					viewBookmarks.setFlags(Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);
+					if (privateMode)
+					{
+						viewBookmarks.setFlags(Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);
+					}
 					
 					// start the bookmark viewing activity
 					startActivityForResult(viewBookmarks, 100);

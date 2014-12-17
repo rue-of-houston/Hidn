@@ -177,9 +177,9 @@ public class KinveyManager implements KinveySetup {
 			{
 				// create the toast message
 				String message = "Setup did not finalize";
-				showMessage(message);
+				showMessage(err.getLocalizedMessage());
 				
-				Log.i("Sign Up Setup Error", err.getLocalizedMessage());
+				Log.i("Sign Up Setup Error", message);
 				err.printStackTrace();
 			}
 		};
@@ -213,9 +213,9 @@ public class KinveyManager implements KinveySetup {
 			{
 				// create the toast message
 				String message = "Account creation failed";
-				showMessage(message);
+				showMessage(err.getLocalizedMessage());
 				
-				Log.i("Sign Up Error", err.getLocalizedMessage());
+				Log.i("Sign Up Error", message);
 				err.printStackTrace();
 				
 				// set the result to false since account creation was unsuccessful
@@ -299,9 +299,9 @@ public class KinveyManager implements KinveySetup {
 			{
 				// create the toast message
 				String message = "User data not saved";
-				showMessage(message);
+				showMessage(err.getLocalizedMessage());
 				
-				Log.i("Account Update Error", err.getLocalizedMessage());
+				Log.i("Account Update Error", message);
 				err.printStackTrace();
 				
 				
@@ -362,6 +362,7 @@ public class KinveyManager implements KinveySetup {
 			@Override
 			public void onFailure(Throwable err)
 			{
+				showMessage(err.getLocalizedMessage());
 				Log.i("Account Data", "Failed to retrieve account data");
 				Log.i("Account Data Error", err.getLocalizedMessage());
 				err.printStackTrace();
@@ -418,5 +419,64 @@ public class KinveyManager implements KinveySetup {
 	public Client getClient()
 	{
 		return kinvey;
+	}
+
+	@Override
+	public void getNewsData(Query query, final Handler handler)
+	{
+		// create the app data for the associated entity
+				AsyncAppData<NewsEntity> accounts = kinvey.appData("News", NewsEntity.class);
+				
+				// create the callback
+				KinveyListCallback<NewsEntity> callback = new KinveyListCallback<NewsEntity>() {
+					
+					@Override
+					public void onSuccess(NewsEntity[] entity)
+					{
+						if (handler != null)
+						{
+							// create the messenger and message objects
+							Messenger messenger = new Messenger(handler);
+							Message msg = Message.obtain();
+							
+							if (msg != null && messenger != null)
+							{
+								msg.arg1 = Activity.RESULT_OK;
+								msg.arg2 = FETCHING_ACCOUNT;
+								msg.obj = entity;
+										
+								try {
+									
+									// sends the message through handler
+									messenger.send(msg);
+									
+								} catch (RemoteException e)
+								{
+									e.printStackTrace();
+									
+									Log.i("Kinvey Manager Exception", "Handler Error Retrieving News");
+								}
+							}
+						}
+						
+						Log.i("News Data", "Queried " + entity.length + " result(s)");
+						Log.i("News Data Success", entity.toString());
+					}
+					
+					@Override
+					public void onFailure(Throwable err)
+					{
+						showMessage(err.getLocalizedMessage());
+						Log.i("News Data", "Failed to retrieve news data");
+						Log.i("News Data Error", err.getLocalizedMessage());
+						err.printStackTrace();
+					}
+				};
+				
+				if (accounts != null)
+				{
+					// initiate a query
+					accounts.get(query, callback);
+				}
 	}
 }

@@ -37,6 +37,7 @@ public class ViewContactsActivity extends Activity implements FragmentSetup, Ref
 	public String theme;
 	public String themeB;
 	public boolean defaultNavType;
+	public boolean privateMode = false;
 	public String TITLE = "Contact Viewer";
 	private String TEXT_MESSAGE = "";
 	public AlertDialog alert;
@@ -403,6 +404,9 @@ public class ViewContactsActivity extends Activity implements FragmentSetup, Ref
 			defaultNavType = defaults.getData().getBoolean("defaultNavType", true);
 			theme = defaults.getData().getString("theme", "4_3");
 			themeB = defaults.getData().getString("themeB", "Dark");
+			
+			// get the private boolean
+			privateMode = defaults.getData().getBoolean("privateMode", false);
 		}
 		
 		// method for setting the actionBar
@@ -426,7 +430,10 @@ public class ViewContactsActivity extends Activity implements FragmentSetup, Ref
 			defaults.set("loadLastView", true);
 		}
 		
-		finish();
+		if (privateMode)
+		{
+			onBackPressed();
+		}
 	}
 	
 	@Override

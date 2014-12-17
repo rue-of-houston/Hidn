@@ -33,6 +33,7 @@ public class AddDocumentsActivity extends Activity implements FragmentSetup, Ref
 
 	public final String TITLE = "Document Browser";
 	public boolean defaultNavType;
+	public boolean privateMode = false;
 	public String theme;
 	public String themeB;
 	ListView docList;
@@ -166,6 +167,9 @@ public class AddDocumentsActivity extends Activity implements FragmentSetup, Ref
 			defaultNavType = defaults.getData().getBoolean("defaultNavType", true);
 			theme = defaults.getData().getString("theme", "4_3");
 			themeB = defaults.getData().getString("themeB", "Dark");
+			
+			// get the private boolean
+			privateMode = defaults.getData().getBoolean("privateMode", false);
 		}
 		
 		// method for setting the actionBar
@@ -193,6 +197,14 @@ public class AddDocumentsActivity extends Activity implements FragmentSetup, Ref
 	}
 	
 	@Override
+	public void finish() {
+		
+		restartParent();
+	}
+	
+	
+	
+	@Override
 	protected void onPause() {
 		super.onPause();
 		
@@ -204,7 +216,10 @@ public class AddDocumentsActivity extends Activity implements FragmentSetup, Ref
 			defaults.set("loadLastView", true);
 		}
 		
-		finish();
+		if (privateMode)
+		{
+			finish();
+		}
 	}
 	
 	public void saveFiles()
@@ -310,17 +325,12 @@ public class AddDocumentsActivity extends Activity implements FragmentSetup, Ref
 	@Override
 	public void restartParent()
 	{
-		boolean privateMode = false;
-		
 		ApplicationDefaults defaults = new ApplicationDefaults(this);
 		
 		if (defaults != null)
 		{
 			// set the app to reload the last view upon restart
 			defaults.set("loadLastView", true);
-			
-			// get the private boolean
-			privateMode = defaults.getData().getBoolean("privateMode", false);
 		}
 		
 		Intent navStyle = null;

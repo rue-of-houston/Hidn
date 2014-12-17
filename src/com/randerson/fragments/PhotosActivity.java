@@ -2,17 +2,26 @@ package com.randerson.fragments;
 
 import libs.ApplicationDefaults;
 import libs.UniArray;
+
 import com.randerson.activities.AddPhotosActivity;
+import com.randerson.activities.DrawerFragmentActivity;
+import com.randerson.activities.PagerFragmentActivity;
 import com.randerson.activities.ViewPhotosActivity;
 import com.randerson.hidn.R;
 import com.randerson.interfaces.Constants;
 import com.randerson.interfaces.FragmentSetup;
+import com.randerson.interfaces.Refresher;
 import com.randerson.interfaces.ViewHandler;
+import com.randerson.support.ActionManager;
 import com.randerson.support.DataManager;
+import com.randerson.support.FileRestorer;
 import com.randerson.support.PhotoAdapter;
 import com.randerson.support.ThemeMaster;
+
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -23,15 +32,17 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemLongClickListener;
 
 @SuppressLint("DefaultLocale")
-public class PhotosActivity extends android.support.v4.app.Fragment implements FragmentSetup, Constants {
+public class PhotosActivity extends android.support.v4.app.Fragment implements FragmentSetup, Constants, Refresher {
 
 	public static final String TITLE = "Photos";
 	public ViewHandler parentView;
 	public boolean defaultNavType;
+	public boolean privateMode = false;
 	public String theme;
 	public String themeB;
 	public View root;
@@ -39,6 +50,8 @@ public class PhotosActivity extends android.support.v4.app.Fragment implements F
 	public String[] photoPaths;
 	public ListView photoList;
 	public PhotoAdapter adapter;
+	public boolean isDeleting = false;
+	public boolean isRestoring = false;
 	
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -94,40 +107,73 @@ public class PhotosActivity extends android.support.v4.app.Fragment implements F
 					public void onItemClick(AdapterView<?> parent, View view,
 							int position, long id)
 					{
-						// init the datamanager class
-						DataManager dataManager = new DataManager(getActivity());
-						
-						if (dataManager != null)
+						if (isDeleting == false && isRestoring == false)
 						{
-							// get the photos data object
-							UniArray photos = (UniArray) dataManager.load(DataManager.PHOTO_DATA);
+							// init the datamanager class
+							DataManager dataManager = new DataManager(getActivity());
 							
-							if (photos !=  null)
+							if (dataManager != null)
 							{
-								// get data specified at the current position
-								UniArray item = (UniArray) photos.getObject(photoNames[position]);
+								// get the photos data object
+								UniArray photos = (UniArray) dataManager.load(DataManager.PHOTO_DATA);
 								
-								if (item != null)
+								if (photos !=  null)
 								{
-									String path = item.getString("hidnPath");
-									String name = item.getString("fileName");
+									// get data specified at the current position
+									UniArray item = (UniArray) photos.getObject(photoNames[position]);
 									
-									Intent intent = new Intent(getActivity(), ViewPhotosActivity.class);
-									
-									if (intent != null)
+									if (item != null)
 									{
-										// disable the passLock
-										parentView.setDisablePassLock(true);
+										String path = item.getString("hidnPath");
+										String name = item.getString("fileName");
 										
-										// add the parameters
-										intent.putExtra("key", photoNames[position]);
-										intent.putExtra("fileName", name);
-										intent.putExtra("filePath", path);
+										Intent intent = new Intent(getActivity(), ViewPhotosActivity.class);
 										
-										intent.setFlags(Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);
-										
-										startActivity(intent);
+										if (intent != null)
+										{
+											// disable the passLock
+											parentView.setDisablePassLock(true);
+											
+											// add the parameters
+											intent.putExtra("key", photoNames[position]);
+											intent.putExtra("fileName", name);
+											intent.putExtra("filePath", path);
+											
+											if (privateMode)
+											{
+												intent.setFlags(Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);
+											}
+											
+											startActivity(intent);
+										}
 									}
+								}
+							}
+						}
+						else
+						{
+							// get the textView
+							TextView textView = (TextView) view.findViewById(R.id.photoListItem);
+							
+							if (textView != null)
+							{
+								
+								// check if the backgrounds match as being selected
+								if (textView.isSelected() == true)
+								{
+									// set the view as unselected
+									textView.setSelected(false);
+									
+									// restore the color
+									ActionManager.restoreBgColor(getActivity(), textView, position);
+								}
+								else if (textView.isSelected() == false)
+								{
+									// set the view as selected
+									textView.setSelected(true);
+									
+									// set the view to be highlighted
+									ActionManager.setHighlighted(getActivity(), textView);
 								}
 							}
 						}
@@ -218,6 +264,9 @@ public class PhotosActivity extends android.support.v4.app.Fragment implements F
 			defaultNavType = defaults.getData().getBoolean("defaultNavType", true);
 			theme = defaults.getData().getString("theme", "4_3");
 			themeB = defaults.getData().getString("themeB", "Dark");
+			
+			// get the private boolean
+			privateMode = defaults.getData().getBoolean("privateMode", false);
 		}
 		
 		// method for setting the actionBar
@@ -257,10 +306,373 @@ public class PhotosActivity extends android.support.v4.app.Fragment implements F
 			
 			if (importPhotos != null)
 			{
-				importPhotos.setFlags(Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);
+				if (privateMode)
+				{
+					importPhotos.setFlags(Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);
+				}
 				
 				startActivity(importPhotos);
 			}
+		}
+		else if (itemId == R.id.photo_remove_photo && parentView.hasValidPin() && isRestoring == false)
+		{
+			if (isDeleting)
+			{
+				// create an alert
+				AlertDialog alert = null;
+				
+				// get the number of items checked
+				long[] checkedItemIds = photoList.getCheckedItemIds();
+				
+				// verify that at least 1 item is checked
+				if (checkedItemIds.length > 0)
+				{
+					// build the alert
+					AlertDialog.Builder alertBuilder = new AlertDialog.Builder(getActivity());
+					
+					if (alertBuilder != null)
+					{
+						
+						// set the builder params
+						alertBuilder.setCancelable(false);
+						alertBuilder.setTitle("Confirm Delete");
+						
+						alertBuilder.setPositiveButton("Delete", new DialogInterface.OnClickListener() {
+							
+							public void onClick(DialogInterface dialog, int which)
+							{
+								// initiate the delete
+								removeItems();
+								
+								// dismiss the dialog
+								dialog.dismiss();
+							}
+
+						});
+						
+						alertBuilder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+							
+							@Override
+							public void onClick(DialogInterface dialog, int which) {
+								
+								// show the message
+								ActionManager.showMessage(getActivity(), "Delete Mode Disabled");
+								
+								// put the list in multiple choice mode
+								photoList.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
+										
+								// take the list out of delete mode
+								//isDeleting = false;
+					
+								// cancel the dialog
+								dialog.cancel();
+							}
+						});
+						
+						// set the dialog alert
+						alert = alertBuilder.create();
+					}
+					
+					// show the alert
+					alert.show();
+				}
+				else
+				{
+					// show the message
+					ActionManager.showMessage(getActivity(), "Delete Mode Disabled");
+					
+					// put the list in multiple choice mode
+					photoList.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
+							
+					// take the list out of delete mode
+					isDeleting = false;
+				}
+				
+			}
+			else
+			{
+				// put the list in multiple choice mode
+				photoList.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
+				
+				// put the list in delete mode
+				isDeleting = true;
+				
+				ActionManager.showMessage(getActivity(), "Delete Mode Enabled");
+			}
+		}
+		else if (itemId == R.id.photo_restore_photo && parentView.hasValidPin() && isDeleting == false)
+		{
+			if (isRestoring)
+			{
+				// create an alert
+				AlertDialog alert = null;
+				
+				// get the number of items checked
+				long[] checkedItemIds = photoList.getCheckedItemIds();
+				
+				// verify that at least 1 item is checked
+				if (checkedItemIds.length > 0)
+				{
+					// build the alert
+					AlertDialog.Builder alertBuilder = new AlertDialog.Builder(getActivity());
+					
+					if (alertBuilder != null)
+					{
+						
+						// set the builder params
+						alertBuilder.setCancelable(false);
+						alertBuilder.setTitle("Confirm Restore");
+						
+						alertBuilder.setPositiveButton("Restore", new DialogInterface.OnClickListener() {
+							
+							public void onClick(DialogInterface dialog, int which)
+							{
+								// initiate the delete
+								restoreItems();
+								
+								// dismiss the dialog
+								dialog.dismiss();
+							}
+
+						});
+						
+						alertBuilder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+							
+							@Override
+							public void onClick(DialogInterface dialog, int which) {
+								
+								// show the message
+								ActionManager.showMessage(getActivity(), "Restore Mode Disabled");
+								
+								// put the list in multiple choice mode
+								photoList.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
+										
+								// take the list out of restore mode
+								//isRestoring = false;
+					
+								// cancel the dialog
+								dialog.cancel();
+							}
+						});
+						
+						// set the dialog alert
+						alert = alertBuilder.create();
+					}
+					
+					// show the alert
+					alert.show();
+				}
+				else
+				{
+					// show the message
+					ActionManager.showMessage(getActivity(), "Restore Mode Disabled");
+					
+					// put the list in multiple choice mode
+					photoList.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
+							
+					// take the list out of restore mode
+					isRestoring = false;
+				}
+				
+			}
+			else
+			{
+				// put the list in multiple choice mode
+				photoList.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
+				
+				// put the list in restore mode
+				isRestoring = true;
+				
+				ActionManager.showMessage(getActivity(), "Restore Mode Enabled");
+			}
+		}
+		else if (parentView.hasValidPin())
+		{
+			// error message for double operation attempts
+			
+			String mode = "different";
+			
+			if (isDeleting)
+			{
+				mode = "Delete";
+			}
+			else if (isRestoring)
+			{
+				mode = "Restore";
+			}
+			
+			ActionManager.showMessage(getActivity(), "Cannot be completed, already in " + mode + " mode");
+		}
+	}
+	
+	public void restoreItems()
+	{
+		boolean didRestore = false;
+		long[] checkedItemIds = photoList.getCheckedItemIds();
+		
+		// verify that there is at least 1 item checked
+		if (checkedItemIds.length > 0)
+		{
+			DataManager dataManager = new DataManager(getActivity());
+			
+			if (dataManager != null)
+			{
+				UniArray container = dataManager.load(DataManager.PHOTO_DATA);
+				
+				if (container != null)
+				{
+					// get a list of all the keys
+					String[] keys = container.getAllObjectKeys();
+					
+					// iterate over the length of the items checked
+					for (int i = 0; i < checkedItemIds.length; i++)
+					{
+						// set the key to the key returned for checkedItem position returned for the value of i
+						int keyIndex = (int) checkedItemIds[i];
+						String key = keys[keyIndex];
+						
+						// get the item container
+						UniArray item = (UniArray) container.getObject(key);
+						
+						if (item != null)
+						{
+							// try to remove the item at the key
+							FileRestorer.restoreMediaItem(getActivity(), item, DataManager.PHOTO_DATA);
+						}
+					}
+				}
+				
+				// show the result toast
+				ActionManager.showMessage(getActivity(), checkedItemIds.length + " items restored");
+				
+				// to refresh the parent
+				didRestore = true;
+			}
+		}
+		else
+		{
+			// show the result toast
+			ActionManager.showMessage(getActivity(), " No items selected / restored");
+		}
+		
+		// put the list in multiple choice mode
+		photoList.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
+				
+		// take the list out of restore mode
+		isRestoring = false;
+		
+		if (didRestore)
+		{
+			restartParent();
+		}
+	}
+	
+	public void removeItems()
+	{
+		boolean didDelete = false;
+		long[] checkedItemIds = photoList.getCheckedItemIds();
+		
+		// verify that there is at least 1 item checked
+		if (checkedItemIds.length > 0)
+		{
+			DataManager dataManager = new DataManager(getActivity());
+			
+			if (dataManager != null)
+			{
+				UniArray container = dataManager.load(DataManager.PHOTO_DATA);
+				
+				if (container != null)
+				{
+					// get a list of all the keys
+					String[] keys = container.getAllObjectKeys();
+					
+					// iterate over the length of the items checked
+					for (int i = 0; i < checkedItemIds.length; i++)
+					{
+						// set the key to the key returned for checkedItem position returned for the value of i
+						int keyIndex = (int) checkedItemIds[i];
+						String key = keys[keyIndex];
+						
+						// get the item container
+						UniArray item = (UniArray) container.getObject(key);
+						
+						if (item != null)
+						{
+							// try to remove the item at the key
+							FileRestorer.deleteMediaItem(getActivity(), item, DataManager.PHOTO_DATA);
+						}
+					}
+				}
+				
+				// show the result toast
+				ActionManager.showMessage(getActivity(), checkedItemIds.length + " items removed");
+				
+				// to refresh the parent
+				didDelete = true;
+			}
+		}
+		else
+		{
+			// show the result toast
+			ActionManager.showMessage(getActivity(), " No items selected / removed");
+		}
+		
+		// put the list in multiple choice mode
+		photoList.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
+				
+		// take the list out of delete mode
+		isDeleting = false;
+		
+		if (didDelete)
+		{
+			restartParent();
+		}
+	}
+	
+	@Override
+	public void restartParent()
+	{
+
+		ApplicationDefaults defaults = new ApplicationDefaults(getActivity());
+		
+		if (defaults != null)
+		{
+			// set the app to reload the last view upon restart
+			defaults.set("loadLastView", true);
+		}
+		
+		Intent navStyle = null;
+		
+		// create intent on navStyle that is selected
+		if (defaultNavType)
+		{
+			// pagerview swipe nav
+			navStyle = new Intent(getActivity(), PagerFragmentActivity.class);
+		}
+		else if (!defaultNavType)
+		{
+			// drawerlist nav
+			navStyle = new Intent(getActivity(), DrawerFragmentActivity.class);
+		}
+		
+		// verify the intent is valid and change the activity
+		if (navStyle != null)
+		{
+			// check if private mode is enabled
+			if (privateMode)
+			{
+				// set the flag to exclude from recent menu
+				navStyle.setFlags(Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);
+			}
+			
+			// set the flag clearing duplicate activities
+			navStyle.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+			
+			// set the password validation arg
+			navStyle.putExtra("passwordIsValid", parentView.hasValidPin());
+			
+			// restart the parent
+			startActivity(navStyle);
 		}
 	}
 }

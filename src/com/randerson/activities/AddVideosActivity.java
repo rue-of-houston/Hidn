@@ -34,6 +34,7 @@ public class AddVideosActivity extends Activity implements FragmentSetup, Refres
 	public final String TITLE = "Video Browser";
 	ArrayList<File> videos;
 	public boolean defaultNavType;
+	public boolean privateMode = false;
 	public String theme;
 	public String themeB;
 	ListView listView;
@@ -170,6 +171,9 @@ public class AddVideosActivity extends Activity implements FragmentSetup, Refres
 			defaultNavType = defaults.getData().getBoolean("defaultNavType", true);
 			theme = defaults.getData().getString("theme", "4_3");
 			themeB = defaults.getData().getString("themeB", "Dark");
+			
+			// get the private boolean
+			privateMode = defaults.getData().getBoolean("privateMode", false);
 		}
 		
 		// method for setting the actionBar
@@ -185,6 +189,13 @@ public class AddVideosActivity extends Activity implements FragmentSetup, Refres
 	public void onActionBarItemClicked(int itemId)
 	{
 		
+	}
+	
+	@Override
+	public void finish() {
+		super.finish();
+		
+		restartParent();
 	}
 	
 	@Override
@@ -208,7 +219,10 @@ public class AddVideosActivity extends Activity implements FragmentSetup, Refres
 			defaults.set("loadLastView", true);
 		}
 		
-		finish();
+		if (privateMode)
+		{
+			finish();
+		}
 	}
 	
 	public void saveFiles()

@@ -2,15 +2,20 @@ package com.randerson.fragments;
 
 import libs.ApplicationDefaults;
 
+import com.kinvey.java.Query;
 import com.randerson.hidn.R;
 import com.randerson.interfaces.Constants;
 import com.randerson.interfaces.FragmentSetup;
 import com.randerson.interfaces.ViewHandler;
+import com.randerson.kinvey.KinveyManager;
+import com.randerson.kinvey.NewsEntity;
 import com.randerson.support.ThemeMaster;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -19,7 +24,7 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
 
-@SuppressLint("DefaultLocale")
+@SuppressLint({ "DefaultLocale", "HandlerLeak" })
 public class HomeActivity extends android.support.v4.app.Fragment implements FragmentSetup, Constants {
 
 	public static final String TITLE = "Home";
@@ -50,6 +55,41 @@ public class HomeActivity extends android.support.v4.app.Fragment implements Fra
 			// set the drawable for the listView bg
 			int color = ThemeMaster.getThemeId(theme)[2];
 			layout.setBackgroundColor(color);
+		}
+		
+		// get an instance of the kinvey manager
+		KinveyManager KM = new KinveyManager(getActivity());
+		
+		if (KM != null)
+		{
+			boolean isUserLoggedOn = KM.getClient().user().isUserLoggedIn();
+			
+			// active user is present so retrieve news feed
+			if (isUserLoggedOn)
+			{
+				Query query = KM.createQuery("author", "system");
+				
+				Handler handler = new Handler()
+				{
+					@Override
+					public void handleMessage(Message msg) 
+					{
+						super.handleMessage(msg);
+						
+						if (msg.arg1 == Activity.RESULT_OK && msg.obj != null)
+						{
+							// pass in the returned entity data
+							updateNewsFeed((NewsEntity[]) msg.obj);
+						}
+					}
+				};
+				
+				KM.getNewsData(query, handler);
+			}
+			else
+			{
+				
+			}
 		}
 		
 		return root;
@@ -151,6 +191,11 @@ public class HomeActivity extends android.support.v4.app.Fragment implements Fra
 	@Override
 	public void onActionBarItemClicked(int itemId) {
 		// TODO Auto-generated method stub
+		
+	}
+	
+	public void updateNewsFeed(NewsEntity[] entity)
+	{
 		
 	}
 	

@@ -17,6 +17,7 @@ public interface KinveySetup
 	public void signUp(String username, String password, String firstName, String lastName, Handler handler);
 	public void updateAccountData(AccountsEntity entity, Handler handler);
 	public void getAccountData(Query query, Handler handler);
+	public void getNewsData(Query query, Handler handler);
 	public Query createQuery(String key, Object value);
 	public Query createQuery(String[] keys, Object[] values);
 	public void signOff();

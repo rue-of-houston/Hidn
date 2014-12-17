@@ -7,6 +7,20 @@
         android:icon="@drawable/ic_content_new_document"
         android:title="@string/add"/>
     
+     <item
+        android:id="@+id/document_remove_document"
+        android:orderInCategory="1"
+        android:showAsAction="always"
+        android:icon="@drawable/ic_action_delete"
+        android:title="@string/blank"/>
+     
+     <item
+        android:id="@+id/document_restore_document"
+        android:orderInCategory="1"
+        android:showAsAction="always"
+        android:icon="@drawable/ic_content_import_export"
+        android:title="@string/blank"/>
+    
     <item
         android:id="@+id/main_settings"
         android:orderInCategory="100"

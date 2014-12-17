@@ -25,6 +25,7 @@ public class AddContactActivity extends Activity implements FragmentSetup, Refre
 
 	public final String TITLE = "New Contact";
 	public boolean defaultNavType;
+	public boolean privateMode = false;
 	public String theme;
 	public String themeB;
 	
@@ -103,6 +104,9 @@ public class AddContactActivity extends Activity implements FragmentSetup, Refre
 			defaultNavType = defaults.getData().getBoolean("defaultNavType", true);
 			theme = defaults.getData().getString("theme", "4_3");
 			themeB = defaults.getData().getString("themeB", "Dark");
+			
+			// get the private boolean
+			privateMode = defaults.getData().getBoolean("privateMode", false);
 		}
 		
 		// method for setting the actionBar
@@ -130,9 +134,13 @@ public class AddContactActivity extends Activity implements FragmentSetup, Refre
 		{
 			// set the app to reload the last view upon restart
 			defaults.set("loadLastView", true);
+			
 		}
 		
-		finish();
+		if (privateMode)
+		{
+			onBackPressed();
+		}
 	}
 	
 	public void saveContact()

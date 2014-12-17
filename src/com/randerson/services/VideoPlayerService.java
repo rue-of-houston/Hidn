@@ -58,8 +58,6 @@ public class VideoPlayerService extends IntentService {
 			// create the source file
 			File sourceFile = new File(filePath);
 			
-			String sourceName = sourceFile.getName();
-			
 			if (tempFile != null)
 			{
 				// create an explorer instance to move the file publicly

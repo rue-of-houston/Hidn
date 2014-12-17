@@ -105,7 +105,7 @@ or to a theme attribute in the form "<code>?[<i>package</i>:][<i>type</i>:]<i>na
     }
     public static final class id {
         public static final int accountSwitch=0x7f090045;
-        public static final int action_settings=0x7f090079;
+        public static final int action_settings=0x7f09007c;
         public static final int addContactBg=0x7f090000;
         public static final int addContactBg2=0x7f090001;
         public static final int addDocumentsBg=0x7f090009;
@@ -135,13 +135,16 @@ or to a theme attribute in the form "<code>?[<i>package</i>:][<i>type</i>:]<i>na
         public static final int contactPrimaryPhoneField=0x7f090056;
         public static final int contactSecondaryPhoneField=0x7f090059;
         public static final int contact_new_contact=0x7f090077;
+        public static final int contact_remove_contact=0x7f090078;
         public static final int contactsBg=0x7f09001a;
         public static final int contactsList=0x7f09001b;
         public static final int documentList=0x7f09001d;
         public static final int documentListItem=0x7f09006c;
+        public static final int document_remove_document=0x7f09007a;
+        public static final int document_restore_document=0x7f09007b;
         public static final int documentsBg=0x7f09001c;
         public static final int documentsList=0x7f09000a;
-        public static final int documents_add_doc=0x7f090078;
+        public static final int documents_add_doc=0x7f090079;
         public static final int drawer=0x7f090029;
         public static final int drawerContent=0x7f09002a;
         public static final int drawerList=0x7f09002b;
@@ -177,7 +180,8 @@ or to a theme attribute in the form "<code>?[<i>package</i>:][<i>type</i>:]<i>na
         public static final int noteSubmitBtn=0x7f090010;
         public static final int noteTitle=0x7f09000e;
         public static final int notesBg=0x7f09002c;
-        public static final int notes_add_note=0x7f09007a;
+        public static final int notes_add_note=0x7f09007d;
+        public static final int notes_remove_note=0x7f09007e;
         public static final int num0=0x7f090039;
         public static final int num1=0x7f09002f;
         public static final int num2=0x7f090030;
@@ -195,9 +199,11 @@ or to a theme attribute in the form "<code>?[<i>package</i>:][<i>type</i>:]<i>na
         public static final int photoListItem=0x7f09006f;
         public static final int photoName=0x7f090062;
         public static final int photoViewer=0x7f090063;
+        public static final int photo_remove_photo=0x7f090080;
+        public static final int photo_restore_photo=0x7f090081;
         public static final int photosBg=0x7f09003b;
         public static final int photosGrid=0x7f090012;
-        public static final int photos_add_photo=0x7f09007b;
+        public static final int photos_add_photo=0x7f09007f;
         public static final int pin=0x7f09004d;
         public static final int pinTitle=0x7f09004c;
         public static final int primaryMsgBtn=0x7f090058;
@@ -222,9 +228,11 @@ or to a theme attribute in the form "<code>?[<i>package</i>:][<i>type</i>:]<i>na
         public static final int videoList=0x7f090050;
         public static final int videoListItem=0x7f090073;
         public static final int videoName=0x7f090066;
+        public static final int video_remove_video=0x7f090083;
+        public static final int video_restore_video=0x7f090084;
         public static final int videosBg=0x7f09004f;
         public static final int videosList=0x7f090014;
-        public static final int videos_add_video=0x7f09007c;
+        public static final int videos_add_video=0x7f090082;
         public static final int viewContactBg=0x7f090053;
         public static final int viewPhotosBg=0x7f090060;
         public static final int viewVideosBg=0x7f090064;

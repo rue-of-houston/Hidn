@@ -454,7 +454,7 @@ public class DataManager implements DataSetup
 			
 			if (dataWrapper != null)
 			{
-				// add the passed in data to the proper data level in 2nd level UniArray
+				// remove the indexed data at the key in the UniArray
 				dataWrapper.removeObject(key);
 				
 				// pass the updated 1st level UniArray to be saved in the top-level

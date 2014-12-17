@@ -32,11 +32,11 @@
            android:inputType="textCapWords" android:maxLength="16" android:background="@drawable/theme_light"/>
        
        <TextView android:id="@+id/lastNameTitle" style="@style/signupTextView" android:textColor="#FFFFFF" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/lastName" android:layout_marginTop="5dip"/>
-       <EditText android:id="@+id/lastName" android:textColor="#43D5FF" android:layout_width="match_parent" android:layout_height="35dip" android:hint="@string/lastNameHint"
+       <EditText android:id="@+id/lastName" android:textColor="#000000" android:layout_width="match_parent" android:layout_height="35dip" android:hint="@string/lastNameHint"
            android:inputType="textCapWords" android:maxLength="16" android:background="@drawable/theme_light"/>
        
        <TextView android:id="@+id/pinTitle" style="@style/signupTextView" android:textColor="#FFFFFF" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/pin" android:layout_marginTop="5dip"/>
-       <EditText android:id="@+id/pin" android:textColor="#43D5FF" android:layout_width="match_parent" android:layout_height="35dip" android:hint="@string/pinHint"
+       <EditText android:id="@+id/pin" android:textColor="#000000" android:layout_width="match_parent" android:layout_height="35dip" android:hint="@string/pinHint"
            android:inputType="numberPassword" android:maxLength="6" android:background="@drawable/theme_light"/>
        
        <Button android:id="@+id/submitBtn" android:layout_margin="5dip" android:background="@drawable/button_click" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/submit"/>

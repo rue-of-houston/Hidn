@@ -43,6 +43,7 @@ public class ViewPhotosActivity extends Activity implements FragmentSetup, Refre
 	public String theme;
 	public String themeB;
 	public boolean defaultNavType;
+	public boolean privateMode = false;
 	public TextView textView;
 	public String filePath;
 	public String fileName;
@@ -353,6 +354,9 @@ public class ViewPhotosActivity extends Activity implements FragmentSetup, Refre
 			defaultNavType = defaults.getData().getBoolean("defaultNavType", true);
 			theme = defaults.getData().getString("theme", "4_3");
 			themeB = defaults.getData().getString("themeB", "Dark");
+			
+			// get the private boolean
+			privateMode = defaults.getData().getBoolean("privateMode", false);
 		}
 		
 		// method for setting the actionBar
@@ -376,7 +380,10 @@ public class ViewPhotosActivity extends Activity implements FragmentSetup, Refre
 			defaults.set("loadLastView", true);
 		}
 		
-		finish();
+		if (privateMode)
+		{
+			onBackPressed();
+		}
 	}
 	
 	private void showMessage(String message)

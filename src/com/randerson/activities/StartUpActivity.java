@@ -5,6 +5,7 @@ import java.io.File;
 import libs.ApplicationDefaults;
 import libs.FileSystem;
 import libs.UniArray;
+
 import com.randerson.hidn.R;
 import com.randerson.interfaces.Constants;
 import com.randerson.interfaces.DataSetup;
@@ -199,8 +200,28 @@ public class StartUpActivity extends Activity implements Constants{
 		
 		// setup the app public folder
 		File publicDir = new File(Environment.getExternalStorageDirectory() + "/HidN/"); 
-		publicDir.mkdir();
+		
+		if (publicDir.exists() == false)
+		{
+			publicDir.mkdir();
+		}
+	}
+
+	@Override
+	protected void onRestart() {
+		super.onRestart();
+		
+		// create an intent to relaunch the stalled out setup
+		Intent restartSession = new Intent(this, StartUpActivity.class);
+		
+		if (restartSession != null)
+		{
+			restartSession.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+			startActivity(restartSession);
+		}
+		
+		
 	}
 	
-
+	
 }

@@ -2,6 +2,7 @@ package com.randerson.support;
 
 import java.util.ArrayList;
 
+import libs.ApplicationDefaults;
 import libs.ApplicationManager;
 import android.content.Context;
 import android.content.Intent;
@@ -9,6 +10,7 @@ import android.net.Uri;
 import android.provider.CallLog;
 import android.telephony.SmsManager;
 import android.util.Log;
+import android.widget.TextView;
 import android.widget.Toast;
 
 public class ActionManager {
@@ -174,6 +176,43 @@ public class ActionManager {
 		if (msg != null)
 		{
 			msg.show();
+		}
+	}
+	
+	public static int getBgColor(TextView view)
+	{
+		return view.getSolidColor();
+	}
+	
+	public static void setHighlighted(Context context, TextView view)
+	{
+		if (view != null)
+		{
+			view.setBackgroundColor(context.getResources().getColor(android.R.color.holo_orange_dark));
+		}
+	}
+	
+	public static void restoreBgColor(Context context, TextView view, int position)
+	{
+		ApplicationDefaults defaults = new ApplicationDefaults(context);
+		
+		if (defaults != null)
+		{
+			int themeListA = defaults.getData().getInt("themeListA", ThemeMaster.getColor("#9FA6A4"));
+			int themeListB = ThemeMaster.getColor("#FFFFFF");
+			
+			if (view != null)
+			{
+				// check if the position is even or odd and set the background to appropriate color
+				if (position % 2 == 0)
+				{
+					view.setBackgroundColor(themeListB);
+				}
+				else
+				{
+					view.setBackgroundColor(themeListA);
+				}
+			}
 		}
 	}
 	
